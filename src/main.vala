@@ -10,35 +10,35 @@ public class DockerManager : Gtk.Window {
     public DockerManager () {
         Object(window_position: Gtk.WindowPosition.CENTER);
 
-		this.set_size_request(1000, 400);
+        this.set_size_request(1000, 400);
         this.destroy.connect(Gtk.main_quit);
 
-		//Titlebar
-		var titlebar = create_titlebar();
-		this.set_titlebar(titlebar);
+        //Titlebar
+        var titlebar = create_titlebar();
+        this.set_titlebar(titlebar);
 
-		//Main box
+        //Main box
         Gtk.Box box = new Gtk.Box(Gtk.Orientation.VERTICAL, 1);
-        this.add (box);
+        this.add(box);
 
-		//ScrolledWindow
-		Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(null, null);
-		scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+        //ScrolledWindow
+        Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(null, null);
+        scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
 
-		//Headerbar
+        //Headerbar
         var headerbar = create_headerbar();
-		box.pack_start(headerbar, false, true, 0);
+        box.pack_start(headerbar, false, true, 0);
 
-		//Images : Treview and ListStore
-		var images_list_store = Store.Images.create_list_store ();
+        //Images : Treview and ListStore
+        var images_list_store = Store.Images.create_list_store ();
         headerbar.on_click_search_button (images_list_store);
 		
 		//Images treeview
-		var images_tv = new View.ImagesTreeView(images_list_store);
+        var images_tv = new View.ImagesTreeView(images_list_store);
 
-		scrolled.add(images_tv);
+        scrolled.add(images_tv);
 
-		box.pack_start(scrolled, true, true, 0);
+        box.pack_start(scrolled, true, true, 0);
     }
 
     public static void main (string[] args) {
@@ -59,16 +59,16 @@ public class DockerManager : Gtk.Window {
 
     private Gtk.HeaderBar create_titlebar() {
 		
-		Gtk.HeaderBar titlebar = new Gtk.HeaderBar();
-		titlebar.show_close_button = true;
-		titlebar.title = "Gnome Docker Manager";
+        Gtk.HeaderBar titlebar = new Gtk.HeaderBar();
+        titlebar.show_close_button = true;
+        titlebar.title = "Gnome Docker Manager";
 
-		return titlebar;
-	}
+        return titlebar;
+    }
 
-	private HeaderBar create_headerbar() {
+    private HeaderBar create_headerbar() {
 
-		HeaderBar headerbar = new HeaderBar();
+        HeaderBar headerbar = new HeaderBar();
 
         return headerbar;
 	}
@@ -96,29 +96,30 @@ private class HeaderBar : Gtk.HeaderBar {
 	
 	public void on_click_search_button(Gtk.ListStore store) {
 		
-		this.search_button.clicked.connect(() => {
-			try {
-				var repository = new Docker.UnixSocketRepository (entry.text);
+        this.search_button.clicked.connect(() => {
+            
+            try {
+                var repository = new Docker.UnixSocketRepository (entry.text);
 
-				Docker.Image[]? images = repository.get_images();
+                Docker.Image[]? images = repository.get_images();
 
-				Gtk.TreeIter iter;
-				store.clear();
-				store.append(out iter);
+                Gtk.TreeIter iter;
+                store.clear();
+                store.append(out iter);
 
-				foreach (Docker.Image image in images) {
+                foreach(Docker.Image image in images) {
 					
-					store.set(iter, 
-						0, image.id.substring(0, 12), 
-						1, new DateTime.from_unix_utc(image.created_at).to_string()
-					);
+                    store.set(iter, 
+                        0, image.id.substring(0, 12), 
+                        1, new DateTime.from_unix_utc(image.created_at).to_string()
+                    );
 					
-					store.append(out iter);
-				}
+                    store.append(out iter);
+                }
 
-			} catch (Docker.RequestError e) {
-				//view.buffer.text = e.message;
-			}
-		});
-	}
+            } catch (Docker.RequestError e) {
+                //view.buffer.text = e.message;
+            }
+        });
+    }
 }
