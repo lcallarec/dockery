@@ -7,6 +7,9 @@
 
 public class DockerManager : Gtk.Window {
 
+
+    private string docker_host = "/var/run/docker.sock";
+
     public DockerManager () {
         Object(window_position: Gtk.WindowPosition.CENTER);
 
@@ -16,22 +19,29 @@ public class DockerManager : Gtk.Window {
         //Titlebar
         var titlebar = create_titlebar();
         this.set_titlebar(titlebar);
-
+        
         //Main box
         Gtk.Box box = new Gtk.Box(Gtk.Orientation.VERTICAL, 1);
         this.add(box);
-
+        
         //ScrolledWindow
         Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(null, null);
         scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
 
         //Headerbar
-        var headerbar = create_headerbar();
+        var headerbar = create_headerbar(docker_host);
         box.pack_start(headerbar, false, true, 0);
 
+        //InfoBar
+        var infobar = create_infobar();
+        box.add(infobar);
+
+        //MessageDispatcher
+        var md = new MessageDispatcher(infobar);
+        
         //Images : Treview and ListStore
         var images_list_store = Store.Images.create_list_store ();
-        headerbar.on_click_search_button (images_list_store);
+        headerbar.on_click_search_button (images_list_store, md);    
 		
 		//Images treeview
         var images_tv = new View.ImagesTreeView(images_list_store);
@@ -40,6 +50,8 @@ public class DockerManager : Gtk.Window {
 
         box.pack_start(scrolled, true, true, 0);
     }
+
+    private Gtk.InfoBar infobar { get; set;}
 
     public static void main (string[] args) {
         Gtk.init(ref args);
@@ -52,9 +64,9 @@ public class DockerManager : Gtk.Window {
         }
 
         var dm = new DockerManager();
-        dm.show_all();
-
-        Gtk.main();
+        dm.show_all(); 
+        
+        Gtk.main();        
     }
 
     private Gtk.HeaderBar create_titlebar() {
@@ -66,12 +78,19 @@ public class DockerManager : Gtk.Window {
         return titlebar;
     }
 
-    private HeaderBar create_headerbar() {
+    private HeaderBar create_headerbar(string docker_host) {
 
-        HeaderBar headerbar = new HeaderBar();
+        HeaderBar headerbar = new HeaderBar(docker_host);
 
         return headerbar;
 	}
+    
+    private Gtk.InfoBar create_infobar() {
+
+		Gtk.InfoBar infobar = new Gtk.InfoBar();
+
+        return infobar;
+    }
 
 }
 
@@ -80,12 +99,12 @@ private class HeaderBar : Gtk.HeaderBar {
 	private Gtk.Entry  entry;
 	private Gtk.Button search_button;
 	
-	public HeaderBar() {
+	public HeaderBar(string docker_host) {
 		
 		this.search_button = new Gtk.Button.from_icon_name("edit-find", Gtk.IconSize.BUTTON);
 		
 		this.entry = new Gtk.Entry();
-		this.entry.text = "/var/run/docker.sock";
+		this.entry.text = docker_host;
 		this.entry.width_chars = 30;
 		
 		this.pack_start(entry);
@@ -94,8 +113,8 @@ private class HeaderBar : Gtk.HeaderBar {
 
 	}
 	
-	public void on_click_search_button(Gtk.ListStore store) {
-		
+	public void on_click_search_button(Gtk.ListStore store, MessageDispatcher md) {
+        
         this.search_button.clicked.connect(() => {
             
             try {
@@ -119,9 +138,30 @@ private class HeaderBar : Gtk.HeaderBar {
                     store.append(out iter);
                 }
 
+                md.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
+                
             } catch (Docker.RequestError e) {
-                //view.buffer.text = e.message;
+                md.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
     }
 }
+
+private class MessageDispatcher : GLib.Object {
+    
+    private Gtk.InfoBar dialog;
+    private Gtk.Label label;
+    
+    public MessageDispatcher(Gtk.InfoBar infobar) {
+        dialog = infobar;
+        label  = new Gtk.Label(null);
+        dialog.get_content_area().add(label);
+    }
+    
+    public void dispatch(Gtk.MessageType type, string message) {
+        dialog.set_message_type(type);
+        label.label = message;
+    }
+    
+}
+

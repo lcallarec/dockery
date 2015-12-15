@@ -34,7 +34,9 @@ namespace Docker {
                 return parse_image_payload(response.payload);
 
             } catch (Error e) {
-                throw new RequestError.FATAL("erreur");
+                var message_builder = new StringBuilder();
+                message_builder.printf("Can't connect to docker daemon located at %s", this.socket_path);
+                throw new RequestError.FATAL(message_builder.str);
             }
         }
 		
@@ -56,7 +58,7 @@ namespace Docker {
                     images += Image() {
                         id 		   = node.get_object().get_string_member("Id"),
                         created_at = (int64) node.get_object().get_int_member("Created"),
-			repository = repotag[0],
+                        repository = repotag[0],
                         tag        = repotag[1]
                     };
                 }
