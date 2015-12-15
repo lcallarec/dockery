@@ -42,8 +42,8 @@ namespace Docker {
 		
         private Image[] parse_image_payload(string payload) {
 
-            Image[] images = {}; 
-			
+            Image[] images = {};
+           	
             try {
                 var parser = new Json.Parser();
                 parser.load_from_data(payload);
@@ -51,12 +51,15 @@ namespace Docker {
                 var nodes = parser.get_root().get_array().get_elements();
 		
                 foreach (unowned Json.Node node in nodes) {
+                    string[0] repotag = node.get_object().get_array_member("RepoTags").get_string_element(0).split(":", 2);
+
                     images += Image() {
                         id 		   = node.get_object().get_string_member("Id"),
-                        created_at = (int64) node.get_object().get_int_member("Created")
+                        created_at = (int64) node.get_object().get_int_member("Created"),
+			repository = repotag[0],
+                        tag        = repotag[1]
                     };
                 }
-
             } catch (Error e) {
                 return images;
             }
@@ -126,11 +129,13 @@ namespace Docker {
                 return null;
             }
         }
-	}
+}
 	
     public struct Image {
         public string id;
         public int64 created_at;
+        public string repository;
+        public string tag;
     }
 }
 

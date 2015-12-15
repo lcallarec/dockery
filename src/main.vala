@@ -82,7 +82,7 @@ private class HeaderBar : Gtk.HeaderBar {
 	
 	public HeaderBar() {
 		
-		this.search_button = new Gtk.Button.from_icon_name("edit-find");
+		this.search_button = new Gtk.Button.from_icon_name("edit-find", Gtk.IconSize.BUTTON);
 		
 		this.entry = new Gtk.Entry();
 		this.entry.text = "/var/run/docker.sock";
@@ -111,7 +111,9 @@ private class HeaderBar : Gtk.HeaderBar {
 					
                     store.set(iter, 
                         0, image.id.substring(0, 12), 
-                        1, new DateTime.from_unix_utc(image.created_at).to_string()
+                        1, image.repository, 
+                        2, image.tag,
+                        3, new DateTime.from_unix_utc(image.created_at).to_string()
                     );
 					
                     store.append(out iter);

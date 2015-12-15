@@ -11,13 +11,11 @@ namespace View {
 		public ImagesTreeView(Gtk.ListStore list_store) {
 			
 			this.set_model(list_store);
-			
-			var id_column = new Gtk.CellRendererText();
-			
-			var created_at_column = new Gtk.CellRendererText();
-			
-			this.insert_column_with_attributes (0, "Id", id_column, "text", 0);
-			this.insert_column_with_attributes (1, "Created At", created_at_column, "text", 1);
+
+			this.insert_column_with_attributes (0, "Id", new Gtk.CellRendererText(), "text", 0);
+			this.insert_column_with_attributes (1, "Repo", new Gtk.CellRendererText(), "text", 1);
+			this.insert_column_with_attributes (2, "Tag", new Gtk.CellRendererText(), "text", 2);
+			this.insert_column_with_attributes (3, "Created At", new Gtk.CellRendererText(), "text", 2);
 		}
 	}
 }
