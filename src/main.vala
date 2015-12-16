@@ -41,7 +41,7 @@ public class DockerManager : Gtk.Window {
         
         //Notebook:
         Gtk.Notebook notebook = new Gtk.Notebook();
-        workspace.pack_start(notebook);
+        workspace.pack_start(notebook, false, true, 1);
 
         //Image Page box
         Gtk.Box image_page_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 1);
@@ -52,7 +52,6 @@ public class DockerManager : Gtk.Window {
         headerbar.on_click_search_button (images_list_store, md);    
 
         var images_tv = new View.ImagesTreeView(images_list_store);
-        //scrolled.add(images_tv);
 
         image_page_box.pack_start(images_tv, true, true, 0);
       
