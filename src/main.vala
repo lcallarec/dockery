@@ -19,36 +19,43 @@ public class DockerManager : Gtk.Window {
         //Titlebar
         var titlebar = create_titlebar();
         this.set_titlebar(titlebar);
-        
+                
         //Main box
-        Gtk.Box box = new Gtk.Box(Gtk.Orientation.VERTICAL, 1);
-        this.add(box);
-        
-        //ScrolledWindow
-        Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(null, null);
-        scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+        Gtk.Box main_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 1);
+        this.add(main_box);
 
         //Headerbar
         var headerbar = create_headerbar(docker_host);
-        box.pack_start(headerbar, false, true, 0);
+        main_box.pack_start(headerbar, false, true, 0);
 
         //InfoBar
         var infobar = create_infobar();
-        box.add(infobar);
+        main_box.add(infobar);
 
         //MessageDispatcher
         var md = new MessageDispatcher(infobar);
+
+        //Image Page box
+        Gtk.Box workspace = new Gtk.Box(Gtk.Orientation.VERTICAL, 1);
+        main_box.add(workspace);
         
-        //Images : Treview and ListStore
+        //Notebook:
+        Gtk.Notebook notebook = new Gtk.Notebook();
+        workspace.pack_start(notebook);
+
+        //Image Page box
+        Gtk.Box image_page_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 1);
+        notebook.append_page(image_page_box, new Gtk.Label("Images"));
+	
+        //Images : Treeview and ListStore
         var images_list_store = Store.Images.create_list_store ();
         headerbar.on_click_search_button (images_list_store, md);    
-		
-		//Images treeview
+
         var images_tv = new View.ImagesTreeView(images_list_store);
+        //scrolled.add(images_tv);
 
-        scrolled.add(images_tv);
-
-        box.pack_start(scrolled, true, true, 0);
+        image_page_box.pack_start(images_tv, true, true, 0);
+      
     }
 
     private Gtk.InfoBar infobar { get; set;}
