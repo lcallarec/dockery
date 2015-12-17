@@ -35,7 +35,7 @@ namespace Docker {
 
             } catch (Error e) {
                 var message_builder = new StringBuilder();
-                message_builder.printf("Can't connect to docker daemon located at %s", this.socket_path);
+                message_builder.printf("Can't connect to docker daemon at %s", this.socket_path);
                 throw new RequestError.FATAL(message_builder.str);
             }
         }
@@ -45,7 +45,6 @@ namespace Docker {
         private Image[] parse_image_payload(string payload) {
 
             Image[] images = {};
-           	
             try {
                 var parser = new Json.Parser();
                 parser.load_from_data(payload);
@@ -63,6 +62,7 @@ namespace Docker {
                     };
                 }
             } catch (Error e) {
+
                 return images;
             }
 
@@ -80,10 +80,17 @@ namespace Docker {
         try {
                 status  = extract_response_status_code(stream);
                 headers = extract_response_headers(stream);
+
+                if (headers.has("Transfer-Encoding", "chunked")) {
+                    stream.read_line(null);
+                }
+
                 payload = stream.read_line(null).strip();
-				
+                
+                stream.close();
+			
             } catch (IOError e) {
-                stdout.printf(e.message);
+                return null;
             }
         }
 
@@ -114,13 +121,9 @@ namespace Docker {
             string header_line;
 
             try {
-                Regex regex = new Regex("([a-zAZ]*):([a-zAZ]*)");			
-				
-                MatchInfo info;
                 while ((header_line = stream.read_line(null)).strip() != "") {
-                    if (regex.match(header_line, 0, out info)){
-                        headers.set(info.fetch(1), info.fetch(2));
-                    }
+                    string[] _header = header_line.split(":", 2);                        
+                    headers.set(_header[0], _header[1].strip());
                 }
                 
                 return headers;
