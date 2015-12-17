@@ -69,6 +69,10 @@ public class DockerManager : Gtk.Window {
             Gtk.Widget.set_default_direction(Gtk.TextDirection.LTR);
         }
 
+        if (args[1] == "--dark-theme") {
+			Gtk.Settings.get_default().set("gtk-application-prefer-dark-theme", true);	
+		}
+
         var dm = new DockerManager();
         dm.show_all(); 
         
