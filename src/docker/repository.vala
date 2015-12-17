@@ -90,7 +90,7 @@ namespace Docker {
                 stream.close();
 			
             } catch (IOError e) {
-                return null;
+                stdout.printf(e.message);
             }
         }
 
