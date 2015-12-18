@@ -23,6 +23,6 @@ valac -g --save-temps \
          --pkg gio-unix-2.0 \
          --pkg gee-0.8 \
          --pkg json-glib-1.0 \
-         main.vala docker/*.vala  store/*.vala view/*.vala \
+         main.vala docker/*.vala view/*.vala \
          -o gdocker
 ```
