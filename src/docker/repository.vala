@@ -12,26 +12,22 @@ namespace Docker {
     public class UnixSocketRepository : RepositoryInterface, GLib.Object {
 		
         private string socket_path;
+		private SocketClient client = new SocketClient();
 		
         public UnixSocketRepository(string socket_path) {
             this.socket_path = socket_path;
         }
 		
+		/**
+		 * Retrieve the list of all images
+		 */
         public Image[]? get_images() throws RequestError {
 		
             try {
-                SocketClient client = new SocketClient();
-                SocketConnection conn = client.connect(new UnixSocketAddress(this.socket_path));
-
-                string message = "GET /images/json HTTP/1.1\r\nHost: localhost\r\n\r\n";	
-
-                conn.output_stream.write(message.data);
-
-                DataInputStream _response = new DataInputStream(conn.input_stream);
-
-                response = new RepositoryResponse(_response);
 				
-                return parse_image_payload(response.payload);
+                string message = "GET /images/json HTTP/1.1\r\nHost: localhost\r\n\r\n";	
+			
+                return parse_image_payload(this.send(message).payload);
 
             } catch (Error e) {
                 var message_builder = new StringBuilder();
@@ -39,9 +35,31 @@ namespace Docker {
                 throw new RequestError.FATAL(message_builder.str);
             }
         }
-		
+
         public RepositoryResponse response { get; private set;}
 		
+		/**
+		 * Create the connection to docker daemon
+		 */	
+		private SocketConnection create_connection() {
+			return this.client.connect(new UnixSocketAddress(this.socket_path));
+		}
+	
+		/**
+		 * Send a message to docker daemon and return the response
+		 */ 
+		private RepositoryResponse send(string message) {
+			    
+			var conn = this.create_connection();
+			   
+			conn.output_stream.write(message.data);
+
+            return new RepositoryResponse(new DataInputStream(conn.input_stream));
+		}
+		
+		/**
+		 * Parse images payload
+		 */ 
         private Image[] parse_image_payload(string payload) {
 
             Image[] images = {};
