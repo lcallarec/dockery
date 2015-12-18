@@ -1,4 +1,3 @@
 *.c
-./src/gdocker
-
-
+*.geany
+src/gdocker
