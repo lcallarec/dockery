@@ -29,9 +29,13 @@ namespace Docker {
 			
                 return parse_image_payload(this.send(message).payload);
 
-            } catch (Error e) {
-                var message_builder = new StringBuilder();
-                message_builder.printf("Can't connect to docker daemon at %s", this.socket_path);
+            } catch (RequestError e) {
+				var message_builder = new StringBuilder();
+                message_builder.printf(
+					"Error while fetching images list from docker daemon at %s (%s)",
+					this.socket_path,
+					e.message
+				);
                 throw new RequestError.FATAL(message_builder.str);
             }
         }
@@ -41,22 +45,42 @@ namespace Docker {
 		/**
 		 * Create the connection to docker daemon
 		 */	
-		private SocketConnection create_connection() {
-			return this.client.connect(new UnixSocketAddress(this.socket_path));
+		private SocketConnection? create_connection() throws RequestError {
+			try {
+				return this.client.connect(new UnixSocketAddress(this.socket_path));	
+			} catch (GLib.Error e) {
+				var message_builder = new StringBuilder();
+                message_builder.printf(
+					"Error while fetching images list from docker daemon at %s (%s)",
+					this.socket_path,
+					e.message
+				);
+                throw new RequestError.FATAL(message_builder.str);
+			}
 		}
 	
 		/**
 		 * Send a message to docker daemon and return the response
 		 */ 
-		private RepositoryResponse send(string message) {
+		private RepositoryResponse send(string message) throws RequestError{
 			    
 			var conn = this.create_connection();
 			   
-			conn.output_stream.write(message.data);
+			try {
+				conn.output_stream.write(message.data);	
+			} catch(GLib.IOError e) {
+				var message_builder = new StringBuilder();
+                message_builder.printf(
+					"Error while sending images list request to docker daemon at %s (%s)",
+					this.socket_path,
+					e.message
+				);
+                throw new RequestError.FATAL(message_builder.str);
+			}
 
             return new RepositoryResponse(new DataInputStream(conn.input_stream));
 		}
-		
+
 		/**
 		 * Parse images payload
 		 */ 
