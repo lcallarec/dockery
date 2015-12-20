@@ -6,13 +6,15 @@ namespace Docker {
     }
 	
     public interface RepositoryInterface : GLib.Object {
-        public abstract Image[]? get_images() throws RequestError;
+        public abstract Model.Image[]? get_images() throws RequestError;
+        public abstract Model.Container[]? get_containers() throws RequestError;
     }
 
     public class UnixSocketRepository : RepositoryInterface, GLib.Object {
 		
         private string socket_path;
 		private SocketClient client = new SocketClient();
+		private ModelHydrater hydrater = new ModelHydrater();
 		
         public UnixSocketRepository(string socket_path) {
             this.socket_path = socket_path;
@@ -21,13 +23,13 @@ namespace Docker {
 		/**
 		 * Retrieve the list of all images
 		 */
-        public Image[]? get_images() throws RequestError {
+        public Model.Image[]? get_images() throws RequestError {
 		
             try {
 				
                 string message = "GET /images/json HTTP/1.1\r\nHost: localhost\r\n\r\n";	
 			
-                return parse_image_payload(this.send(message).payload);
+                return parse_images_list_payload(this.send(message).payload);
 
             } catch (RequestError e) {
 				var message_builder = new StringBuilder();
@@ -43,13 +45,13 @@ namespace Docker {
 		/**
 		 * Retrieve a list of containers
 		 */
-        public Container[]? get_containers() throws RequestError {
+        public Model.Container[]? get_containers() throws RequestError {
 		
             try {
 				
                 string message = "GET /containers/json HTTP/1.1\r\nHost: localhost\r\n\r\n";	
 			
-                return parse_container_payload(this.send(message).payload);
+                return parse_containers_list_payload(this.send(message).payload);
 
             } catch (RequestError e) {
 				var message_builder = new StringBuilder();
@@ -104,11 +106,11 @@ namespace Docker {
 		}
 
 		/**
-		 * Parse images payload
+		 * Parse images list response payload
 		 */ 
-        private Image[] parse_image_payload(string payload) {
+        private Model.Image[] parse_images_list_payload(string payload) {
 
-            Image[] images = {};
+            Model.Image[] images = {};
             try {
                 var parser = new Json.Parser();
                 parser.load_from_data(payload);
@@ -116,14 +118,13 @@ namespace Docker {
                 var nodes = parser.get_root().get_array().get_elements();
 		
                 foreach (unowned Json.Node node in nodes) {
-                    string[0] repotag = node.get_object().get_array_member("RepoTags").get_string_element(0).split(":", 2);
+					node.get_object().get_array_member("RepoTags").get_string_element(0);
 
-                    images += Image() {
-                        id 		   = node.get_object().get_string_member("Id"),
-                        created_at = (int64) node.get_object().get_int_member("Created"),
-                        repository = repotag[0],
-                        tag        = repotag[1]
-                    };
+                    images += hydrater.hydrate_image(
+						node.get_object().get_string_member("Id"),
+                        node.get_object().get_int_member("Created"),
+                        node.get_object().get_array_member("RepoTags").get_string_element(0)
+                    );
                 }
             } catch (Error e) {
 
@@ -136,9 +137,9 @@ namespace Docker {
 		/**
 		 * Parse containers payload
 		 */ 
-        private Container[] parse_container_payload(string payload) {
+        private Model.Container[] parse_containers_list_payload(string payload) {
 
-            Container[] containers = {};
+            Model.Container[] containers = {};
             try {
                 var parser = new Json.Parser();
                 parser.load_from_data(payload);
@@ -146,12 +147,11 @@ namespace Docker {
                 var nodes = parser.get_root().get_array().get_elements();
 		
                 foreach (unowned Json.Node node in nodes) {
-                    containers += Container() {
-                        id 		   = node.get_object().get_string_member("Id"),
-                        created_at = (int64) node.get_object().get_int_member("Created"),
-                        image_id   = node.get_object().get_string_member("ImageID"),
-						command    = node.get_object().get_string_member("Command")
-                    };
+                    containers += hydrater.hydrate_container(
+                        node.get_object().get_string_member("Id"),
+                        node.get_object().get_int_member("Created"),
+						node.get_object().get_string_member("Command")
+                    );
                 }
             } catch (Error e) {
 
@@ -227,20 +227,33 @@ namespace Docker {
             }
         }
 	}
-
-    public struct Image {
-        public string id;
-        public int64 created_at;
-        public string repository;
-        public string tag;
-    }
-    
-    public struct Container {
-        public string id;
-        public int64 created_at;
-        public string image_id;
-        public string command;
-    }
+	
+	internal class ModelHydrater {
+		
+		public Model.Image hydrate_image(string id, int64 created_at, string repotags) {
+			
+			string[0] _repotags = repotags.split(":", 2);
+			
+			Model.Image image = new Model.Image();
+			image.full_id    = id;
+			image.created_at = new DateTime.from_unix_local(created_at);
+            image.repository = _repotags[0];
+            image.tag		 = _repotags[1];
+            
+            return image;
+		}
+		
+		public Model.Container hydrate_container(string id, int64 created_at, string command) {
+			
+			Model.Container container = new Model.Container();
+			container.full_id = id;
+			container.created_at = new DateTime.from_unix_local(created_at);
+            container.command = command;
+           
+            return container;
+		}
+	}
+	
 }
 
 

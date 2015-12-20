@@ -27,10 +27,10 @@ namespace View {
 		/**
 		 * Add new rows from images array
 		 */ 
-		public int hydrate(Docker.Image[] images) {
+		public int hydrate(Docker.Model.Image[] images) {
 			
 			int i = 0;
-			foreach(Docker.Image image in images) {
+			foreach(Docker.Model.Image image in images) {
 											
 				Gtk.ListBoxRow row = new Gtk.ListBoxRow();
 				row.set_selectable(false);
@@ -43,11 +43,11 @@ namespace View {
 				Pango.AttrList attrs = new Pango.AttrList ();
 				attrs.insert(Pango.attr_scale_new(Pango.Scale.SMALL));
 				
-				var label_id = new Gtk.Label(image.id.substring(0, 12));
+				var label_id = new Gtk.Label(image.id);
 				label_id.halign = Gtk.Align.START;
 				label_id.set_selectable(true);
 				
-				var label_creation_date = new Gtk.Label(new DateTime.from_unix_utc(image.created_at).to_string());
+				var label_creation_date = new Gtk.Label(image.created_at.to_string());
 				label_creation_date.attributes = attrs;
 				label_creation_date.halign = Gtk.Align.START;
 				label_creation_date.set_selectable(true);
@@ -79,7 +79,7 @@ namespace View {
 		 * Flush all child widgets from the view
 		 * Add new rows from images array
 		 */
-		public int refresh(Docker.Image[] images, bool show_after_refresh = false) {
+		public int refresh(Docker.Model.Image[] images, bool show_after_refresh = false) {
 			this.flush();
 			int images_count = this.hydrate(images);
 			
@@ -103,10 +103,10 @@ namespace View {
 		/**
 		 * Add new rows from containers array
 		 */ 
-		public int hydrate(Docker.Container[] containers) {
+		public int hydrate(Docker.Model.Container[] containers) {
 			
 			int i = 0;
-			foreach(Docker.Container container in containers) {
+			foreach(Docker.Model.Container container in containers) {
 											
 				Gtk.ListBoxRow row = new Gtk.ListBoxRow();
 				row.set_selectable(false);
@@ -119,11 +119,11 @@ namespace View {
 				Pango.AttrList attrs = new Pango.AttrList ();
 				attrs.insert(Pango.attr_scale_new(Pango.Scale.SMALL));
 				
-				var label_id = new Gtk.Label(container.id.substring(0, 12));
+				var label_id = new Gtk.Label(container.id);
 				label_id.halign = Gtk.Align.START;
 				label_id.set_selectable(true);
 				
-				var label_creation_date = new Gtk.Label(new DateTime.from_unix_utc(container.created_at).to_string());
+				var label_creation_date = new Gtk.Label(container.created_at.to_string());
 				label_creation_date.attributes = attrs;
 				label_creation_date.halign = Gtk.Align.START;
 				label_creation_date.set_selectable(true);
@@ -152,7 +152,7 @@ namespace View {
 		 * Flush all child widgets from the view
 		 * Add new rows from containers array
 		 */
-		public int refresh(Docker.Container[] containers, bool show_after_refresh = false) {
+		public int refresh(Docker.Model.Container[] containers, bool show_after_refresh = false) {
 			this.flush();
 			int containers_count = this.hydrate(containers);
 			
