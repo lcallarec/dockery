@@ -253,7 +253,6 @@ namespace Docker {
             return container;
 		}
 	}
-	
 }
 
 

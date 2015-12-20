@@ -13,7 +13,7 @@ public class DockerManager : Gtk.Window {
     public DockerManager () {
         Object(window_position: Gtk.WindowPosition.CENTER);
 
-        this.set_size_request(600, 400);
+        this.set_default_size(600, 400);
         this.destroy.connect(Gtk.main_quit);
 
         //Titlebar
@@ -30,34 +30,39 @@ public class DockerManager : Gtk.Window {
 		
         //InfoBar
         var infobar = create_infobar();
-        main_box.add(infobar);
+        main_box.pack_start(infobar, false, true, 0);
 
         //MessageDispatcher
         var md = new MessageDispatcher(infobar);
 
         //Workspace
         Gtk.Box workspace = new Gtk.Box(Gtk.Orientation.VERTICAL, 1);
-        main_box.add(workspace);
+        main_box.pack_start(workspace, true, true, 0);
         
         //Notebook:
         Gtk.Notebook notebook = new Gtk.Notebook();
-        workspace.pack_start(notebook, false, true, 1);
+        workspace.pack_start(notebook, true, true, 1);
 
         //Image Page
-        Gtk.Box images_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 1);
-        notebook.append_page(images_box, new Gtk.Label("Images"));
-	
 		var images_view = new View.ImagesView();
-		images_box.pack_start(images_view, true, true, 0);
+		Gtk.ScrolledWindow images_view_scrolled = new Gtk.ScrolledWindow(null, null); 
+		images_view_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+        images_view_scrolled.add(images_view);
+       
+        notebook.append_page(images_view_scrolled, new Gtk.Label("Images"));
+	
 		
 		//Container Page
-        Gtk.Box containers_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 1);
-        notebook.append_page(containers_box, new Gtk.Label("Containers"));
-	
 		var containers_view = new View.ContainersView();
-		containers_box.pack_start(containers_view, true, true, 0);
-		
+		Gtk.ScrolledWindow containers_view_scrolled = new Gtk.ScrolledWindow(null, null); 
+		containers_view_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+        containers_view_scrolled.add(containers_view);
+       
+        notebook.append_page(containers_view_scrolled, new Gtk.Label("Containers"));
+
+		//Global listener	
 		headerbar.on_click_search_button(images_view, containers_view, md);
+	
     }
 
     public static void main (string[] args) {
