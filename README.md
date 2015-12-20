@@ -2,7 +2,7 @@
 
 (very early stage of development)
 
-## Compile instructions
+## Compile ans install instructions
 
 Be sure these librairies are installed :
 
@@ -13,16 +13,13 @@ Be sure these librairies are installed :
 * gee-0.8 (`apt-get install libgee-0.8`)
 * json-glib-1.0 (`apt-get install libjson-glib-1.0.0 libjson-glib-dev`)
 
-Just run :
-
-```bash
-valac -g --save-temps \
-         --pkg gtk+-3.0 \
-         --pkg libsoup-2.4 \
-         --pkg gio-2.0 \
-         --pkg gio-unix-2.0 \
-         --pkg gee-0.8 \
-         --pkg json-glib-1.0 \
-         main.vala docker/*.vala view/*.vala \
-         -o gdocker
 ```
+make
+sudo make install
+```
+
+## Execute
+```
+gdocker
+```
+
