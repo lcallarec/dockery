@@ -19,7 +19,7 @@ public class DockerManager : Gtk.Window {
         //Titlebar
         var titlebar = create_titlebar();
         this.set_titlebar(titlebar);
-                
+
         //Main box
         Gtk.Box main_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 1);
         this.add(main_box);
@@ -35,7 +35,7 @@ public class DockerManager : Gtk.Window {
         //MessageDispatcher
         var md = new MessageDispatcher(infobar);
 
-        //Image Page box
+        //Workspace
         Gtk.Box workspace = new Gtk.Box(Gtk.Orientation.VERTICAL, 1);
         main_box.add(workspace);
         
@@ -43,15 +43,21 @@ public class DockerManager : Gtk.Window {
         Gtk.Notebook notebook = new Gtk.Notebook();
         workspace.pack_start(notebook, false, true, 1);
 
-        //Image Page box
-        Gtk.Box image_page_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 1);
-        notebook.append_page(image_page_box, new Gtk.Label("Images"));
+        //Image Page
+        Gtk.Box images_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 1);
+        notebook.append_page(images_box, new Gtk.Label("Images"));
 	
 		var images_view = new View.ImagesView();
-		image_page_box.pack_start(images_view, true, true, 0);
+		images_box.pack_start(images_view, true, true, 0);
 		
-		headerbar.on_click_search_button(images_view, md);  
-     
+		//Container Page
+        Gtk.Box containers_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 1);
+        notebook.append_page(containers_box, new Gtk.Label("Containers"));
+	
+		var containers_view = new View.ContainersView();
+		containers_box.pack_start(containers_view, true, true, 0);
+		
+		headerbar.on_click_search_button(images_view, containers_view, md);
     }
 
     public static void main (string[] args) {
@@ -118,7 +124,7 @@ private class HeaderBar : Gtk.HeaderBar {
 
 	}
 	
-	public void on_click_search_button(View.ImagesView images_view, MessageDispatcher md) {
+	public void on_click_search_button(View.ImagesView images_view, View.ContainersView containers_view, MessageDispatcher md) {
         
         this.search_button.clicked.connect(() => {
             
@@ -126,9 +132,11 @@ private class HeaderBar : Gtk.HeaderBar {
 				
                 var repository = new Docker.UnixSocketRepository (entry.text);
 
-                Docker.Image[]? images = repository.get_images();
+                Docker.Image[]? images         = repository.get_images();
+                Docker.Container[]? containers = repository.get_containers();
 
                 images_view.refresh(images, true);
+                containers_view.refresh(containers, true);
 
                 md.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
                 

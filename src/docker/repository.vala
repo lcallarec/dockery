@@ -40,6 +40,28 @@ namespace Docker {
             }
         }
 
+		/**
+		 * Retrieve a list of containers
+		 */
+        public Container[]? get_containers() throws RequestError {
+		
+            try {
+				
+                string message = "GET /containers/json HTTP/1.1\r\nHost: localhost\r\n\r\n";	
+			
+                return parse_container_payload(this.send(message).payload);
+
+            } catch (RequestError e) {
+				var message_builder = new StringBuilder();
+                message_builder.printf(
+					"Error while fetching container list from docker daemon at %s (%s)",
+					this.socket_path,
+					e.message
+				);
+                throw new RequestError.FATAL(message_builder.str);
+            }
+        }
+
         public RepositoryResponse response { get; private set;}
 		
 		/**
@@ -110,6 +132,34 @@ namespace Docker {
 
             return images;
         }
+        
+		/**
+		 * Parse containers payload
+		 */ 
+        private Container[] parse_container_payload(string payload) {
+
+            Container[] containers = {};
+            try {
+                var parser = new Json.Parser();
+                parser.load_from_data(payload);
+				
+                var nodes = parser.get_root().get_array().get_elements();
+		
+                foreach (unowned Json.Node node in nodes) {
+                    containers += Container() {
+                        id 		   = node.get_object().get_string_member("Id"),
+                        created_at = (int64) node.get_object().get_int_member("Created"),
+                        image_id   = node.get_object().get_string_member("ImageID"),
+						command    = node.get_object().get_string_member("Command")
+                    };
+                }
+            } catch (Error e) {
+
+                return containers;
+            }
+
+            return containers;
+        }
     }
 	
     public class RepositoryResponse : Object {
@@ -176,13 +226,20 @@ namespace Docker {
                 return null;
             }
         }
-}
-	
+	}
+
     public struct Image {
         public string id;
         public int64 created_at;
         public string repository;
         public string tag;
+    }
+    
+    public struct Container {
+        public string id;
+        public int64 created_at;
+        public string image_id;
+        public string command;
     }
 }
 
