@@ -138,7 +138,7 @@ private class HeaderBar : Gtk.HeaderBar {
                 var repository = new Docker.UnixSocketRepository (entry.text);
 
                 Docker.Model.Image[]? images         = repository.get_images();
-                Docker.Model.Container[]? containers = repository.get_containers();
+                Docker.Model.Container[]? containers = repository.get_containers(Docker.Model.ContainerStatus.PAUSED);
 
                 images_view.refresh(images, true);
                 containers_view.refresh(containers, true);

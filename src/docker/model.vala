@@ -24,7 +24,15 @@ namespace Docker.Model {
     
     public class Container : Model {
         public string command {get; set;}
-    }    
+    }
+    
+    public enum ContainerStatus {
+        CREATED,
+        RESTARTING,
+        RUNNING,
+        PAUSED,
+        EXITED
+    }
 }
 
 

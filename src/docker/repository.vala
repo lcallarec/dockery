@@ -4,10 +4,14 @@ namespace Docker {
         FATAL,
         NOT_FOUND
     }
+
+    public errordomain ContainerStatusError {
+        UNKOWN_STATUS
+    }
 	
     public interface RepositoryInterface : GLib.Object {
         public abstract Model.Image[]? get_images() throws RequestError;
-        public abstract Model.Container[]? get_containers() throws RequestError;
+        public abstract Model.Container[]? get_containers(Model.ContainerStatus status) throws RequestError;
     }
 
     public class UnixSocketRepository : RepositoryInterface, GLib.Object {
@@ -45,22 +49,37 @@ namespace Docker {
 		/**
 		 * Retrieve a list of containers
 		 */
-        public Model.Container[]? get_containers() throws RequestError {
+        public Model.Container[]? get_containers(Model.ContainerStatus status) throws RequestError {
 		
             try {
 				
-                string message = "GET /containers/json HTTP/1.1\r\nHost: localhost\r\n\r\n";	
+				string _status = ContainerStatusResolver.resolve(status);
+				
+				var filters = new Gee.HashMap<string, Gee.ArrayList<string>>();
+				var statuses = new Gee.ArrayList<string>();
+				statuses.add(_status);
+				filters.set("status", statuses);
+				
+				string json_filters = build_json_query_filter(filters);
+				
+                var message_builder = new StringBuilder("GET /containers/json");
+                
+                message_builder.append("?");
+                message_builder.append("filters="); 
+                message_builder.append(json_filters);
+                
+                message_builder.append(" HTTP/1.1\r\nHost: localhost\r\n\r\n");	
 			
-                return parse_containers_list_payload(this.send(message).payload);
+                return parse_containers_list_payload(this.send(message_builder.str).payload);
 
             } catch (RequestError e) {
-				var message_builder = new StringBuilder();
-                message_builder.printf(
+				var error_message_builder = new StringBuilder();
+                error_message_builder.printf(
 					"Error while fetching container list from docker daemon at %s (%s)",
 					this.socket_path,
 					e.message
 				);
-                throw new RequestError.FATAL(message_builder.str);
+                throw new RequestError.FATAL(error_message_builder.str);
             }
         }
 
@@ -75,7 +94,7 @@ namespace Docker {
 			} catch (GLib.Error e) {
 				var message_builder = new StringBuilder();
                 message_builder.printf(
-					"Error while fetching images list from docker daemon at %s (%s)",
+					"Error while fetching images list from docker daemon at %s :\n(%s)",
 					this.socket_path,
 					e.message
 				);
@@ -86,7 +105,7 @@ namespace Docker {
 		/**
 		 * Send a message to docker daemon and return the response
 		 */ 
-		private RepositoryResponse send(string message) throws RequestError{
+		private RepositoryResponse send(string message) throws RequestError {
 			    
 			var conn = this.create_connection();
 			   
@@ -160,6 +179,35 @@ namespace Docker {
 
             return containers;
         }
+        
+        /**
+         * 
+         */
+        protected string build_json_query_filter(Gee.HashMap<string, Gee.ArrayList<string>> data) {
+			
+			Json.Builder builder = new Json.Builder();
+			builder.begin_object();
+
+			foreach (var entry in data.entries) {
+			
+				builder.set_member_name (entry.key);
+			
+				builder.begin_array ();
+				foreach (var subentry in entry.value) {
+					builder.add_string_value(subentry);
+				}
+				builder.end_array ();
+				
+			}
+			
+			builder.end_object();
+						
+			Json.Generator generator = new Json.Generator();
+			Json.Node root = builder.get_root();
+			generator.set_root(root);
+
+			return generator.to_data(null);
+		}
     }
 	
     public class RepositoryResponse : Object {
@@ -253,16 +301,17 @@ namespace Docker {
             return container;
 		}
 	}
+
+	internal class ContainerStatusResolver {
+		
+		public static string resolve(Model.ContainerStatus status) {
+			switch(status) {
+				case Model.ContainerStatus.RUNNING:
+					return "running";
+				case Model.ContainerStatus.PAUSED:
+					return "paused";
+			}
+			throw new ContainerStatusError.UNKOWN_STATUS("Unkown container status");
+		}	
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
