@@ -57,13 +57,11 @@ namespace Docker {
                 return parse_images_list_payload(this.send(message).payload);
 
             } catch (RequestError e) {
-				var message_builder = new StringBuilder();
-                message_builder.printf(
-					"Error while fetching images list from docker daemon at %s (%s)",
+                string err_message = "Error while fetching images list from docker daemon at %s (%s)".printf(
 					this.socket_path,
 					e.message
 				);
-                throw new RequestError.FATAL(message_builder.str);
+                throw new RequestError.FATAL(err_message);
             }
         }
 
@@ -89,19 +87,17 @@ namespace Docker {
                 return parse_containers_list_payload(this.send(message_builder.str).payload);
 
             } catch (RequestError e) {
-				var error_message_builder = new StringBuilder();
-                error_message_builder.printf(
-					"Error while fetching container list from docker daemon at %s (%s)",
+				
+                string err_message = "Error while fetching container list from docker daemon at %s (%s)".printf(
 					this.socket_path,
 					e.message
 				);
-                throw new RequestError.FATAL(error_message_builder.str);
+                throw new RequestError.FATAL(err_message);
             } catch (ContainerStatusError e) {
-				var error_message_builder = new StringBuilder();
-                error_message_builder.printf(
-					"Internal client error : %s",
-					e.message
-				);
+				
+				string err_message = "Internal client error : %s".printf(e.message);
+			
+				throw new RequestError.FATAL(err_message);
 			}
         }
 		
@@ -112,13 +108,11 @@ namespace Docker {
 			try {
 				return this.client.connect(new UnixSocketAddress(this.socket_path));	
 			} catch (GLib.Error e) {
-				var message_builder = new StringBuilder();
-                message_builder.printf(
-					"Error while fetching images list from docker daemon at %s :\n(%s)",
+                string err_message = "Error while fetching images list from docker daemon at %s :\n(%s)".printf(
 					this.socket_path,
 					e.message
 				);
-                throw new RequestError.FATAL(message_builder.str);
+                throw new RequestError.FATAL(err_message);
 			}
 		}
 	
@@ -135,13 +129,12 @@ namespace Docker {
 			try {
 				conn.output_stream.write(request_builder.str.data);	
 			} catch(GLib.IOError e) {
-				var message_builder = new StringBuilder();
-                message_builder.printf(
-					"Error while sending images list request to docker daemon at %s (%s)",
+
+                string err_message = "Error while sending images list request to docker daemon at %s (%s)".printf(
 					this.socket_path,
 					e.message
 				);
-                throw new RequestError.FATAL(message_builder.str);
+                throw new RequestError.FATAL(err_message);
 			}
 
             return new IO.SocketResponse(new DataInputStream(conn.input_stream));
@@ -247,7 +240,9 @@ namespace Docker {
 				case Model.ContainerStatus.PAUSED:
 					return "paused";
 			}
-			throw new ContainerStatusError.UNKOWN_STATUS("Unkown container status");
+			
+			return "r";
+			//throw new ContainerStatusError.UNKOWN_STATUS("Unkown container status");
 		}	
 	}
 }

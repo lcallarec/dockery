@@ -138,10 +138,16 @@ private class HeaderBar : Gtk.HeaderBar {
                 var repository = new Docker.UnixSocketRepository (entry.text);
 
                 Docker.Model.Image[]? images         = repository.get_images();
-                Docker.Model.Container[]? containers = repository.get_containers(Docker.Model.ContainerStatus.PAUSED);
-
+                
+                var container_collection = new Docker.Model.Containers();
+                
+                foreach(Docker.Model.ContainerStatus status in Docker.Model.ContainerStatus.all()) {
+					var containers = repository.get_containers(status);
+					container_collection.add(status, containers);						
+				}
+                
                 images_view.refresh(images, true);
-                containers_view.refresh(containers, true);
+                containers_view.refresh(container_collection, true);
 
                 md.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
                 
@@ -172,4 +178,3 @@ private class MessageDispatcher : GLib.Object {
     }
     
 }
-

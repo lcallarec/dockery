@@ -6,6 +6,7 @@ namespace View {
     }
     
     public abstract class ListBoxView : Gtk.ListBox, ViewInterface {
+        protected int size = 0;
         /**
 		 * Remove all child widgets from the view
 		 */ 
@@ -29,8 +30,7 @@ namespace View {
 		 */ 
 		public int hydrate(Docker.Model.Image[] images) {
 			
-			int i = 0;
-			foreach(Docker.Model.Image image in images) {
+  			foreach(Docker.Model.Image image in images) {
 											
 				Gtk.ListBoxRow row = new Gtk.ListBoxRow();
 				row.set_selectable(false);
@@ -66,13 +66,15 @@ namespace View {
 				label_repotag.set_selectable(true);
 				
 				mbox1.pack_start(label_repotag, false, true, 0);
-				
-				this.insert(row, i);
-				
-				i++;
+
+				size++;
+
+				this.insert(row, size);
 			}
 			
-			return i;
+            size++;
+            
+			return size;
 		}
 
 		/**
@@ -101,13 +103,17 @@ namespace View {
 	public class ContainersView : ListBoxView {
 
 		/**
-		 * Add new rows from containers array
+		 * Add new rows from containers array list
 		 */ 
-		public int hydrate(Docker.Model.Container[] containers) {
+		public int hydrate(Docker.Model.ContainerStatus status, Gee.ArrayList<Docker.Model.Container> containers) {
 			
-			int i = 0;
+            Gtk.ListBoxRow _row = new Gtk.ListBoxRow();
+            _row.add(new Gtk.Label(ContainerStatusConverter.convert_from_enum(status)));
+            this.insert(_row, size);
 			foreach(Docker.Model.Container container in containers) {
-											
+		
+        		size++;
+                											
 				Gtk.ListBoxRow row = new Gtk.ListBoxRow();
 				row.set_selectable(false);
 				Gtk.Box box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 1);
@@ -139,22 +145,29 @@ namespace View {
 				label_command.set_selectable(true);
 				
 				mbox1.pack_start(label_command, false, true, 0);
-				
-				this.insert(row, i);
-				
-				i++;
+		
+				this.insert(row, size);
 			}
-			
-			return i;
+            
+			size++;
+            
+			return size;
 		}
 
 		/**
 		 * Flush all child widgets from the view
-		 * Add new rows from containers array
+		 * Add new rows from containers list
 		 */
-		public int refresh(Docker.Model.Container[] containers, bool show_after_refresh = false) {
+		public int refresh(Docker.Model.Containers containers, bool show_after_refresh = false) {
 			this.flush();
-			int containers_count = this.hydrate(containers);
+            this.size = 0;
+            int containers_count = 0;
+            foreach(Docker.Model.ContainerStatus status in Docker.Model.ContainerStatus.all()) {
+                var c = containers.get_by_status(status);
+                if (c.is_empty == false) {
+                    containers_count = this.hydrate(status, c);
+                }
+            }
 			
 			if (true == show_after_refresh) {
 				this.show_all();				
@@ -162,5 +175,26 @@ namespace View {
 		
 			return containers_count;
 		}
+	}
+    
+    /**
+	 * Convert container status from a type / to another type
+	 */ 
+	internal class ContainerStatusConverter {
+		
+		/**
+		 * Convert a container from Model.ContainerStatus enum to string (according to remote docker api)
+		 */ 
+		public static string convert_from_enum(Docker.Model.ContainerStatus status) {
+			switch(status) {
+				case Docker.Model.ContainerStatus.RUNNING:
+					return "running";
+				case Docker.Model.ContainerStatus.PAUSED:
+					return "paused";
+			}
+			
+			return "r";
+			//throw new ContainerStatusError.UNKOWN_STATUS("Unkown container status");
+		}	
 	}
 }

@@ -95,7 +95,9 @@ namespace Docker.IO {
             
             string _filter = filter_builder.str;
             
-            //Restore the string builder
+            //Restore
+            builder = new Json.Builder();
+            generator = new Json.Generator();
             filter_builder = new StringBuilder("?");
             
             return _filter;
