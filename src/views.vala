@@ -110,7 +110,7 @@ namespace View {
             Gtk.ListBoxRow _row = new Gtk.ListBoxRow();
             Pango.AttrList _attrs = new Pango.AttrList();
 			_attrs.insert(Pango.attr_weight_new(Pango.Weight.BOLD));
-            var status_label = new Gtk.Label(ContainerStatusConverter.convert_from_enum(status));
+            var status_label = new Gtk.Label(Docker.Model.ContainerStatusConverter.convert_from_enum(status));
             status_label.attributes = _attrs;
             status_label.halign = Gtk.Align.START;
             _row.add(status_label);
@@ -195,39 +195,5 @@ namespace View {
 
             return _switch; 
         } 
-	}
-    
-    /**
-	 * Convert container status from a type / to another type
-	 */ 
-	internal class ContainerStatusConverter {
-		
-		/**
-		 * Convert a container from Model.ContainerStatus enum to string (according to remote docker api)
-		 */ 
-		public static string convert_from_enum(Docker.Model.ContainerStatus status) {
-            string s_status;	    		
-            switch(status) {
-				case Docker.Model.ContainerStatus.RUNNING:
-					s_status = "running";
-                    break;
-				case Docker.Model.ContainerStatus.PAUSED:
-					s_status = "paused";
-                    break;
-                case Docker.Model.ContainerStatus.EXITED:
-                    s_status = "exited";
-                    break;
-                case Docker.Model.ContainerStatus.CREATED:
-                    s_status = "created";
-                    break;
-                case Docker.Model.ContainerStatus.RESTARTING:
-                    s_status = "restarting";
-                    break;
-                default:
-                    assert_not_reached();
-			}
-
-            return s_status;
-		}	
 	}
 }

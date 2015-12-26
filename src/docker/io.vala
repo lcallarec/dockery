@@ -88,7 +88,7 @@ namespace Docker.IO {
            
             filter_builder.append(build_json_request_filter(filter_value));
             
-            filter_builder.append("&");
+            //filter_builder.append("&");
         } 
         
         public string build() {

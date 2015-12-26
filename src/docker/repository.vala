@@ -1,9 +1,5 @@
 namespace Docker {
 	
-    public errordomain ContainerStatusError {
-        UNKOWN_STATUS
-    }
-	
 	public errordomain RequestError {
 		FATAL
 	}
@@ -72,7 +68,7 @@ namespace Docker {
 		
             try {
 				
-				string _status = ContainerStatusConverter.convert_from_enum(status);
+				string _status = Docker.Model.ContainerStatusConverter.convert_from_enum(status);
 				
 				var filters = new Gee.HashMap<string, Gee.ArrayList<string>>();
 				var statuses = new Gee.ArrayList<string>();
@@ -83,7 +79,8 @@ namespace Docker {
 				
                 var message_builder = new StringBuilder("GET /containers/json");
                 message_builder.append(filter_builder.build());
-			
+//message_builder.append("all=1");			
+stdout.printf(message_builder.str + "\n");
                 return parse_containers_list_payload(this.send(message_builder.str).payload);
 
             } catch (RequestError e) {
@@ -93,12 +90,7 @@ namespace Docker {
 					e.message
 				);
                 throw new RequestError.FATAL(err_message);
-            } catch (ContainerStatusError e) {
-				
-				string err_message = "Internal client error : %s".printf(e.message);
-			
-				throw new RequestError.FATAL(err_message);
-			}
+            }
         }
 		
 		/**
@@ -223,26 +215,5 @@ namespace Docker {
            
             return container;
 		}
-	}
-
-	/**
-	 * Convert container status from a type / to another type
-	 */ 
-	internal class ContainerStatusConverter {
-		
-		/**
-		 * Convert a container from Model.ContainerStatus enum to string (according to remote docker api)
-		 */ 
-		public static string convert_from_enum(Model.ContainerStatus status) {
-			switch(status) {
-				case Model.ContainerStatus.RUNNING:
-					return "running";
-				case Model.ContainerStatus.PAUSED:
-					return "paused";
-			}
-			
-			return "r";
-			//throw new ContainerStatusError.UNKOWN_STATUS("Unkown container status");
-		}	
 	}
 }

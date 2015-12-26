@@ -27,9 +27,12 @@ namespace Docker.Model {
     }
     
     public class Containers {
-        private Gee.ArrayList<Container> _running = new Gee.ArrayList<Container>();
-        private Gee.ArrayList<Container> _paused  = new Gee.ArrayList<Container>();
-        
+        private Gee.ArrayList<Container> _running    = new Gee.ArrayList<Container>();
+        private Gee.ArrayList<Container> _paused     = new Gee.ArrayList<Container>();
+        private Gee.ArrayList<Container> _created    = new Gee.ArrayList<Container>();
+        private Gee.ArrayList<Container> _restarting = new Gee.ArrayList<Container>();
+        private Gee.ArrayList<Container> _exited     = new Gee.ArrayList<Container>();        
+
         public Gee.ArrayList<Container> running {
             get {
                 return _running;
@@ -42,6 +45,24 @@ namespace Docker.Model {
             }
         }
         
+        public Gee.ArrayList<Container> created {
+            get {
+                return _created;
+            }
+        }
+
+        public Gee.ArrayList<Container> restarting {
+            get {
+                return _restarting;
+            }
+        }
+
+        public Gee.ArrayList<Container> exited {
+            get {
+                return _exited;
+            }
+        }
+
         public void add(ContainerStatus status, Container[] containers) {
             switch(status) {
                 case ContainerStatus.RUNNING:
@@ -54,6 +75,21 @@ namespace Docker.Model {
                         paused.add(container);        
                     }
                     break;
+                case ContainerStatus.CREATED:
+                    foreach (Container container in containers) {
+                        created.add(container);        
+                    }
+                    break;
+                case ContainerStatus.RESTARTING:
+                    foreach (Container container in containers) {
+                        restarting.add(container);        
+                    }
+                    break;
+                case ContainerStatus.EXITED:
+                    foreach (Container container in containers) {
+                        exited.add(container);        
+                    }
+                    break;
             }
         }
         
@@ -63,6 +99,12 @@ namespace Docker.Model {
                     return running;
                 case ContainerStatus.PAUSED:
                     return paused;
+                case ContainerStatus.CREATED:
+                    return created;
+                case ContainerStatus.RESTARTING:
+                    return restarting;
+                case ContainerStatus.EXITED:
+                    return exited;
             }
             
             return new Gee.ArrayList<Container>();
@@ -80,6 +122,40 @@ namespace Docker.Model {
             return {RUNNING, PAUSED, EXITED, CREATED, RESTARTING};
         }
     }
+
+   /**
+	* Convert container status from a type / to another type
+	*/ 
+	public class ContainerStatusConverter {
+		
+		/**
+		 * Convert a container from Model.ContainerStatus enum to string (according to remote docker api)
+		 */ 
+		public static string convert_from_enum(Docker.Model.ContainerStatus status) {
+            string s_status;	    		
+            switch(status) {
+				case Docker.Model.ContainerStatus.RUNNING:
+					s_status = "running";
+                    break;
+				case Docker.Model.ContainerStatus.PAUSED:
+					s_status = "paused";
+                    break;
+                case Docker.Model.ContainerStatus.EXITED:
+                    s_status = "exited";
+                    break;
+                case Docker.Model.ContainerStatus.CREATED:
+                    s_status = "created";
+                    break;
+                case Docker.Model.ContainerStatus.RESTARTING:
+                    s_status = "restarting";
+                    break;
+                default:
+                    assert_not_reached();
+			}
+
+            return s_status;
+		}	
+	}
 }
 
 
