@@ -33,7 +33,7 @@ namespace View {
   			foreach(Docker.Model.Image image in images) {
 											
 				Gtk.ListBoxRow row = new Gtk.ListBoxRow();
-				row.set_selectable(false);
+				//row.set_selectable(false);
 				Gtk.Box box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 1);
 				row.add(box);
 				
@@ -108,22 +108,28 @@ namespace View {
 		public int hydrate(Docker.Model.ContainerStatus status, Gee.ArrayList<Docker.Model.Container> containers) {
 			
             Gtk.ListBoxRow _row = new Gtk.ListBoxRow();
-            _row.add(new Gtk.Label(ContainerStatusConverter.convert_from_enum(status)));
+            Pango.AttrList _attrs = new Pango.AttrList();
+			_attrs.insert(Pango.attr_weight_new(Pango.Weight.BOLD));
+            var status_label = new Gtk.Label(ContainerStatusConverter.convert_from_enum(status));
+            status_label.attributes = _attrs;
+            status_label.halign = Gtk.Align.START;
+            _row.add(status_label);
             this.insert(_row, size);
+	
+			Pango.AttrList attrs = new Pango.AttrList ();
+			attrs.insert(Pango.attr_scale_new(Pango.Scale.SMALL));
+
 			foreach(Docker.Model.Container container in containers) {
 		
         		size++;
                 											
 				Gtk.ListBoxRow row = new Gtk.ListBoxRow();
-				row.set_selectable(false);
+				//row.set_selectable(false);
 				Gtk.Box box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 1);
 				row.add(box);
 				
 				Gtk.Box rbox = new Gtk.Box(Gtk.Orientation.VERTICAL, 1); 
 				box.pack_start(rbox, false, true, 1);
-				
-				Pango.AttrList attrs = new Pango.AttrList ();
-				attrs.insert(Pango.attr_scale_new(Pango.Scale.SMALL));
 				
 				var label_id = new Gtk.Label(container.id);
 				label_id.halign = Gtk.Align.START;
@@ -138,14 +144,14 @@ namespace View {
 				rbox.pack_start(label_creation_date, false, true, 1);
 
 				Gtk.Box mbox1 = new Gtk.Box(Gtk.Orientation.VERTICAL, 1); 
-				box.pack_start(mbox1, true, true, 0);
+				box.pack_end(mbox1, true, true, 0);
 				
 				var label_command = new Gtk.Label(container.command);
 				label_command.halign = Gtk.Align.START;
 				label_command.set_selectable(true);
 				
-				mbox1.pack_start(label_command, false, true, 0);
-		
+				mbox1.pack_start(label_command, true, true, 0);
+
 				this.insert(row, size);
 			}
             
@@ -175,6 +181,20 @@ namespace View {
 		
 			return containers_count;
 		}
+
+        private Gtk.Switch addSwitch(Docker.Model.ContainerStatus status, Docker.Model.Container container) {
+            Gtk.Switch _switch = new Gtk.Switch();
+
+		    _switch.notify["active"].connect (() => {
+			    if (_switch.active) {
+			    	stdout.printf ("The switch is on!\n");
+			    } else {
+				    stdout.printf ("The switch is off!\n");
+			    }
+		    });
+
+            return _switch; 
+        } 
 	}
     
     /**
@@ -186,15 +206,28 @@ namespace View {
 		 * Convert a container from Model.ContainerStatus enum to string (according to remote docker api)
 		 */ 
 		public static string convert_from_enum(Docker.Model.ContainerStatus status) {
-			switch(status) {
+            string s_status;	    		
+            switch(status) {
 				case Docker.Model.ContainerStatus.RUNNING:
-					return "running";
+					s_status = "running";
+                    break;
 				case Docker.Model.ContainerStatus.PAUSED:
-					return "paused";
+					s_status = "paused";
+                    break;
+                case Docker.Model.ContainerStatus.EXITED:
+                    s_status = "exited";
+                    break;
+                case Docker.Model.ContainerStatus.CREATED:
+                    s_status = "created";
+                    break;
+                case Docker.Model.ContainerStatus.RESTARTING:
+                    s_status = "restarting";
+                    break;
+                default:
+                    assert_not_reached();
 			}
-			
-			return "r";
-			//throw new ContainerStatusError.UNKOWN_STATUS("Unkown container status");
+
+            return s_status;
 		}	
 	}
 }
