@@ -38,33 +38,15 @@ namespace View {
 				Gtk.Grid row_layout = new Gtk.Grid();
                 row.add(row_layout);
 				
-				StringBuilder sb = new StringBuilder();
-				sb.printf("%s:%s", image.repository, image.tag);
-
-				var label_repotag = new Gtk.Label(sb.str);
-                label_repotag.attributes = Fonts.get_em();
-				label_repotag.halign = Gtk.Align.START;
-                label_repotag.valign = Gtk.Align.START;
-				label_repotag.set_selectable(true);
-				label_repotag.set_hexpand(true);
-
-                row_layout.attach(label_repotag, 0, 0, 1, 1);
-
-				var label_id = new Gtk.Label(image.id);
-				label_id.halign = Gtk.Align.START;
-				label_id.set_selectable(true);
-				
-				var label_creation_date = new Gtk.Label(image.created_at.to_string());
-				label_creation_date.attributes = Fonts.get_minor();
-				label_creation_date.halign = Gtk.Align.START;
-				label_creation_date.set_selectable(true);
-				
-				var label_size = new Gtk.Label(image.size);
-				label_size.halign = Gtk.Align.START;
+				var label_repotag       = create_repotag_label(image);			
+				var label_id            = create_id_label(image);
+				var label_creation_date = create_creation_date_label(image);
+				var label_size          = create_virtual_size_label(image);
 
                 //attach (Widget child, int left, int top, int width = 1, int height = 1)
-                row_layout.attach(label_id, 0, 1, 1, 1);
-				row_layout.attach(label_size, 1, 0, 1, 1);
+             	row_layout.attach(label_repotag,       0, 0, 1, 1);
+                row_layout.attach(label_id,            0, 1, 1, 1);
+				row_layout.attach(label_size,          1, 0, 1, 1);
                 row_layout.attach(label_creation_date, 1, 1, 1, 1);
 				
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
@@ -92,6 +74,60 @@ namespace View {
 		
 			return images_count;
 		}
+
+		/**
+		 * Create a repo:tab label
+		 */	
+		private Gtk.Label create_repotag_label(Docker.Model.Image image) {
+
+			StringBuilder sb = new StringBuilder();
+			sb.printf("from: <b>%s:%s</b>", GLib.Markup.escape_text(image.repository), GLib.Markup.escape_text(image.tag));
+
+			var label = new Gtk.Label(null);
+			label.set_markup(sb.str);
+			label.halign = Gtk.Align.START;
+            label.valign = Gtk.Align.START;
+			label.set_selectable(true);
+			label.set_hexpand(true);
+
+			return label;
+		}
+
+		/**
+		 * Create a id label
+		 */	
+		private Gtk.Label create_id_label(Docker.Model.Image image) {
+
+			var label = new Gtk.Label(image.id);
+			label.halign = Gtk.Align.START;
+			label.set_selectable(true);
+
+			return label;
+		}
+
+		/**
+		 * Create a creation date label
+		 */	
+		private Gtk.Label create_creation_date_label(Docker.Model.Image image) {
+
+			var label = new Gtk.Label("%s: %s".printf("created at", image.created_at.to_string()));
+			label.attributes = Fonts.get_minor();
+			label.halign = Gtk.Align.START;
+			label.set_selectable(true);
+
+			return label;
+		}
+
+		/**
+		 * Create a virtual size label
+		 */	
+		private Gtk.Label create_virtual_size_label(Docker.Model.Image image) {
+
+			var label = new Gtk.Label(image.size);
+			label.halign = Gtk.Align.START;
+
+			return label;
+		}		
 	}
     
     /*

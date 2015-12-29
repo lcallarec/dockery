@@ -200,7 +200,7 @@ namespace Docker.Model {
 	    * format a string of bytes to an human readable format with units
 	    */
         public static string string_bytes_to_human(string bytes) {
-            double current_size = bytes.to_double();
+            double current_size = double.parse(bytes);
             string current_size_formatted = bytes.to_string() + SizeFormatter.SIZE_UNITS[0];  
 
             for (int i = 1; i<= SizeFormatter.SIZE_UNITS.length; i++) {
