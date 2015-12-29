@@ -12,7 +12,7 @@ namespace Docker {
     }
 
 
-	public abstract class BaseRepository :  GLib.Object {
+	public abstract class BaseRepository : Repository, GLib.Object {
 		
 		/**
 		 * Retrieve a list of containers accordinbg to a ginve status
@@ -28,7 +28,6 @@ namespace Docker {
  		
 		protected IO.RequestQueryStringBuilder filter_builder = new IO.RequestQueryStringBuilder(); 		
 	}
-
 
     public class UnixSocketRepository : BaseRepository {
 		
@@ -78,9 +77,8 @@ namespace Docker {
 				filter_builder.add_json_filter("filters", filters);
 				
                 var message_builder = new StringBuilder("GET /containers/json");
-                message_builder.append(filter_builder.build());
-//message_builder.append("all=1");			
-stdout.printf(message_builder.str + "\n");
+                message_builder.append(filter_builder.build());		
+                stdout.printf(message_builder.str + "\n");
                 return parse_containers_list_payload(this.send(message_builder.str).payload);
 
             } catch (RequestError e) {
@@ -150,7 +148,8 @@ stdout.printf(message_builder.str + "\n");
                     images += model_factory.create_image(
 						node.get_object().get_string_member("Id"),
                         node.get_object().get_int_member("Created"),
-                        node.get_object().get_array_member("RepoTags").get_string_element(0)
+                        node.get_object().get_array_member("RepoTags").get_string_element(0),
+                        (uint) node.get_object().get_int_member("VirtualSize")
                     );
                 }
             } catch (Error e) {
@@ -193,7 +192,7 @@ stdout.printf(message_builder.str + "\n");
 	 */
 	internal class ModelFactory {
 		
-		public Model.Image create_image(string id, int64 created_at, string repotags) {
+		public Model.Image create_image(string id, int64 created_at, string repotags, uint size) {
 			
 			string[0] _repotags = repotags.split(":", 2);
 			
@@ -202,7 +201,8 @@ stdout.printf(message_builder.str + "\n");
 			image.created_at = new DateTime.from_unix_local(created_at);
             image.repository = _repotags[0];
             image.tag		 = _repotags[1];
-            
+            image.raw_size   = size;             
+
             return image;
 		}
 		

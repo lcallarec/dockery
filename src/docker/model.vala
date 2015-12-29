@@ -1,5 +1,8 @@
 namespace Docker.Model {
         
+    /**
+	 * Base model
+	 */
     public class Model : GLib.Object {
         private string _id;
         private string _full_id;
@@ -17,15 +20,37 @@ namespace Docker.Model {
         public DateTime created_at {get; set;}
     } 
     
+	/**
+	 * Image model
+	 */
     public class Image : Model {
+        private uint _raw_size;
+        private string _size;
+
         public string repository {get; set;}
         public string tag {get; set;}
+
+        public uint raw_size { 
+            get { return _raw_size; }
+            set { _raw_size = value; size = value.to_string();}
+        }
+
+        public string size { 
+            get { return _size; }
+            set { _size = SizeFormatter.string_bytes_to_human(value); }
+        }
     }
     
+	/**
+	 * Container model
+	 */
     public class Container : Model {
         public string command {get; set;}
     }
     
+	/**
+	 * Represent a list of containers, sorted by status
+	 */
     public class Containers {
         private Gee.ArrayList<Container> _running    = new Gee.ArrayList<Container>();
         private Gee.ArrayList<Container> _paused     = new Gee.ArrayList<Container>();
@@ -63,6 +88,9 @@ namespace Docker.Model {
             }
         }
 
+	   /**
+	    * Add an array of containers to the given status stack
+	    */
         public void add(ContainerStatus status, Container[] containers) {
             switch(status) {
                 case ContainerStatus.RUNNING:
@@ -93,7 +121,10 @@ namespace Docker.Model {
             }
         }
         
-         public Gee.ArrayList<Container> get_by_status(ContainerStatus status) {
+	   /**
+	    * Get the list of container according to given status
+	    */
+        public Gee.ArrayList<Container> get_by_status(ContainerStatus status) {
             switch(status) {
                 case ContainerStatus.RUNNING:
                     return running;
@@ -129,9 +160,9 @@ namespace Docker.Model {
 	public class ContainerStatusConverter {
 		
 		/**
-		 * Convert a container from Model.ContainerStatus enum to string (according to remote docker api)
+		 * Convert a container status from enum to string (according to remote docker api)
 		 */ 
-		public static string convert_from_enum(Docker.Model.ContainerStatus status) {
+		public static string convert_from_enum(ContainerStatus status) {
             string s_status;	    		
             switch(status) {
 				case Docker.Model.ContainerStatus.RUNNING:
@@ -156,6 +187,32 @@ namespace Docker.Model {
             return s_status;
 		}	
 	}
+
+   /**
+	* Static helper class for size formatting	 
+    */
+    public class SizeFormatter {
+        
+        const string[] SIZE_UNITS   = {"B", "KB", "MB", "GB", "TB"};
+        const double KFACTOR = 1000;
+
+       /**
+	    * format a string of bytes to an human readable format with units
+	    */
+        public static string string_bytes_to_human(string bytes) {
+            double current_size = bytes.to_double();
+            string current_size_formatted = bytes.to_string() + SizeFormatter.SIZE_UNITS[0];  
+
+            for (int i = 1; i<= SizeFormatter.SIZE_UNITS.length; i++) {
+                if (current_size < SizeFormatter.KFACTOR) {
+                     return GLib.Math.round(current_size).to_string() + SizeFormatter.SIZE_UNITS[i];
+                }                
+                current_size = current_size / SizeFormatter.KFACTOR;
+            }
+
+            return current_size_formatted;
+        }
+    }
 }
 
 
