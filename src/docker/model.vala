@@ -165,10 +165,10 @@ namespace Docker.Model {
 		public static string convert_from_enum(ContainerStatus status) {
             string s_status;	    		
             switch(status) {
-				case Docker.Model.ContainerStatus.RUNNING:
-					s_status = "running";
+                case Docker.Model.ContainerStatus.RUNNING:
+                    s_status = "running";
                     break;
-				case Docker.Model.ContainerStatus.PAUSED:
+                case Docker.Model.ContainerStatus.PAUSED:
 					s_status = "paused";
                     break;
                 case Docker.Model.ContainerStatus.EXITED:
