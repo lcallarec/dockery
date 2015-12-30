@@ -1,15 +1,10 @@
 namespace View {
     
-    public interface ViewInterface : GLib.Object {
-        public abstract void flush();
-    }
-    
-    public abstract class ListBoxView : Gtk.ListBox, ViewInterface {
-        protected int size = 0;
+    public interface ViewInterface : Gtk.Container {
         /**
-		 * Remove all child widgets from the view
+		 * Remove all child widgets from the container
 		 */ 
-		public virtual void flush() {
+        public virtual void flush() {
 			this.@foreach((widget) => {
 				this.remove(widget);
 			});
@@ -22,9 +17,11 @@ namespace View {
 	 * Laurent Callarec <l.callarec@gmail.com>
 	 * 
 	 */
-	public class ImagesView : ListBoxView {
-
-		/**
+	public class ImagesView : ViewInterface, Gtk.ListBox {
+        
+        protected int size = 0;
+		
+        /**
 		 * Add new rows from images array
 		 */ 
 		public int hydrate(Docker.Model.Image[] images) {
@@ -136,23 +133,33 @@ namespace View {
 	 * Laurent Callarec <l.callarec@gmail.com>
 	 * 
 	 */
-	public class ContainersView : ListBoxView {
+	public class ContainersView : ViewInterface, Gtk.Box {
+        
+        protected Gtk.Notebook notebook = new Gtk.Notebook();
+        
+        public void flush() {
+			notebook.@foreach((widget) => {
+                notebook.detach_tab(widget);                    
+			});
+		}
 
+        public ContainersView() {
+            notebook.name = "notebook";
+            pack_start(notebook, true, true, 0);
+        }
+        
 		/**
 		 * Add new rows from containers array list
 		 */ 
 		public int hydrate(Docker.Model.ContainerStatus status, Gee.ArrayList<Docker.Model.Container> containers) {
-			
-            Gtk.ListBoxRow _row = new Gtk.ListBoxRow();
-            var status_label = new Gtk.Label(Docker.Model.ContainerStatusConverter.convert_from_enum(status));
-            status_label.attributes = Fonts.get_em();
-            status_label.halign = Gtk.Align.START;
-            _row.add(status_label);
+    
+            int containers_count = 0;
+            Gtk.ListBox list_box = new Gtk.ListBox();
             
  			foreach(Docker.Model.Container container in containers) {
-		
-        		size++;
-                											
+                
+                containers_count++;
+                                                                        
 				Gtk.ListBoxRow row = new Gtk.ListBoxRow();
                 //For Gtk 3.14+ only				
 				//row.set_selectable(false);
@@ -174,13 +181,13 @@ namespace View {
                 				
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
  				row_layout.attach(separator, 0, 3, 4, 2);
-
-				this.insert(row, size);
+    
+				list_box.insert(row, containers_count);
 			}
-            
-			size++;
-            
-			return size;
+      
+            notebook.append_page(list_box, new Gtk.Label(Docker.Model.ContainerStatusConverter.convert_from_enum(status)));
+
+			return containers_count;
 		}
 
 		/**
@@ -189,7 +196,6 @@ namespace View {
 		 */
 		public int refresh(Docker.Model.Containers containers, bool show_after_refresh = false) {
 			this.flush();
-            this.size = 0;
             int containers_count = 0;
             foreach(Docker.Model.ContainerStatus status in Docker.Model.ContainerStatus.all()) {
                 var c = containers.get_by_status(status);
@@ -197,9 +203,9 @@ namespace View {
                     containers_count = this.hydrate(status, c);
                 }
             }
-			
+			this.show_all();
 			if (true == show_after_refresh) {
-				this.show_all();				
+				this.show_all();
 			}
 		
 			return containers_count;
