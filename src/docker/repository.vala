@@ -1,9 +1,5 @@
 namespace Docker {
 	
-    public errordomain ContainerStatusError {
-        UNKOWN_STATUS
-    }
-	
 	public errordomain RequestError {
 		FATAL
 	}
@@ -16,7 +12,7 @@ namespace Docker {
     }
 
 
-	public abstract class BaseRepository :  GLib.Object {
+	public abstract class BaseRepository : Repository, GLib.Object {
 		
 		/**
 		 * Retrieve a list of containers accordinbg to a ginve status
@@ -32,7 +28,6 @@ namespace Docker {
  		
 		protected IO.RequestQueryStringBuilder filter_builder = new IO.RequestQueryStringBuilder(); 		
 	}
-
 
     public class UnixSocketRepository : BaseRepository {
 		
@@ -72,7 +67,7 @@ namespace Docker {
 		
             try {
 				
-				string _status = ContainerStatusConverter.convert_from_enum(status);
+				string _status = Docker.Model.ContainerStatusConverter.convert_from_enum(status);
 				
 				var filters = new Gee.HashMap<string, Gee.ArrayList<string>>();
 				var statuses = new Gee.ArrayList<string>();
@@ -82,8 +77,8 @@ namespace Docker {
 				filter_builder.add_json_filter("filters", filters);
 				
                 var message_builder = new StringBuilder("GET /containers/json");
-                message_builder.append(filter_builder.build());
-			
+                message_builder.append(filter_builder.build());		
+                stdout.printf(message_builder.str + "\n");
                 return parse_containers_list_payload(this.send(message_builder.str).payload);
 
             } catch (RequestError e) {
@@ -93,12 +88,7 @@ namespace Docker {
 					e.message
 				);
                 throw new RequestError.FATAL(err_message);
-            } catch (ContainerStatusError e) {
-				
-				string err_message = "Internal client error : %s".printf(e.message);
-			
-				throw new RequestError.FATAL(err_message);
-			}
+            }
         }
 		
 		/**
@@ -158,7 +148,8 @@ namespace Docker {
                     images += model_factory.create_image(
 						node.get_object().get_string_member("Id"),
                         node.get_object().get_int_member("Created"),
-                        node.get_object().get_array_member("RepoTags").get_string_element(0)
+                        node.get_object().get_array_member("RepoTags").get_string_element(0),
+                        (uint) node.get_object().get_int_member("VirtualSize")
                     );
                 }
             } catch (Error e) {
@@ -201,7 +192,7 @@ namespace Docker {
 	 */
 	internal class ModelFactory {
 		
-		public Model.Image create_image(string id, int64 created_at, string repotags) {
+		public Model.Image create_image(string id, int64 created_at, string repotags, uint size) {
 			
 			string[0] _repotags = repotags.split(":", 2);
 			
@@ -210,7 +201,8 @@ namespace Docker {
 			image.created_at = new DateTime.from_unix_local(created_at);
             image.repository = _repotags[0];
             image.tag		 = _repotags[1];
-            
+            image.raw_size   = size;             
+
             return image;
 		}
 		
@@ -223,26 +215,5 @@ namespace Docker {
            
             return container;
 		}
-	}
-
-	/**
-	 * Convert container status from a type / to another type
-	 */ 
-	internal class ContainerStatusConverter {
-		
-		/**
-		 * Convert a container from Model.ContainerStatus enum to string (according to remote docker api)
-		 */ 
-		public static string convert_from_enum(Model.ContainerStatus status) {
-			switch(status) {
-				case Model.ContainerStatus.RUNNING:
-					return "running";
-				case Model.ContainerStatus.PAUSED:
-					return "paused";
-			}
-			
-			return "r";
-			//throw new ContainerStatusError.UNKOWN_STATUS("Unkown container status");
-		}	
 	}
 }

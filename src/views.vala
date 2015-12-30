@@ -1,5 +1,4 @@
 namespace View {
-	
     
     public interface ViewInterface : GLib.Object {
         public abstract void flush();
@@ -33,47 +32,31 @@ namespace View {
   			foreach(Docker.Model.Image image in images) {
 											
 				Gtk.ListBoxRow row = new Gtk.ListBoxRow();
+				//For Gtk 3.14+ only				
 				//row.set_selectable(false);
-				Gtk.Box box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 1);
-				row.add(box);
-				
-				Gtk.Box rbox = new Gtk.Box(Gtk.Orientation.VERTICAL, 1); 
-				box.pack_start(rbox, false, true, 1);
-				
-				Pango.AttrList attrs = new Pango.AttrList ();
-				attrs.insert(Pango.attr_scale_new(Pango.Scale.SMALL));
-				
-				var label_id = new Gtk.Label(image.id);
-				label_id.halign = Gtk.Align.START;
-				label_id.set_selectable(true);
-				
-				var label_creation_date = new Gtk.Label(image.created_at.to_string());
-				label_creation_date.attributes = attrs;
-				label_creation_date.halign = Gtk.Align.START;
-				label_creation_date.set_selectable(true);
-				
-				rbox.pack_start(label_id, false, true, 1); 
-				rbox.pack_start(label_creation_date, false, true, 1);
 
-				Gtk.Box mbox1 = new Gtk.Box(Gtk.Orientation.VERTICAL, 1); 
-				box.pack_start(mbox1, true, true, 0);
+				Gtk.Grid row_layout = new Gtk.Grid();
+                row.add(row_layout);
 				
-				StringBuilder sb = new StringBuilder();
-				sb.printf("%s:%s", image.repository, image.tag);
-				
-				var label_repotag = new Gtk.Label(sb.str);
-				label_repotag.halign = Gtk.Align.START;
-				label_repotag.set_selectable(true);
-				
-				mbox1.pack_start(label_repotag, false, true, 0);
+				var label_repotag       = create_repotag_label(image);			
+				var label_id            = create_id_label(image);
+				var label_creation_date = create_creation_date_label(image);
+				var label_size          = create_virtual_size_label(image);
 
-				size++;
+                //attach (Widget child, int left, int top, int width = 1, int height = 1)
+             	row_layout.attach(label_repotag,       0, 0, 1, 1);
+                row_layout.attach(label_id,            0, 1, 1, 1);
+				row_layout.attach(label_size,          1, 0, 1, 1);
+                row_layout.attach(label_creation_date, 1, 1, 1, 1);
+				
+                Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
+ 				row_layout.attach(separator, 0, 3, 4, 2);
+				
+				size += 1;
 
 				this.insert(row, size);
 			}
-			
-            size++;
-            
+
 			return size;
 		}
 
@@ -92,6 +75,59 @@ namespace View {
 			return images_count;
 		}
 
+		/**
+		 * Create a repo:tab label
+		 */	
+		private Gtk.Label create_repotag_label(Docker.Model.Image image) {
+
+			StringBuilder sb = new StringBuilder();
+			sb.printf("from: <b>%s:%s</b>", GLib.Markup.escape_text(image.repository), GLib.Markup.escape_text(image.tag));
+
+			var label = new Gtk.Label(null);
+			label.set_markup(sb.str);
+			label.halign = Gtk.Align.START;
+            label.valign = Gtk.Align.START;
+			label.set_selectable(true);
+			label.set_hexpand(true);
+
+			return label;
+		}
+
+		/**
+		 * Create a id label
+		 */	
+		private Gtk.Label create_id_label(Docker.Model.Image image) {
+
+			var label = new Gtk.Label(image.id);
+			label.halign = Gtk.Align.START;
+			label.set_selectable(true);
+
+			return label;
+		}
+
+		/**
+		 * Create a creation date label
+		 */	
+		private Gtk.Label create_creation_date_label(Docker.Model.Image image) {
+
+			var label = new Gtk.Label("%s: %s".printf("created at", image.created_at.to_string()));
+			label.attributes = Fonts.get_minor();
+			label.halign = Gtk.Align.START;
+			label.set_selectable(true);
+
+			return label;
+		}
+
+		/**
+		 * Create a virtual size label
+		 */	
+		private Gtk.Label create_virtual_size_label(Docker.Model.Image image) {
+
+			var label = new Gtk.Label(image.size);
+			label.halign = Gtk.Align.START;
+
+			return label;
+		}		
 	}
     
     /*
@@ -108,22 +144,19 @@ namespace View {
 		public int hydrate(Docker.Model.ContainerStatus status, Gee.ArrayList<Docker.Model.Container> containers) {
 			
             Gtk.ListBoxRow _row = new Gtk.ListBoxRow();
-            Pango.AttrList _attrs = new Pango.AttrList();
-			_attrs.insert(Pango.attr_weight_new(Pango.Weight.BOLD));
-            var status_label = new Gtk.Label(ContainerStatusConverter.convert_from_enum(status));
-            status_label.attributes = _attrs;
+    
+            var status_label = new Gtk.Label(Docker.Model.ContainerStatusConverter.convert_from_enum(status));
+            status_label.attributes = Fonts.get_em();
             status_label.halign = Gtk.Align.START;
             _row.add(status_label);
             this.insert(_row, size);
-	
-			Pango.AttrList attrs = new Pango.AttrList ();
-			attrs.insert(Pango.attr_scale_new(Pango.Scale.SMALL));
 
 			foreach(Docker.Model.Container container in containers) {
 		
         		size++;
                 											
 				Gtk.ListBoxRow row = new Gtk.ListBoxRow();
+				//For Gtk 3.14+ only				
 				//row.set_selectable(false);
 				Gtk.Box box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 1);
 				row.add(box);
@@ -136,7 +169,7 @@ namespace View {
 				label_id.set_selectable(true);
 				
 				var label_creation_date = new Gtk.Label(container.created_at.to_string());
-				label_creation_date.attributes = attrs;
+				label_creation_date.attributes = Fonts.get_minor();
 				label_creation_date.halign = Gtk.Align.START;
 				label_creation_date.set_selectable(true);
 				
@@ -196,38 +229,26 @@ namespace View {
             return _switch; 
         } 
 	}
-    
-    /**
-	 * Convert container status from a type / to another type
-	 */ 
-	internal class ContainerStatusConverter {
-		
-		/**
-		 * Convert a container from Model.ContainerStatus enum to string (according to remote docker api)
-		 */ 
-		public static string convert_from_enum(Docker.Model.ContainerStatus status) {
-            string s_status;	    		
-            switch(status) {
-				case Docker.Model.ContainerStatus.RUNNING:
-					s_status = "running";
-                    break;
-				case Docker.Model.ContainerStatus.PAUSED:
-					s_status = "paused";
-                    break;
-                case Docker.Model.ContainerStatus.EXITED:
-                    s_status = "exited";
-                    break;
-                case Docker.Model.ContainerStatus.CREATED:
-                    s_status = "created";
-                    break;
-                case Docker.Model.ContainerStatus.RESTARTING:
-                    s_status = "restarting";
-                    break;
-                default:
-                    assert_not_reached();
-			}
 
-            return s_status;
-		}	
-	}
+    internal class Fonts {
+
+        public static Pango.AttrList get_minor() {
+            Pango.AttrList minor = create_attr_list();
+			minor.insert(Pango.attr_scale_new(Pango.Scale.SMALL));
+           
+            return minor;
+        }
+
+        public static Pango.AttrList get_em() {
+            Pango.AttrList em = create_attr_list();
+			em.insert(Pango.attr_weight_new(Pango.Weight.BOLD));
+
+            return em;            
+        }
+
+        private static Pango.AttrList create_attr_list() {
+            return new Pango.AttrList();        
+        }
+ 
+    }
 }

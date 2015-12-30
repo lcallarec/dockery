@@ -105,6 +105,7 @@ public class DockerManager : Gtk.Window {
     private Gtk.InfoBar create_infobar() {
 
 		Gtk.InfoBar infobar = new Gtk.InfoBar();
+        infobar.set_no_show_all(true);
         return infobar;
     }
 
@@ -137,7 +138,7 @@ private class HeaderBar : Gtk.HeaderBar {
 				
                 var repository = new Docker.UnixSocketRepository (entry.text);
 
-                Docker.Model.Image[]? images         = repository.get_images();
+                Docker.Model.Image[]? images = repository.get_images();
                 
                 var container_collection = new Docker.Model.Containers();
                 
@@ -174,7 +175,9 @@ private class MessageDispatcher : GLib.Object {
     
     public void dispatch(Gtk.MessageType type, string message) {
         dialog.set_message_type(type);
-        label.label = message;
+        label.label = message;  
+        dialog.show();
+        label.show();
     }
     
 }

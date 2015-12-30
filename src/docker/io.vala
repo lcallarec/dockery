@@ -39,7 +39,7 @@ namespace Docker.IO {
                 Regex regex = new Regex("HTTP/(\\d.\\d) (\\d{3}) [a-zAZ]*");
                 MatchInfo info;
                 if (regex.match(header_line, 0, out info)){
-                    return (int) info.fetch(2);
+                    return int.parse(info.fetch(2));
                 }
             } catch (RegexError e) {
                 return null;
@@ -88,7 +88,7 @@ namespace Docker.IO {
            
             filter_builder.append(build_json_request_filter(filter_value));
             
-            filter_builder.append("&");
+            //filter_builder.append("&");
         } 
         
         public string build() {
