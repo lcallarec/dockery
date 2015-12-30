@@ -11,4 +11,4 @@ gnome-docker-file:
 		-o gdocker
 		
 install:
-	cp gdocker /usr/local/bin
+	cp -f gdocker /usr/local/bin
