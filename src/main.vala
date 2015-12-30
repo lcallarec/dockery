@@ -43,15 +43,6 @@ public class DockerManager : Gtk.Window {
         Gtk.Notebook notebook = new Gtk.Notebook();
         workspace.pack_start(notebook, true, true, 1);
 
-        //Image Page
-		var images_view = new View.ImagesView();
-		Gtk.ScrolledWindow images_view_scrolled = new Gtk.ScrolledWindow(null, null); 
-		images_view_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-        images_view_scrolled.add(images_view);
-       
-        notebook.append_page(images_view_scrolled, new Gtk.Label("Images"));
-	
-		
 		//Container Page
 		var containers_view = new View.ContainersView();
 		Gtk.ScrolledWindow containers_view_scrolled = new Gtk.ScrolledWindow(null, null); 
@@ -60,6 +51,14 @@ public class DockerManager : Gtk.Window {
        
         notebook.append_page(containers_view_scrolled, new Gtk.Label("Containers"));
 
+        //Image Page
+		var images_view = new View.ImagesView();
+		Gtk.ScrolledWindow images_view_scrolled = new Gtk.ScrolledWindow(null, null); 
+		images_view_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+        images_view_scrolled.add(images_view);
+       
+        notebook.append_page(images_view_scrolled, new Gtk.Label("Images"));
+	
 		//Global listener	
 		headerbar.on_click_search_button(images_view, containers_view, md);
 	
