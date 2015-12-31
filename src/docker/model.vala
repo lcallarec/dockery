@@ -45,7 +45,22 @@ namespace Docker.Model {
 	 * Container model
 	 */
     public class Container : Model {
+        private string[] _names;
+        
         public string command {get; set;}
+        
+        public string[] names {
+            get {
+                return _names;
+            }
+            
+            set {
+                _names = value;
+                name   = value[0];
+            }
+        }
+        
+        public string name {get; set;}
     }
     
 	/**

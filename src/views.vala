@@ -1,15 +1,10 @@
 namespace View {
     
-    public interface ViewInterface : GLib.Object {
-        public abstract void flush();
-    }
-    
-    public abstract class ListBoxView : Gtk.ListBox, ViewInterface {
-        protected int size = 0;
+    public interface ViewInterface : Gtk.Container {
         /**
-		 * Remove all child widgets from the view
+		 * Remove all child widgets from the container
 		 */ 
-		public virtual void flush() {
+        public virtual void flush() {
 			this.@foreach((widget) => {
 				this.remove(widget);
 			});
@@ -22,9 +17,11 @@ namespace View {
 	 * Laurent Callarec <l.callarec@gmail.com>
 	 * 
 	 */
-	public class ImagesView : ListBoxView {
-
-		/**
+	public class ImagesView : ViewInterface, Gtk.ListBox {
+        
+        protected int size = 0;
+		
+        /**
 		 * Add new rows from images array
 		 */ 
 		public int hydrate(Docker.Model.Image[] images) {
@@ -39,8 +36,8 @@ namespace View {
                 row.add(row_layout);
 				
 				var label_repotag       = create_repotag_label(image);			
-				var label_id            = create_id_label(image);
-				var label_creation_date = create_creation_date_label(image);
+                var label_id            = create_id_label(image);
+                var label_creation_date = create_creation_date_label(image);
 				var label_size          = create_virtual_size_label(image);
 
                 //attach (Widget child, int left, int top, int width = 1, int height = 1)
@@ -50,7 +47,7 @@ namespace View {
                 row_layout.attach(label_creation_date, 1, 1, 1, 1);
 				
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
- 				row_layout.attach(separator, 0, 3, 4, 2);
+ 				row_layout.attach(separator, 0, 2, 2, 2);
 				
 				size += 1;
 
@@ -136,61 +133,63 @@ namespace View {
 	 * Laurent Callarec <l.callarec@gmail.com>
 	 * 
 	 */
-	public class ContainersView : ListBoxView {
+	public class ContainersView : ViewInterface, Gtk.Box {
+        
+        protected Gtk.Notebook notebook = new Gtk.Notebook();
+        
+        public void flush() {
+			notebook.@foreach((widget) => {
+                notebook.detach_tab(widget);                    
+			});
+		}
 
+        public ContainersView() {
+            notebook.name = "notebook";
+            pack_start(notebook, true, true, 0);
+        }
+        
 		/**
 		 * Add new rows from containers array list
 		 */ 
 		public int hydrate(Docker.Model.ContainerStatus status, Gee.ArrayList<Docker.Model.Container> containers) {
-			
-            Gtk.ListBoxRow _row = new Gtk.ListBoxRow();
     
-            var status_label = new Gtk.Label(Docker.Model.ContainerStatusConverter.convert_from_enum(status));
-            status_label.attributes = Fonts.get_em();
-            status_label.halign = Gtk.Align.START;
-            _row.add(status_label);
-            this.insert(_row, size);
-
-			foreach(Docker.Model.Container container in containers) {
-		
-        		size++;
-                											
+            int containers_count = 0;
+            Gtk.ListBox list_box = new Gtk.ListBox();
+            
+ 			foreach(Docker.Model.Container container in containers) {
+                
+                containers_count++;
+                                                                        
 				Gtk.ListBoxRow row = new Gtk.ListBoxRow();
-				//For Gtk 3.14+ only				
+                //For Gtk 3.14+ only				
 				//row.set_selectable(false);
-				Gtk.Box box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 1);
-				row.add(box);
-				
-				Gtk.Box rbox = new Gtk.Box(Gtk.Orientation.VERTICAL, 1); 
-				box.pack_start(rbox, false, true, 1);
-				
-				var label_id = new Gtk.Label(container.id);
-				label_id.halign = Gtk.Align.START;
-				label_id.set_selectable(true);
-				
-				var label_creation_date = new Gtk.Label(container.created_at.to_string());
-				label_creation_date.attributes = Fonts.get_minor();
-				label_creation_date.halign = Gtk.Align.START;
-				label_creation_date.set_selectable(true);
-				
-				rbox.pack_start(label_id, false, true, 1); 
-				rbox.pack_start(label_creation_date, false, true, 1);
 
-				Gtk.Box mbox1 = new Gtk.Box(Gtk.Orientation.VERTICAL, 1); 
-				box.pack_end(mbox1, true, true, 0);
+				Gtk.Grid row_layout = new Gtk.Grid();
+                row_layout.column_spacing = 5;
+                row_layout.row_spacing = 0;
+                
+                row.add(row_layout);
 				
-				var label_command = new Gtk.Label(container.command);
-				label_command.halign = Gtk.Align.START;
-				label_command.set_selectable(true);
-				
-				mbox1.pack_start(label_command, true, true, 0);
+                var label_name          = create_name_label(container);
+                var label_id            = create_id_label(container);
+                var label_creation_date = create_creation_date_label(container);
+                var label_command       = create_command_label(container);
 
-				this.insert(row, size);
+                //attach (Widget child, int left, int top, int width = 1, int height = 1)
+                row_layout.attach(label_name,          0, 0, 1, 1);
+                row_layout.attach(label_id,            0, 1, 1, 1);
+				row_layout.attach(label_command,       1, 0, 1, 1);
+                row_layout.attach(label_creation_date, 1, 1, 1, 1);
+                				
+                Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
+ 				row_layout.attach(separator, 0, 2, 4, 2);
+    
+				list_box.insert(row, containers_count);
 			}
-            
-			size++;
-            
-			return size;
+      
+            notebook.append_page(list_box, new Gtk.Label(Docker.Model.ContainerStatusConverter.convert_from_enum(status)));
+
+			return containers_count;
 		}
 
 		/**
@@ -199,7 +198,6 @@ namespace View {
 		 */
 		public int refresh(Docker.Model.Containers containers, bool show_after_refresh = false) {
 			this.flush();
-            this.size = 0;
             int containers_count = 0;
             foreach(Docker.Model.ContainerStatus status in Docker.Model.ContainerStatus.all()) {
                 var c = containers.get_by_status(status);
@@ -207,9 +205,9 @@ namespace View {
                     containers_count = this.hydrate(status, c);
                 }
             }
-			
+			this.show_all();
 			if (true == show_after_refresh) {
-				this.show_all();				
+				this.show_all();
 			}
 		
 			return containers_count;
@@ -227,7 +225,59 @@ namespace View {
 		    });
 
             return _switch; 
-        } 
+        }
+        
+        /**
+		 * Create an id label
+		 */	
+		private Gtk.Label create_id_label(Docker.Model.Container container) {
+
+			var label = new Gtk.Label(container.id);
+			label.halign = Gtk.Align.START;
+			label.set_selectable(true);
+
+			return label;
+		}
+        
+        /**
+		 * Create a creation date label
+		 */	
+		private Gtk.Label create_creation_date_label(Docker.Model.Container container) {
+
+			var label = new Gtk.Label("%s: %s".printf("created at", container.created_at.to_string()));
+			label.attributes = Fonts.get_minor();
+			label.halign = Gtk.Align.START;
+			label.set_selectable(true);
+
+			return label;
+		}
+        
+        /**
+		 * Create a command label
+		 */	
+		private Gtk.Label create_command_label(Docker.Model.Container container) {
+
+			var label = new Gtk.Label(container.command);
+			label.halign = Gtk.Align.START;
+            label.valign = Gtk.Align.START;
+            label.set_hexpand(true);
+			label.set_selectable(true);
+
+			return label;
+		}
+        
+        /**
+		 * Create a names label
+		 */	
+		private Gtk.Label create_name_label(Docker.Model.Container container) {
+
+			var label = new Gtk.Label(container.name);
+			label.halign = Gtk.Align.START;
+            label.attributes = Fonts.get_em();
+			label.set_selectable(true);
+
+			return label;
+		}
 	}
 
     internal class Fonts {
