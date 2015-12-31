@@ -173,10 +173,20 @@ namespace Docker {
                 var nodes = parser.get_root().get_array().get_elements();
 		
                 foreach (unowned Json.Node node in nodes) {
+                    
+                    var names_node = node.get_object().get_array_member("Names");
+                    uint len       = names_node.get_length();
+                    string[] names = {};
+                    
+                    for (int i = 0; i <= len - 1; i++) {
+						names[i] = names_node.get_string_element(i);
+					}
+
                     containers += model_factory.create_container(
                         node.get_object().get_string_member("Id"),
                         node.get_object().get_int_member("Created"),
-						node.get_object().get_string_member("Command")
+						node.get_object().get_string_member("Command"),
+						names
                     );
                 }
             } catch (Error e) {
@@ -206,12 +216,13 @@ namespace Docker {
             return image;
 		}
 		
-		public Model.Container create_container(string id, int64 created_at, string command) {
+		public Model.Container create_container(string id, int64 created_at, string command, string[] names) {
 			
 			Model.Container container = new Model.Container();
-			container.full_id = id;
+			container.full_id    = id;
 			container.created_at = new DateTime.from_unix_local(created_at);
-            container.command = command;
+            container.command    = command;
+            container.names      = names;
            
             return container;
 		}

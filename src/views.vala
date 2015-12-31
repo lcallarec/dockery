@@ -170,14 +170,16 @@ namespace View {
                 
                 row.add(row_layout);
 				
+                var label_name          = create_name_label(container);
                 var label_id            = create_id_label(container);
                 var label_creation_date = create_creation_date_label(container);
                 var label_command       = create_command_label(container);
 
                 //attach (Widget child, int left, int top, int width = 1, int height = 1)
-                row_layout.attach(label_id,            0, 0, 1, 1);
-                row_layout.attach(label_creation_date, 0, 1, 1, 1);
-				row_layout.attach(label_command,       1, 0, 1, 2);
+                row_layout.attach(label_name,          0, 0, 1, 1);
+                row_layout.attach(label_id,            0, 1, 1, 1);
+				row_layout.attach(label_command,       1, 0, 1, 1);
+                row_layout.attach(label_creation_date, 1, 1, 1, 1);
                 				
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
  				row_layout.attach(separator, 0, 3, 4, 2);
@@ -259,6 +261,19 @@ namespace View {
 			label.halign = Gtk.Align.START;
             label.valign = Gtk.Align.START;
             label.set_hexpand(true);
+			label.set_selectable(true);
+
+			return label;
+		}
+        
+        /**
+		 * Create a names label
+		 */	
+		private Gtk.Label create_name_label(Docker.Model.Container container) {
+
+			var label = new Gtk.Label(container.name);
+			label.halign = Gtk.Align.START;
+            label.attributes = Fonts.get_em();
 			label.set_selectable(true);
 
 			return label;
