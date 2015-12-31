@@ -47,7 +47,7 @@ namespace View {
                 row_layout.attach(label_creation_date, 1, 1, 1, 1);
 				
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
- 				row_layout.attach(separator, 0, 3, 4, 2);
+ 				row_layout.attach(separator, 0, 2, 2, 2);
 				
 				size += 1;
 
@@ -166,7 +166,7 @@ namespace View {
 
 				Gtk.Grid row_layout = new Gtk.Grid();
                 row_layout.column_spacing = 5;
-                row_layout.row_spacing = 5;
+                row_layout.row_spacing = 0;
                 
                 row.add(row_layout);
 				
@@ -182,7 +182,7 @@ namespace View {
                 row_layout.attach(label_creation_date, 1, 1, 1, 1);
                 				
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
- 				row_layout.attach(separator, 0, 3, 4, 2);
+ 				row_layout.attach(separator, 0, 2, 4, 2);
     
 				list_box.insert(row, containers_count);
 			}

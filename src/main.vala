@@ -20,7 +20,7 @@ public class DockerManager : Gtk.Window {
         this.set_titlebar(titlebar);
 
         //Main box
-        Gtk.Box main_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 1);
+        Gtk.Box main_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         this.add(main_box);
 
         //Headerbar
@@ -35,7 +35,7 @@ public class DockerManager : Gtk.Window {
         var md = new MessageDispatcher(infobar);
 
         //Workspace
-        Gtk.Box workspace = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 1);
+        Gtk.Box workspace = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
         main_box.pack_start(workspace, true, true, 0);
         
         //Stack
