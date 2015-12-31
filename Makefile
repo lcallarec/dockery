@@ -12,3 +12,9 @@ gnome-docker-file:
 		
 install:
 	cp -f gdocker /usr/local/bin
+	$(MAKE) clean
+	
+clean:
+	find . -type f -name '*.c' -delete && rm gdocker
+	
+		
