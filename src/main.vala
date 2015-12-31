@@ -25,11 +25,12 @@ public class DockerManager : Gtk.Window {
 
         //Headerbar
         var headerbar = create_headerbar(docker_host);
-        main_box.pack_start(headerbar, false, true, 0);
+        main_box.pack_start(headerbar, false, true, 5);
+		main_box.pack_start(new Gtk.Separator(Gtk.Orientation.HORIZONTAL), false, true, 0);
 		
         //InfoBar
         var infobar = create_infobar();
-        main_box.pack_start(infobar, false, true, 0);
+        main_box.pack_start(infobar, false, true, 5);
 
         //MessageDispatcher
         var md = new MessageDispatcher(infobar);
@@ -163,23 +164,23 @@ private class SideBar : Gtk.ListBox {
 	}
 }
 
-private class HeaderBar : Gtk.HeaderBar {
+private class HeaderBar : Gtk.Box {
 	
 	private Gtk.Entry  entry;
 	private Gtk.Button search_button;
 	
 	public HeaderBar(string docker_host) {
-		
-		this.search_button = new Gtk.Button.from_icon_name("edit-find-symbolic", Gtk.IconSize.BUTTON);
-		
+		Object(orientation: Gtk.Orientation.HORIZONTAL, spacing: 0);
+
 		this.entry = new Gtk.Entry();
 		this.entry.text = docker_host;
 		this.entry.width_chars = 30;
 		
-		this.pack_start(entry);
+		this.search_button = new Gtk.Button.from_icon_name("edit-find-symbolic", Gtk.IconSize.BUTTON );
+		this.search_button.expand = false;
 
-		this.pack_start(search_button);
-
+		this.pack_start(entry, false, true, 3);
+		this.pack_start(search_button, false, true, 0);
 	}
 	
 	public void on_click_search_button(View.ImagesView images_view, View.ContainersView containers_view, MessageDispatcher md) {
