@@ -143,10 +143,21 @@ private class SideBar : Gtk.ListBox {
 		containers_row.height_request = SideBar.ROW_HEIGHT;
 		containers_row.name = "containers"; 
 
+		var containers_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+		containers_box.height_request = SideBar.ROW_HEIGHT;
+		
 		var container_row_label = new Gtk.Label("Containers");
 		container_row_label.halign = Gtk.Align.START;
-		containers_row.add(container_row_label);
 		
+		containers_row.add(containers_box);
+		
+		var icon = new Gtk.Image();
+		icon.set_from_icon_name("media-optical-symbolic", Gtk.IconSize.BUTTON);
+		icon.opacity = 0.5;
+		
+		containers_box.pack_start(icon, false, true, 5);
+		containers_box.pack_start(container_row_label);
+	
         add(containers_row);
         select_row(containers_row);
 	}
