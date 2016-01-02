@@ -1,8 +1,8 @@
 namespace Docker.Model {
         
     /**
-	 * Base model
-	 */
+     * Base model
+     */
     public class Model : GLib.Object {
         private string _id;
         private string _full_id;
@@ -20,9 +20,9 @@ namespace Docker.Model {
         public DateTime created_at {get; set;}
     } 
     
-	/**
-	 * Image model
-	 */
+    /**
+     * Image model
+     */
     public class Image : Model {
         private uint _raw_size;
         private string _size;
@@ -41,9 +41,9 @@ namespace Docker.Model {
         }
     }
     
-	/**
-	 * Container model
-	 */
+    /**
+     * Container model
+     */
     public class Container : Model {
         private string[] _names;
         
@@ -63,10 +63,11 @@ namespace Docker.Model {
         public string name {get; set;}
     }
     
-	/**
-	 * Represent a list of containers, sorted by status
-	 */
+    /**
+     * Represent a list of containers, sorted by status
+     */
     public class Containers {
+        
         private Gee.ArrayList<Container> _running    = new Gee.ArrayList<Container>();
         private Gee.ArrayList<Container> _paused     = new Gee.ArrayList<Container>();
         private Gee.ArrayList<Container> _created    = new Gee.ArrayList<Container>();
@@ -103,9 +104,9 @@ namespace Docker.Model {
             }
         }
 
-	   /**
-	    * Add an array of containers to the given status stack
-	    */
+       /**
+        * Add an array of containers to the given status stack
+        */
         public void add(ContainerStatus status, Container[] containers) {
             switch(status) {
                 case ContainerStatus.RUNNING:
@@ -136,9 +137,9 @@ namespace Docker.Model {
             }
         }
         
-	   /**
-	    * Get the list of container according to given status
-	    */
+       /**
+        * Get the list of container according to given status
+        */
         public Gee.ArrayList<Container> get_by_status(ContainerStatus status) {
             switch(status) {
                 case ContainerStatus.RUNNING:
@@ -170,41 +171,41 @@ namespace Docker.Model {
     }
 
    /**
-	* Convert container status from a type / to another type
-	*/ 
-	public class ContainerStatusConverter {
-		
-		/**
-		 * Convert a container status from enum to string (according to remote docker api)
-		 */ 
-		public static string convert_from_enum(ContainerStatus status) {
-            string s_status;	    		
+    * Convert container status from a type / to another type
+    */ 
+    public class ContainerStatusConverter {
+        
+        /**
+         * Convert a container status from enum to string (according to remote docker api)
+         */ 
+        public static string convert_from_enum(ContainerStatus status) {
+            string s_status;                
             switch(status) {
-                case Docker.Model.ContainerStatus.RUNNING:
+                case ContainerStatus.RUNNING:
                     s_status = "running";
                     break;
-                case Docker.Model.ContainerStatus.PAUSED:
-					s_status = "paused";
+                case ContainerStatus.PAUSED:
+                    s_status = "paused";
                     break;
-                case Docker.Model.ContainerStatus.EXITED:
+                case ContainerStatus.EXITED:
                     s_status = "exited";
                     break;
-                case Docker.Model.ContainerStatus.CREATED:
+                case ContainerStatus.CREATED:
                     s_status = "created";
                     break;
-                case Docker.Model.ContainerStatus.RESTARTING:
+                case ContainerStatus.RESTARTING:
                     s_status = "restarting";
                     break;
                 default:
                     assert_not_reached();
-			}
+            }
 
             return s_status;
-		}	
-	}
+        }    
+    }
 
    /**
-	* Static helper class for size formatting	 
+    * Static helper class for size formatting     
     */
     public class SizeFormatter {
         
@@ -212,8 +213,8 @@ namespace Docker.Model {
         const double KFACTOR = 1000;
 
        /**
-	    * format a string of bytes to an human readable format with units
-	    */
+        * format a string of bytes to an human readable format with units
+        */
         public static string string_bytes_to_human(string bytes) {
             double current_size = double.parse(bytes);
             string current_size_formatted = bytes.to_string() + SizeFormatter.SIZE_UNITS[0];  
@@ -228,16 +229,35 @@ namespace Docker.Model {
             return current_size_formatted;
         }
     }
+    
+    /**
+     * Create model object from raw values
+     */
+    public class ModelFactory {
+        
+        public Image create_image(string id, int64 created_at, string repotags, uint size) {
+            
+            string[0] _repotags = repotags.split(":", 2);
+            
+            Image image = new Image();
+            image.full_id    = id;
+            image.created_at = new DateTime.from_unix_local(created_at);
+            image.repository = _repotags[0];
+            image.tag         = _repotags[1];
+            image.raw_size   = size;             
+
+            return image;
+        }
+        
+        public Container create_container(string id, int64 created_at, string command, string[] names) {
+            
+            Container container = new Container();
+            container.full_id    = id;
+            container.created_at = new DateTime.from_unix_local(created_at);
+            container.command    = command;
+            container.names      = names;
+           
+            return container;
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
