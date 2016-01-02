@@ -1,15 +1,22 @@
 namespace Docker.IO {
-	
+    
+    public errordomain RequestError {
+        FATAL
+    }
+    
     public abstract class Response : GLib.Object {
+        
         public string? payload { get; protected set;}
+        
     }
     
     /**
      * Response from a socket request to a docker remote api
      */ 
     public class SocketResponse : Response {
-		
+        
         private int status;
+        
         private Gee.HashMap<string, string> headers;
 
         public SocketResponse(DataInputStream stream) {
@@ -25,7 +32,7 @@ namespace Docker.IO {
                 payload = stream.read_line(null).strip();
                 
                 stream.close();
-			
+            
             } catch (IOError e) {
                 stdout.printf(e.message);
             }
@@ -35,7 +42,7 @@ namespace Docker.IO {
             
             try {
                 string header_line = stream.read_line(null);
-				
+                
                 Regex regex = new Regex("HTTP/(\\d.\\d) (\\d{3}) [a-zAZ]*");
                 MatchInfo info;
                 if (regex.match(header_line, 0, out info)){
@@ -46,12 +53,12 @@ namespace Docker.IO {
             } catch (IOError e) {
                 return null;
             }
-			
+            
             return null;
         }
-		
+        
         private Gee.HashMap<string, string>? extract_response_headers(DataInputStream stream) {
-			
+            
             var headers = new Gee.HashMap<string, string>();
             string header_line;
 
@@ -69,12 +76,9 @@ namespace Docker.IO {
                 return null;
             }
         }
-	}
-}
-
-namespace Docker.IO {
+    }
     
-    public class RequestQueryStringBuilder {
+    protected class RequestQueryStringBuilder {
         
         Json.Builder builder = new Json.Builder();
         Json.Generator generator = new Json.Generator();
@@ -101,31 +105,30 @@ namespace Docker.IO {
             filter_builder = new StringBuilder("?");
             
             return _filter;
-            
         }
         
         private string build_json_request_filter(Gee.HashMap<string, Gee.ArrayList<string>> data) {
 
-			builder.begin_object();
+            builder.begin_object();
 
-			foreach (var entry in data.entries) {
-			
-				builder.set_member_name (entry.key);
-			
-				builder.begin_array ();
-				foreach (string subentry in entry.value) {
-					builder.add_string_value(subentry);
-				}
-				builder.end_array ();
-				
-			}
-			
-			builder.end_object();
-		
-			Json.Node root = builder.get_root();
-			generator.set_root(root);
+            foreach (var entry in data.entries) {
+            
+                builder.set_member_name (entry.key);
+            
+                builder.begin_array ();
+                foreach (string subentry in entry.value) {
+                    builder.add_string_value(subentry);
+                }
+                builder.end_array ();
+                
+            }
+            
+            builder.end_object();
+        
+            Json.Node root = builder.get_root();
+            generator.set_root(root);
 
-			return generator.to_data(null);
-		}
+            return generator.to_data(null);
+        }
     }
 }
