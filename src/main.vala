@@ -12,6 +12,16 @@ public class DockerManager : Gtk.Window {
     public DockerManager () {
         Object(window_position: Gtk.WindowPosition.CENTER);
 
+		var provider = new Gtk.CssProvider();
+		provider.load_from_path("resources/css/main.css");
+
+		var screen = Gdk.Screen.get_default();
+        Gtk.StyleContext context = new Gtk.StyleContext();
+        context.add_provider_for_screen(screen, provider, 1);
+		
+		//Add application icons to degault icon theme
+		new Gtk.IconTheme().get_default().add_resource_path("/org/lcallarec/gnome-docker-manager/resources/icons");
+
         this.set_default_size(700, 600);
         this.destroy.connect(Gtk.main_quit);
 
@@ -30,7 +40,7 @@ public class DockerManager : Gtk.Window {
 		
         //InfoBar
         var infobar = create_infobar();
-        main_box.pack_start(infobar, false, true, 5);
+        main_box.pack_start(infobar, false, true, 1);
 
         //MessageDispatcher
         var md = new MessageDispatcher(infobar);
@@ -148,13 +158,12 @@ private class SideBar : Gtk.ListBox {
 		
 		var container_row_label = new Gtk.Label("Containers");
 		container_row_label.halign = Gtk.Align.START;
-		
+		container_row_label.get_style_context().add_class("toto");
 		containers_row.add(containers_box);
 		
-		var icon = new Gtk.Image();
-		icon.set_from_icon_name("media-optical-symbolic", Gtk.IconSize.BUTTON);
-		icon.opacity = 0.5;
-		
+		var icon = new Gtk.Image.from_icon_name("docker-symbolic", Gtk.IconSize.BUTTON);
+		icon.opacity = 1;
+
 		containers_box.pack_start(icon, false, true, 5);
 		containers_box.pack_start(container_row_label);
 	
@@ -167,10 +176,21 @@ private class SideBar : Gtk.ListBox {
         images_row.height_request = SideBar.ROW_HEIGHT;
 		images_row.name = "images"; 
 
+		var images_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+		images_box.height_request = SideBar.ROW_HEIGHT;
+
 		var images_row_label = new Gtk.Label("Images");
 		images_row_label.halign = Gtk.Align.START;
-		images_row.add(images_row_label);
-
+	
+		images_row.add(images_box);
+		
+		var icon = new Gtk.Image();
+		icon.set_from_icon_name("media-optical-symbolic", Gtk.IconSize.BUTTON);
+		icon.opacity = 0.7;
+		
+		images_box.pack_start(icon, false, true, 5);
+		images_box.pack_start(images_row_label);
+	
         add(images_row);
 	}
 }
@@ -187,7 +207,7 @@ private class HeaderBar : Gtk.Box {
 		this.entry.text = docker_host;
 		this.entry.width_chars = 30;
 		
-		this.search_button = new Gtk.Button.from_icon_name("edit-find-symbolic", Gtk.IconSize.BUTTON );
+		this.search_button = new Gtk.Button.from_icon_name("edit-find-symbolic", Gtk.IconSize.BUTTON);
 		this.search_button.expand = false;
 
 		this.pack_start(entry, false, true, 3);
