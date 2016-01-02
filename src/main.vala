@@ -158,7 +158,6 @@ private class SideBar : Gtk.ListBox {
 		
 		var container_row_label = new Gtk.Label("Containers");
 		container_row_label.halign = Gtk.Align.START;
-		container_row_label.get_style_context().add_class("toto");
 		containers_row.add(containers_box);
 		
 		var icon = new Gtk.Image.from_icon_name("docker-symbolic", Gtk.IconSize.BUTTON);
