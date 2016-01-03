@@ -7,6 +7,10 @@ namespace Docker.IO {
     public abstract class Response : GLib.Object {
         
         public string? payload { get; protected set;}
+
+        public int status { get; protected set;}
+
+        public Gee.HashMap<string, string> headers { get; protected set;}
         
     }
     
@@ -15,10 +19,6 @@ namespace Docker.IO {
      */ 
     public class SocketResponse : Response {
         
-        private int status;
-        
-        private Gee.HashMap<string, string> headers;
-
         public SocketResponse(DataInputStream stream) {
 
         try {

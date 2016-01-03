@@ -28,11 +28,7 @@ namespace Docker {
                 return parse_images_list_payload(this.client.send(message).payload);
 
             } catch (IO.RequestError e) {
-                string err_message = "Error while fetching images list from docker daemon at %s (%s)".printf(
-                    this.client.path,
-                    e.message
-                );
-                throw new IO.RequestError.FATAL(err_message);
+                 throw new IO.RequestError.FATAL("Error while fetching images list from docker daemon : %s".printf(e.message));
             }
         }
         
@@ -95,29 +91,28 @@ namespace Docker {
                 return parse_containers_list_payload(this.client.send(message_builder.str).payload);
 
             } catch (IO.RequestError e) {
-                
-                string err_message = "Error while fetching container list from docker daemon at %s (%s)".printf(
-                    this.client.path,
-                    e.message
-                );
-                throw new IO.RequestError.FATAL(err_message);
+                throw new IO.RequestError.FATAL("Error while fetching container list from docker daemon : %s".printf(e.message));
             }
         }
         
         /**
-         * Pause a container
+         * Pause a single container
          */
         public void pause(Docker.Model.Container container) throws IO.RequestError {
         
             try {
-                this.client.send("POST /containers/%s/pause".printf(container.id));
-            } catch (IO.RequestError e) {
+                var response = this.client.send("POST /containers/%s/pause".printf(container.id));
                 
-                string err_message = "%s(%s)".printf(
-                    this.client.path,
-                    e.message
-                );
-                throw new IO.RequestError.FATAL(err_message);
+                if (response.status == 204) {
+                    return;
+                } else if (response.status == 404) {
+                    throw new IO.RequestError.FATAL("No such container");
+                } else if (response.status == 500) {
+                    throw new IO.RequestError.FATAL("Docker daemon fatal error");
+                }
+                
+            } catch (IO.RequestError e) {
+                throw new IO.RequestError.FATAL("Error while pausing container %s : %s".printf(container.id, e.message));
             }
         }
 
@@ -127,14 +122,18 @@ namespace Docker {
         public void unpause(Docker.Model.Container container) throws IO.RequestError {
         
             try {
-                this.client.send("POST /containers/%s/unpause".printf(container.id));
-            } catch (IO.RequestError e) {
+                var response = this.client.send("POST /containers/%s/unpause".printf(container.id));
                 
-                string err_message = "%s(%s)".printf(
-                    this.client.path,
-                    e.message
-                );
-                throw new IO.RequestError.FATAL(err_message);
+                if (response.status == 204) {
+                    return;
+                } else if (response.status == 404) {
+                    throw new IO.RequestError.FATAL("No such container");
+                } else if (response.status == 500) {
+                    throw new IO.RequestError.FATAL("Docker daemon fatal error");
+                }
+                
+            } catch (IO.RequestError e) {
+                throw new IO.RequestError.FATAL("Error while unpausing container %s : %s".printf(container.id, e.message));
             }
         }
         

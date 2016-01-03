@@ -264,24 +264,25 @@ public class ApplicationController : GLib.Object {
     
     public ApplicationController(View.ContainersView containers_view, View.ImagesView images_view, MessageDispatcher message_dispatcher) {
         this.message_dispatcher = message_dispatcher;
-        this.containers_view = containers_view;
-        this.images_view = images_view;
-           this.repository = create_repository("/var/run/docker.sock");
-                
-                this.refresh_image_list();
-                this.refresh_container_list();
+        this.containers_view    = containers_view;
+        this.images_view        = images_view;
     }
     
     public void listen_container_view() {
+        
         containers_view.container_status_change_request.connect((requested_status, container) => {
             
             try {
+                string message = "";
                 if (requested_status == Docker.Model.ContainerStatus.PAUSED) {
                     repository.containers().unpause(container);    
+                    message = "Container %s successfully unpaused".printf(container.id);
                 } else if (requested_status == Docker.Model.ContainerStatus.RUNNING) {
                     repository.containers().pause(container);
+                    message = "Container %s successfully paused".printf(container.id);
                 }
-                message_dispatcher.dispatch(Gtk.MessageType.INFO, "ok");
+                
+                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
                 
             } catch (Docker.IO.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
@@ -292,7 +293,9 @@ public class ApplicationController : GLib.Object {
     }
     
     public void listen_headerbar(HeaderBar headerbar) {
+        
         headerbar.docker_daemon_lookup_request.connect((docker_path) => {
+            
             try {
                 
                 this.repository = create_repository(docker_path);
@@ -316,7 +319,8 @@ public class ApplicationController : GLib.Object {
     protected void refresh_container_list() {
         
         var container_collection = new Docker.Model.Containers();
-         foreach(Docker.Model.ContainerStatus status in Docker.Model.ContainerStatus.all()) {
+        
+        foreach(Docker.Model.ContainerStatus status in Docker.Model.ContainerStatus.all()) {
             var containers = repository.containers().list(status);
             container_collection.add(status, containers);                        
         }

@@ -36,11 +36,7 @@ namespace Docker {
             try {
                 conn.output_stream.write(request_builder.str.data);
             } catch(GLib.IOError e) {
-
-                string err_message = "Error while sending images list request to docker daemon at %s (%s)".printf(
-                    this.path,
-                    e.message
-                );
+                string err_message = "IO error : %s".printf(e.message);
                 throw new IO.RequestError.FATAL(err_message);
             }
 
