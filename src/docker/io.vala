@@ -113,7 +113,7 @@ namespace Docker.IO {
 
             foreach (var entry in data.entries) {
             
-                builder.set_member_name (entry.key);
+                builder.set_member_name(entry.key);
             
                 builder.begin_array ();
                 foreach (string subentry in entry.value) {
