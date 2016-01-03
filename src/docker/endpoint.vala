@@ -137,6 +137,27 @@ namespace Docker {
             }
         }
         
+         /**
+         * Remove a single container
+         */
+        public void remove(Docker.Model.Container container) throws IO.RequestError {
+        
+            try {
+                var response = this.client.send("DELETE /containers/%s".printf(container.id));
+                
+                if (response.status == 204) {
+                    return;
+                } else if (response.status == 404) {
+                    throw new IO.RequestError.FATAL("No such container");
+                } else if (response.status == 500) {
+                    throw new IO.RequestError.FATAL("Docker daemon fatal error");
+                }
+                
+            } catch (IO.RequestError e) {
+                throw new IO.RequestError.FATAL("Error while killing container %s : %s".printf(container.id, e.message));
+            }
+        }
+        
         /**
          * Parse containers payload
          */ 

@@ -11,6 +11,7 @@ namespace View {
         }
         
         public signal void container_status_change_request(Docker.Model.ContainerStatus status, Docker.Model.Container container);
+        public signal void container_remove_request(Docker.Model.Container container);
     }
     
     /*
@@ -176,6 +177,7 @@ namespace View {
                 var label_id            = create_id_label(container);
                 var label_creation_date = create_creation_date_label(container);
                 var label_command       = create_command_label(container);
+                var button_destroy      = create_button_destroy(container);
                 
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
 
@@ -186,11 +188,12 @@ namespace View {
                 row_layout.attach(label_creation_date, 1, 1, 1, 1);
     
                 if (Docker.Model.ContainerStatus.is_active(current_status)) {
-                    Gtk.Button button = get_pause_button(current_status, container);
-                    row_layout.attach(button,          2, 0, 1, 1);
+                    Gtk.Button button_pause = create_button_pause(current_status, container);
+                    row_layout.attach(button_pause,    2, 0, 1, 1);
                 }
                 
-                row_layout.attach(separator,           0, 2, 4, 1);
+                row_layout.attach(button_destroy,      3, 0, 1, 1);
+                row_layout.attach(separator,           0, 2, 5, 2);
                 
                 list_box.insert(row, containers_count);
             }
@@ -200,7 +203,7 @@ namespace View {
             return containers_count;
         }
 
-        private Gtk.Button get_pause_button(Docker.Model.ContainerStatus current_status, Docker.Model.Container container) {
+        private Gtk.Button create_button_pause(Docker.Model.ContainerStatus current_status, Docker.Model.Container container) {
             
             Gtk.ToggleButton button = new Gtk.ToggleButton();
             Gtk.Image image = new Gtk.Image();
@@ -223,6 +226,17 @@ namespace View {
                     image.set_from_icon_name("media-playback-start-symbolic", Gtk.IconSize.BUTTON);
                     this.container_status_change_request(Docker.Model.ContainerStatus.PAUSED, container);
                 }
+            });
+
+            return button;
+        }
+
+        private Gtk.Button create_button_destroy(Docker.Model.Container container) {
+            
+            Gtk.Button button = new Gtk.Button.from_icon_name("user-trash-symbolic", Gtk.IconSize.BUTTON);
+
+            button.clicked.connect(() => {
+                this.container_remove_request(container);
             });
 
             return button;
