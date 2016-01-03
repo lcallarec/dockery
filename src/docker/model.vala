@@ -170,7 +170,7 @@ namespace Docker.Model {
         }
         
         public static ContainerStatus[] active() {
-            return {RUNNING, PAUSED, EXITED, CREATED, RESTARTING};
+            return {RUNNING, PAUSED};
         }
         
         public static bool is_active(ContainerStatus status) {

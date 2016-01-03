@@ -105,6 +105,40 @@ namespace Docker {
         }
         
         /**
+         * Pause a container
+         */
+        public void pause(Docker.Model.Container container) throws IO.RequestError {
+        
+            try {
+                this.client.send("POST /containers/%s/pause".printf(container.id));
+            } catch (IO.RequestError e) {
+                
+                string err_message = "%s(%s)".printf(
+                    this.client.path,
+                    e.message
+                );
+                throw new IO.RequestError.FATAL(err_message);
+            }
+        }
+
+        /**
+         * Unpause a single container
+         */
+        public void unpause(Docker.Model.Container container) throws IO.RequestError {
+        
+            try {
+                this.client.send("POST /containers/%s/unpause".printf(container.id));
+            } catch (IO.RequestError e) {
+                
+                string err_message = "%s(%s)".printf(
+                    this.client.path,
+                    e.message
+                );
+                throw new IO.RequestError.FATAL(err_message);
+            }
+        }
+        
+        /**
          * Parse containers payload
          */ 
         private Model.Container[] parse_containers_list_payload(string payload) {

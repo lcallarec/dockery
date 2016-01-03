@@ -218,11 +218,11 @@ namespace View {
             button.toggled.connect(() => {
                 if (button.active) {
                     image.set_from_icon_name("media-playback-pause-symbolic", Gtk.IconSize.BUTTON);
+                    this.container_status_change_request(Docker.Model.ContainerStatus.RUNNING, container);
                 } else {
                     image.set_from_icon_name("media-playback-start-symbolic", Gtk.IconSize.BUTTON);
+                    this.container_status_change_request(Docker.Model.ContainerStatus.PAUSED, container);
                 }
-                
-                this.container_status_change_request(status, container);
             });
 
             return button;

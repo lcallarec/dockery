@@ -34,7 +34,7 @@ namespace Docker {
             var conn = this.create_connection();
                
             try {
-                conn.output_stream.write(request_builder.str.data);    
+                conn.output_stream.write(request_builder.str.data);
             } catch(GLib.IOError e) {
 
                 string err_message = "Error while sending images list request to docker daemon at %s (%s)".printf(

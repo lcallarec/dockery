@@ -273,7 +273,20 @@ public class ApplicationController : GLib.Object {
     }
     
     public void listen_container_view() {
-        containers_view.container_status_change_request.connect((status, container) => {
+        containers_view.container_status_change_request.connect((requested_status, container) => {
+            
+            try {
+                if (requested_status == Docker.Model.ContainerStatus.PAUSED) {
+                    repository.containers().unpause(container);    
+                } else if (requested_status == Docker.Model.ContainerStatus.RUNNING) {
+                    repository.containers().pause(container);
+                }
+                message_dispatcher.dispatch(Gtk.MessageType.INFO, "ok");
+                
+            } catch (Docker.IO.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+            
             this.refresh_container_list();
         });
     }
