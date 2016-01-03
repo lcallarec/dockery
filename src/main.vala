@@ -87,8 +87,6 @@ public class DockerManager : Gtk.Window {
         //Container Page
         var containers_view = new View.ContainersView();
         
-      
-        
         Gtk.ScrolledWindow containers_view_scrolled = new Gtk.ScrolledWindow(null, null); 
         containers_view_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
         containers_view_scrolled.add(containers_view);

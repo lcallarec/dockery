@@ -153,7 +153,7 @@ namespace View {
         /**
          * Add new rows from containers array list
          */ 
-        public int hydrate(Docker.Model.ContainerStatus status, Gee.ArrayList<Docker.Model.Container> containers) {
+        public int hydrate(Docker.Model.ContainerStatus current_status, Gee.ArrayList<Docker.Model.Container> containers) {
     
             int containers_count = 0;
             Gtk.ListBox list_box = new Gtk.ListBox();
@@ -185,8 +185,8 @@ namespace View {
                 row_layout.attach(label_command,       1, 0, 1, 1);
                 row_layout.attach(label_creation_date, 1, 1, 1, 1);
     
-                if (Docker.Model.ContainerStatus.is_active(status)) {
-                    Gtk.Button button = get_pause_button(status, container);
+                if (Docker.Model.ContainerStatus.is_active(current_status)) {
+                    Gtk.Button button = get_pause_button(current_status, container);
                     row_layout.attach(button,          2, 0, 1, 1);
                 }
                 
@@ -195,21 +195,21 @@ namespace View {
                 list_box.insert(row, containers_count);
             }
       
-            notebook.append_page(list_box, new Gtk.Label(Docker.Model.ContainerStatusConverter.convert_from_enum(status)));
+            notebook.append_page(list_box, new Gtk.Label(Docker.Model.ContainerStatusConverter.convert_from_enum(current_status)));
 
             return containers_count;
         }
 
-        private Gtk.Button get_pause_button(Docker.Model.ContainerStatus status, Docker.Model.Container container) {
+        private Gtk.Button get_pause_button(Docker.Model.ContainerStatus current_status, Docker.Model.Container container) {
             
             Gtk.ToggleButton button = new Gtk.ToggleButton();
             Gtk.Image image = new Gtk.Image();
             button.always_show_image = true;
             
-            if (status == Docker.Model.ContainerStatus.PAUSED) {
+            if (current_status == Docker.Model.ContainerStatus.PAUSED) {
                 image.set_from_icon_name("media-playback-start-symbolic", Gtk.IconSize.BUTTON);
                 button.set_active(true);
-            } else if (status == Docker.Model.ContainerStatus.RUNNING) {
+            } else if (current_status == Docker.Model.ContainerStatus.RUNNING) {
                 image.set_from_icon_name("media-playback-pause-symbolic", Gtk.IconSize.BUTTON);
                 button.set_active(false);
             }
