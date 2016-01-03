@@ -7,6 +7,10 @@ namespace Docker.IO {
     public abstract class Response : GLib.Object {
         
         public string? payload { get; protected set;}
+
+        public int status { get; protected set;}
+
+        public Gee.HashMap<string, string> headers { get; protected set;}
         
     }
     
@@ -15,27 +19,25 @@ namespace Docker.IO {
      */ 
     public class SocketResponse : Response {
         
-        private int status;
-        
-        private Gee.HashMap<string, string> headers;
-
         public SocketResponse(DataInputStream stream) {
 
         try {
                 status  = extract_response_status_code(stream);
                 headers = extract_response_headers(stream);
-
-                if (headers.has("Transfer-Encoding", "chunked")) {
-                    stream.read_line(null);
-                }
-
-                payload = stream.read_line(null).strip();
                 
-                stream.close();
-            
+                if (stream.get_available() > 0) {
+
+                    if (headers.has("Transfer-Encoding", "chunked")) {
+                        stream.read_line(null);
+                    }
+                    
+                    payload = stream.read_line(null).strip();
+                }
             } catch (IOError e) {
                 stdout.printf(e.message);
             }
+            
+            stream.close();
         }
 
         private int? extract_response_status_code(DataInputStream stream) {
@@ -113,7 +115,7 @@ namespace Docker.IO {
 
             foreach (var entry in data.entries) {
             
-                builder.set_member_name (entry.key);
+                builder.set_member_name(entry.key);
             
                 builder.begin_array ();
                 foreach (string subentry in entry.value) {

@@ -12,6 +12,8 @@ public class DockerManager : Gtk.Window {
 
     private Gtk.InfoBar infobar { get; set;}
 
+    private ApplicationController ac;
+
     public static void main (string[] args) {
         Gtk.init(ref args);
 
@@ -70,9 +72,6 @@ public class DockerManager : Gtk.Window {
         var infobar = create_infobar();
         main_box.pack_start(infobar, false, true, 1);
 
-        //MessageDispatcher
-        var md = new MessageDispatcher(infobar);
-
         //Workspace
         Gtk.Box workspace = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
         main_box.pack_start(workspace, true, true, 0);
@@ -87,6 +86,7 @@ public class DockerManager : Gtk.Window {
 
         //Container Page
         var containers_view = new View.ContainersView();
+        
         Gtk.ScrolledWindow containers_view_scrolled = new Gtk.ScrolledWindow(null, null); 
         containers_view_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
         containers_view_scrolled.add(containers_view);
@@ -103,10 +103,11 @@ public class DockerManager : Gtk.Window {
     
         workspace.pack_start(new Gtk.Separator(Gtk.Orientation.VERTICAL), false, true, 0);
         workspace.pack_start(stack, true, true, 0);
-    
-        //Global listener    
-        headerbar.on_click_search_button(images_view, containers_view, md);
-    
+        
+        //ApplicationController
+        this.ac = new ApplicationController(containers_view, images_view, new MessageDispatcher(infobar));
+        ac.listen_headerbar(headerbar);
+        ac.listen_container_view();
     }
     
     private Gtk.HeaderBar create_titlebar() {
@@ -200,10 +201,12 @@ private class SideBar : Gtk.ListBox {
     }
 }
 
-private class HeaderBar : Gtk.Box {
+public class HeaderBar : Gtk.Box {
     
     private Gtk.Entry  entry;
     private Gtk.Button search_button;
+    
+    public signal void docker_daemon_lookup_request(string docker_path);
     
     public HeaderBar(string docker_host) {
         Object(orientation: Gtk.Orientation.HORIZONTAL, spacing: 0);
@@ -217,33 +220,9 @@ private class HeaderBar : Gtk.Box {
 
         this.pack_start(entry, false, true, 3);
         this.pack_start(search_button, false, true, 0);
-    }
-    
-    public void on_click_search_button(View.ImagesView images_view, View.ContainersView containers_view, MessageDispatcher md) {
         
         this.search_button.clicked.connect(() => {
-            
-            try {
-                
-                var repository = new Docker.Repository(new Docker.UnixSocketClient(entry.text));
-
-                Docker.Model.Image[]? images = repository.images().list();
-                
-                var container_collection = new Docker.Model.Containers();
-                
-                foreach(Docker.Model.ContainerStatus status in Docker.Model.ContainerStatus.all()) {
-                    var containers = repository.containers().list(status);
-                    container_collection.add(status, containers);                        
-                }
-                
-                images_view.refresh(images, true);
-                containers_view.refresh(container_collection, true);
-
-                md.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
-                
-            } catch (Docker.IO.RequestError e) {
-                md.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
+            this.docker_daemon_lookup_request(entry.text);
         });
     }
 }
@@ -251,7 +230,7 @@ private class HeaderBar : Gtk.Box {
 /**
  * Dispatch messages 
  */
-private class MessageDispatcher : GLib.Object {
+public class MessageDispatcher : GLib.Object {
     
     private Gtk.InfoBar dialog;
 
@@ -268,5 +247,86 @@ private class MessageDispatcher : GLib.Object {
         label.label = message;  
         dialog.show();
         label.show();
+    }
+}
+
+/*
+ * ApplicationController is listening to all signals emitted by the view layer
+ */ 
+public class ApplicationController : GLib.Object {
+    
+    private Docker.Repository repository;
+    private MessageDispatcher message_dispatcher;
+    private View.ContainersView containers_view;
+    private View.ImagesView images_view;
+    
+    public ApplicationController(View.ContainersView containers_view, View.ImagesView images_view, MessageDispatcher message_dispatcher) {
+        this.message_dispatcher = message_dispatcher;
+        this.containers_view    = containers_view;
+        this.images_view        = images_view;
+    }
+    
+    public void listen_container_view() {
+        
+        containers_view.container_status_change_request.connect((requested_status, container) => {
+            
+            try {
+                string message = "";
+                if (requested_status == Docker.Model.ContainerStatus.PAUSED) {
+                    repository.containers().unpause(container);    
+                    message = "Container %s successfully unpaused".printf(container.id);
+                } else if (requested_status == Docker.Model.ContainerStatus.RUNNING) {
+                    repository.containers().pause(container);
+                    message = "Container %s successfully paused".printf(container.id);
+                }
+                
+                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
+                
+            } catch (Docker.IO.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+            
+            this.refresh_container_list();
+        });
+    }
+    
+    public void listen_headerbar(HeaderBar headerbar) {
+        
+        headerbar.docker_daemon_lookup_request.connect((docker_path) => {
+            
+            try {
+                
+                this.repository = create_repository(docker_path);
+                
+                this.refresh_image_list();
+                this.refresh_container_list();
+                
+                message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
+                
+            } catch (Docker.IO.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+        });
+    }
+    
+    protected void refresh_image_list() {
+        Docker.Model.Image[]? images = repository.images().list();
+        this.images_view.refresh(images, true);
+    }
+    
+    protected void refresh_container_list() {
+        
+        var container_collection = new Docker.Model.Containers();
+        
+        foreach(Docker.Model.ContainerStatus status in Docker.Model.ContainerStatus.all()) {
+            var containers = repository.containers().list(status);
+            container_collection.add(status, containers);                        
+        }
+        
+        this.containers_view.refresh(container_collection, true);
+    }
+    
+    protected Docker.Repository create_repository(string docker_path) {
+        return new Docker.Repository(new Docker.UnixSocketClient(docker_path));
     }
 }
