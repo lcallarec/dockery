@@ -263,20 +263,6 @@ namespace View {
             return containers_count;
         }
 
-        private Gtk.Switch addSwitch(Docker.Model.ContainerStatus status, Docker.Model.Container container) {
-            Gtk.Switch _switch = new Gtk.Switch();
-
-            _switch.notify["active"].connect (() => {
-                if (_switch.active) {
-                    stdout.printf ("The switch is on!\n");
-                } else {
-                    stdout.printf ("The switch is off!\n");
-                }
-            });
-
-            return _switch; 
-        }
-        
         /**
          * Create an id label
          */    
