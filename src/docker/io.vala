@@ -24,18 +24,20 @@ namespace Docker.IO {
         try {
                 status  = extract_response_status_code(stream);
                 headers = extract_response_headers(stream);
-
-                if (headers.has("Transfer-Encoding", "chunked")) {
-                    stream.read_line(null);
-                }
-
-                payload = stream.read_line(null).strip();
                 
-                stream.close();
-            
+                if (stream.get_available() > 0) {
+
+                    if (headers.has("Transfer-Encoding", "chunked")) {
+                        stream.read_line(null);
+                    }
+                    
+                    payload = stream.read_line(null).strip();
+                }
             } catch (IOError e) {
                 stdout.printf(e.message);
             }
+            
+            stream.close();
         }
 
         private int? extract_response_status_code(DataInputStream stream) {
