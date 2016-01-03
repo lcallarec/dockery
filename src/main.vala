@@ -105,7 +105,7 @@ public class DockerManager : Gtk.Window {
         workspace.pack_start(stack, true, true, 0);
         
         //ApplicationController
-        this.ac = new ApplicationController(containers_view, images_view, new MessageDispatcher(infobar));
+        this.ac = new ApplicationController(this, containers_view, images_view, new MessageDispatcher(infobar));
         ac.listen_headerbar(headerbar);
         ac.listen_container_view();
     }
@@ -256,14 +256,16 @@ public class MessageDispatcher : GLib.Object {
 public class ApplicationController : GLib.Object {
     
     private Docker.Repository repository;
+    private Gtk.Window window;
     private MessageDispatcher message_dispatcher;
     private View.ContainersView containers_view;
     private View.ImagesView images_view;
     
-    public ApplicationController(View.ContainersView containers_view, View.ImagesView images_view, MessageDispatcher message_dispatcher) {
+    public ApplicationController(Gtk.Window window, View.ContainersView containers_view, View.ImagesView images_view, MessageDispatcher message_dispatcher) {
         this.message_dispatcher = message_dispatcher;
         this.containers_view    = containers_view;
         this.images_view        = images_view;
+        this.window             = window;
     }
     
     public void listen_container_view() {
@@ -287,6 +289,32 @@ public class ApplicationController : GLib.Object {
             }
             
             this.refresh_container_list();
+        });
+        
+        containers_view.container_remove_request.connect((container) => {
+            
+            Gtk.MessageDialog msg = new Gtk.MessageDialog(
+                window, Gtk.DialogFlags.MODAL,
+                Gtk.MessageType.WARNING,
+                Gtk.ButtonsType.OK_CANCEL,
+                "Really remove the container %s (%s)?".printf(container.name, container.id)
+            );
+            
+            msg.response.connect ((response_id) => {
+                switch (response_id) {
+                    case Gtk.ResponseType.OK:
+                        repository.containers().remove(container);
+                        this.refresh_container_list();
+                        break;
+                    case Gtk.ResponseType.CANCEL:
+                        break;
+                    case Gtk.ResponseType.DELETE_EVENT:
+                        break;
+                }
+
+                msg.destroy();
+                });
+                msg.show ();  
         });
     }
     
