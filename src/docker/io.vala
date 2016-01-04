@@ -70,13 +70,13 @@ namespace Docker.IO {
                     headers.set(_header[0], _header[1].strip());
                 }
                 
-                return headers;
-                
             } catch (RegexError e) {
                 return null;
             } catch (IOError e) {
                 return null;
             }
+            
+            return headers;
         }
     }
     

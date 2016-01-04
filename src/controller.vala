@@ -29,14 +29,13 @@ public class ApplicationController : GLib.Object {
                     repository.containers().pause(container);
                     message = "Container %s successfully paused".printf(container.id);
                 }
-                
+
+                this.refresh_container_list();                
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
                 
             } catch (Docker.IO.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
-            
-            this.refresh_container_list();
         });
         
         containers_list.container_remove_request.connect((container) => {
@@ -61,8 +60,10 @@ public class ApplicationController : GLib.Object {
                 }
 
                 msg.destroy();
-                });
-                msg.show ();  
+            
+            });
+            
+            msg.show();  
         });
     }
     
@@ -85,12 +86,12 @@ public class ApplicationController : GLib.Object {
         });
     }
     
-    protected void refresh_image_list() {
+    protected void refresh_image_list() throws Docker.IO.RequestError {
         Docker.Model.Image[]? images = repository.images().list();
         this.images_list.refresh(images, true);
     }
     
-    protected void refresh_container_list() {
+    protected void refresh_container_list() throws Docker.IO.RequestError {
         
         var container_collection = new Docker.Model.Containers();
         
