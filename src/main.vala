@@ -85,27 +85,27 @@ public class DockerManager : Gtk.Window {
         workspace.pack_start(sidebar, false, true, 0);
 
         //Container Page
-        var containers_view = new View.ContainersView();
+        var containers_list = new Ui.DockerContainersList();
         
-        Gtk.ScrolledWindow containers_view_scrolled = new Gtk.ScrolledWindow(null, null); 
-        containers_view_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-        containers_view_scrolled.add(containers_view);
+        Gtk.ScrolledWindow containers_list_scrolled = new Gtk.ScrolledWindow(null, null); 
+        containers_list_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+        containers_list_scrolled.add(containers_list);
 
         //Image Page
-        var images_view = new View.ImagesView();
-        Gtk.ScrolledWindow images_view_scrolled = new Gtk.ScrolledWindow(null, null); 
-        images_view_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-        images_view_scrolled.add(images_view);
+        var images_list = new Ui.DockerImagesList();
+        Gtk.ScrolledWindow images_list_scrolled = new Gtk.ScrolledWindow(null, null); 
+        images_list_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+        images_list_scrolled.add(images_list);
 
         //Stack add children
-        stack.add_named(containers_view_scrolled, "containers");
-        stack.add_named(images_view_scrolled, "images");
+        stack.add_named(containers_list_scrolled, "containers");
+        stack.add_named(images_list_scrolled, "images");
     
         workspace.pack_start(new Gtk.Separator(Gtk.Orientation.VERTICAL), false, true, 0);
         workspace.pack_start(stack, true, true, 0);
         
         //ApplicationController
-        this.ac = new ApplicationController(this, containers_view, images_view, new MessageDispatcher(infobar));
+        this.ac = new ApplicationController(this, containers_list, images_list, new MessageDispatcher(infobar));
         ac.listen_headerbar(headerbar);
         ac.listen_container_view();
     }
@@ -258,19 +258,19 @@ public class ApplicationController : GLib.Object {
     private Docker.Repository repository;
     private Gtk.Window window;
     private MessageDispatcher message_dispatcher;
-    private View.ContainersView containers_view;
-    private View.ImagesView images_view;
+    private Ui.DockerContainersList containers_list;
+    private Ui.DockerImagesList images_list;
     
-    public ApplicationController(Gtk.Window window, View.ContainersView containers_view, View.ImagesView images_view, MessageDispatcher message_dispatcher) {
+    public ApplicationController(Gtk.Window window, Ui.DockerContainersList containers_list, Ui.DockerImagesList images_list, MessageDispatcher message_dispatcher) {
         this.message_dispatcher = message_dispatcher;
-        this.containers_view    = containers_view;
-        this.images_view        = images_view;
+        this.containers_list    = containers_list;
+        this.images_list        = images_list;
         this.window             = window;
     }
     
     public void listen_container_view() {
         
-        containers_view.container_status_change_request.connect((requested_status, container) => {
+        containers_list.container_status_change_request.connect((requested_status, container) => {
             
             try {
                 string message = "";
@@ -291,7 +291,7 @@ public class ApplicationController : GLib.Object {
             this.refresh_container_list();
         });
         
-        containers_view.container_remove_request.connect((container) => {
+        containers_list.container_remove_request.connect((container) => {
             
             Gtk.MessageDialog msg = new Gtk.MessageDialog(
                 window, Gtk.DialogFlags.MODAL,
@@ -339,7 +339,7 @@ public class ApplicationController : GLib.Object {
     
     protected void refresh_image_list() {
         Docker.Model.Image[]? images = repository.images().list();
-        this.images_view.refresh(images, true);
+        this.images_list.refresh(images, true);
     }
     
     protected void refresh_container_list() {
@@ -351,7 +351,7 @@ public class ApplicationController : GLib.Object {
             container_collection.add(status, containers);                        
         }
         
-        this.containers_view.refresh(container_collection, true);
+        this.containers_list.refresh(container_collection, true);
     }
     
     protected Docker.Repository create_repository(string docker_path) {

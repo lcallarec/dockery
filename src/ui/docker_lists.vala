@@ -1,6 +1,6 @@
-namespace View {
+namespace Ui {
     
-    public interface IView : Gtk.Container {
+    public interface IDockerList : Gtk.Container {
         /**
          * Remove all child widgets from the container
          */ 
@@ -14,13 +14,7 @@ namespace View {
         public signal void container_remove_request(Docker.Model.Container container);
     }
     
-    /*
-     * ImagesView.vala
-     * 
-     * Laurent Callarec <l.callarec@gmail.com>
-     * 
-     */
-    public class ImagesView : IView, Gtk.ListBox {
+    public class DockerImagesList : IDockerList, Gtk.ListBox {
         
         protected int size = 0;
 
@@ -130,13 +124,7 @@ namespace View {
         }        
     }
     
-    /*
-     * ContainersView.vala
-     * 
-     * Laurent Callarec <l.callarec@gmail.com>
-     * 
-     */
-    public class ContainersView : IView, Gtk.Box {
+    public class DockerContainersList : IDockerList, Gtk.Box {
         
         protected Gtk.Notebook notebook = new Gtk.Notebook();
         
@@ -146,7 +134,7 @@ namespace View {
             });
         }
 
-        public ContainersView() {
+        public DockerContainersList() {
             notebook.name = "notebook";
             pack_start(notebook, true, true, 0);
         }
