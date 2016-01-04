@@ -204,30 +204,19 @@ namespace View {
         }
 
         private Gtk.Button create_button_pause(Docker.Model.ContainerStatus current_status, Docker.Model.Container container) {
-            
-            Gtk.ToggleButton button = new Gtk.ToggleButton();
-            Gtk.Image image = new Gtk.Image();
-            button.always_show_image = true;
-            
-            if (current_status == Docker.Model.ContainerStatus.PAUSED) {
-                image.set_from_icon_name("media-playback-start-symbolic", Gtk.IconSize.BUTTON);
-                button.set_active(true);
-            } else if (current_status == Docker.Model.ContainerStatus.RUNNING) {
-                image.set_from_icon_name("media-playback-pause-symbolic", Gtk.IconSize.BUTTON);
-                button.set_active(false);
-            }
-            
-            button.image = image;
-            button.toggled.connect(() => {
+ 
+            Ui.PauseButton button = new Ui.PauseButton.from_active_rule(() => {
+                return current_status == Docker.Model.ContainerStatus.PAUSED;
+            });
+
+            button.notify["active"].connect(() => {
                 if (button.active) {
-                    image.set_from_icon_name("media-playback-pause-symbolic", Gtk.IconSize.BUTTON);
                     this.container_status_change_request(Docker.Model.ContainerStatus.RUNNING, container);
                 } else {
-                    image.set_from_icon_name("media-playback-start-symbolic", Gtk.IconSize.BUTTON);
                     this.container_status_change_request(Docker.Model.ContainerStatus.PAUSED, container);
                 }
             });
-
+            
             return button;
         }
 
