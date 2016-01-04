@@ -1,6 +1,6 @@
-namespace View {
+namespace Ui {
     
-    public interface IView : Gtk.Container {
+    public interface IDockerList : Gtk.Container {
         /**
          * Remove all child widgets from the container
          */ 
@@ -14,13 +14,7 @@ namespace View {
         public signal void container_remove_request(Docker.Model.Container container);
     }
     
-    /*
-     * ImagesView.vala
-     * 
-     * Laurent Callarec <l.callarec@gmail.com>
-     * 
-     */
-    public class ImagesView : IView, Gtk.ListBox {
+    public class DockerImagesList : IDockerList, Gtk.ListBox {
         
         protected int size = 0;
 
@@ -130,13 +124,7 @@ namespace View {
         }        
     }
     
-    /*
-     * ContainersView.vala
-     * 
-     * Laurent Callarec <l.callarec@gmail.com>
-     * 
-     */
-    public class ContainersView : IView, Gtk.Box {
+    public class DockerContainersList : IDockerList, Gtk.Box {
         
         protected Gtk.Notebook notebook = new Gtk.Notebook();
         
@@ -146,7 +134,7 @@ namespace View {
             });
         }
 
-        public ContainersView() {
+        public DockerContainersList() {
             notebook.name = "notebook";
             pack_start(notebook, true, true, 0);
         }
@@ -204,30 +192,19 @@ namespace View {
         }
 
         private Gtk.Button create_button_pause(Docker.Model.ContainerStatus current_status, Docker.Model.Container container) {
-            
-            Gtk.ToggleButton button = new Gtk.ToggleButton();
-            Gtk.Image image = new Gtk.Image();
-            button.always_show_image = true;
-            
-            if (current_status == Docker.Model.ContainerStatus.PAUSED) {
-                image.set_from_icon_name("media-playback-start-symbolic", Gtk.IconSize.BUTTON);
-                button.set_active(true);
-            } else if (current_status == Docker.Model.ContainerStatus.RUNNING) {
-                image.set_from_icon_name("media-playback-pause-symbolic", Gtk.IconSize.BUTTON);
-                button.set_active(false);
-            }
-            
-            button.image = image;
-            button.toggled.connect(() => {
+ 
+            Ui.PauseButton button = new Ui.PauseButton.from_active_rule(() => {
+                return current_status == Docker.Model.ContainerStatus.PAUSED;
+            });
+
+            button.notify["active"].connect(() => {
                 if (button.active) {
-                    image.set_from_icon_name("media-playback-pause-symbolic", Gtk.IconSize.BUTTON);
                     this.container_status_change_request(Docker.Model.ContainerStatus.RUNNING, container);
                 } else {
-                    image.set_from_icon_name("media-playback-start-symbolic", Gtk.IconSize.BUTTON);
                     this.container_status_change_request(Docker.Model.ContainerStatus.PAUSED, container);
                 }
             });
-
+            
             return button;
         }
 
@@ -314,27 +291,5 @@ namespace View {
 
             return label;
         }
-    }
-
-    internal class Fonts {
-
-        public static Pango.AttrList get_minor() {
-            Pango.AttrList minor = create_attr_list();
-            minor.insert(Pango.attr_scale_new(Pango.Scale.SMALL));
-           
-            return minor;
-        }
-
-        public static Pango.AttrList get_em() {
-            Pango.AttrList em = create_attr_list();
-            em.insert(Pango.attr_weight_new(Pango.Weight.BOLD));
-
-            return em;            
-        }
-
-        private static Pango.AttrList create_attr_list() {
-            return new Pango.AttrList();        
-        }
- 
     }
 }
