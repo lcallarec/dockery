@@ -67,7 +67,7 @@ public class ApplicationController : GLib.Object {
         });
     }
     
-    public void listen_headerbar(HeaderBar headerbar) {
+    public void listen_headerbar(Ui.HeaderBar headerbar) {
         
         headerbar.docker_daemon_lookup_request.connect((docker_path) => {
             
