@@ -61,6 +61,12 @@ namespace Docker.Model {
         }
         
         public string name {get; set;}
+        
+        public ContainerStatus status {get; set;}
+        
+        public string get_status_string() {
+            return ContainerStatusConverter.convert_from_enum(status);
+        }
     }
     
     /**
@@ -209,7 +215,35 @@ namespace Docker.Model {
             }
 
             return s_status;
-        }    
+        }
+        
+        /**
+         * Convert a container status from string to enum (according to remote docker api)
+         */ 
+        public static ContainerStatus convert_to_enum(string s_status) {
+            ContainerStatus status;                
+            switch(s_status) {
+                case "running":
+                    status = ContainerStatus.RUNNING;
+                    break;
+                case "pause":
+                    status = ContainerStatus.PAUSED;
+                    break;
+                case "exited" :
+                    status = ContainerStatus.EXITED;
+                    break;
+                case "created":
+                    status = ContainerStatus.CREATED;
+                    break;
+                case "restarting":
+                    status = ContainerStatus.RESTARTING;
+                    break;
+                default:
+                    assert_not_reached();
+            }
+
+            return status;
+        }   
     }
 
    /**
@@ -257,13 +291,14 @@ namespace Docker.Model {
             return image;
         }
         
-        public Container create_container(string id, int64 created_at, string command, string[] names) {
+        public Container create_container(string id, int64 created_at, string command, string[] names, ContainerStatus status) {
             
-            Container container = new Container();
+            Container container  = new Container();
             container.full_id    = id;
             container.created_at = new DateTime.from_unix_local(created_at);
             container.command    = command;
             container.names      = names;
+            container.status     = status;
            
             return container;
         }

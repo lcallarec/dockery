@@ -88,7 +88,7 @@ namespace Docker {
                 var message_builder = new StringBuilder("GET /containers/json");
                 message_builder.append(filter_builder.build());        
                 stdout.printf(message_builder.str + "\n");
-                return parse_containers_list_payload(this.client.send(message_builder.str).payload);
+                return parse_containers_list_payload(this.client.send(message_builder.str).payload, status);
 
             } catch (IO.RequestError e) {
                 throw new IO.RequestError.FATAL("Error while fetching container list from docker daemon : %s".printf(e.message));
@@ -161,7 +161,7 @@ namespace Docker {
         /**
          * Parse containers payload
          */ 
-        private Model.Container[] parse_containers_list_payload(string payload) {
+        private Model.Container[] parse_containers_list_payload(string payload, Model.ContainerStatus status) {
 
             Model.Container[] containers = {};
             try {
@@ -184,7 +184,8 @@ namespace Docker {
                         node.get_object().get_string_member("Id"),
                         node.get_object().get_int_member("Created"),
                         node.get_object().get_string_member("Command"),
-                        names
+                        names,
+                        status
                     );
                 }
             } catch (Error e) {
