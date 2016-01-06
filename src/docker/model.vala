@@ -285,7 +285,7 @@ namespace Docker.Model {
             image.full_id    = id;
             image.created_at = new DateTime.from_unix_local(created_at);
             image.repository = _repotags[0];
-            image.tag         = _repotags[1];
+            image.tag        = _repotags[1];
             image.raw_size   = size;             
 
             return image;

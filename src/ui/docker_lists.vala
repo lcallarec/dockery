@@ -1,5 +1,10 @@
 namespace Ui {
     
+    public interface IDockerContainerActionable {
+        public signal void container_status_change_request(Docker.Model.ContainerStatus status, Docker.Model.Container container);
+        public signal void container_remove_request(Docker.Model.Container container);
+    }
+    
     public interface IDockerList : Gtk.Container {
         /**
          * Remove all child widgets from the container
@@ -9,9 +14,6 @@ namespace Ui {
                 this.remove(widget);
             });
         }
-        
-        public signal void container_status_change_request(Docker.Model.ContainerStatus status, Docker.Model.Container container);
-        public signal void container_remove_request(Docker.Model.Container container);
     }
     
     public class DockerImagesList : IDockerList, Gtk.ListBox {
@@ -26,6 +28,7 @@ namespace Ui {
               foreach(Docker.Model.Image image in images) {
                                             
                 Gtk.ListBoxRow row = new Gtk.ListBoxRow();
+                             
                 //For Gtk 3.14+ only                
                 row.set_selectable(false);
 
@@ -44,7 +47,7 @@ namespace Ui {
                 row_layout.attach(label_creation_date, 1, 1, 1, 1);
                 
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
-                 row_layout.attach(separator, 0, 2, 2, 2);
+                row_layout.attach(separator, 0, 2, 2, 2);
                 
                 size += 1;
 
@@ -124,7 +127,7 @@ namespace Ui {
         }        
     }
     
-    public class DockerContainersList : IDockerList, Gtk.Box {
+    public class DockerContainersList : IDockerList, IDockerContainerActionable, Gtk.Box {
         
         protected Gtk.Notebook notebook = new Gtk.Notebook();
         
@@ -152,7 +155,18 @@ namespace Ui {
                 containers_count++;
                                                                         
                 Gtk.ListBoxRow row = new Gtk.ListBoxRow();
-                //For Gtk 3.14+ only                
+
+                Gtk.MenuButton mb = new Gtk.MenuButton();
+                
+                ContainerMenu menu = Ui.ContainerMenuFactory.create(container);
+                menu.container_status_change_request.connect((status, container) => {
+                    this.container_status_change_request(status, container);
+                });
+                
+                menu.show_all();
+                mb.popup = menu;
+                
+                //For Gtk 3.14+ only
                 row.set_selectable(false);
 
                 Gtk.Grid row_layout = new Gtk.Grid();
@@ -166,7 +180,7 @@ namespace Ui {
                 var label_creation_date = create_creation_date_label(container);
                 var label_command       = create_command_label(container);
                 var button_destroy      = create_button_destroy(container);
-                
+
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
 
                 //attach (        Widget child,        int left, int top, int width = 1, int height = 1)
@@ -179,8 +193,8 @@ namespace Ui {
                     Gtk.Button button_pause = create_button_pause(current_status, container);
                     row_layout.attach(button_pause,    2, 0, 1, 1);
                 }
-                
-                row_layout.attach(button_destroy,      3, 0, 1, 1);
+
+                row_layout.attach(mb,                  3, 0, 1, 1);
                 row_layout.attach(separator,           0, 2, 5, 2);
                 
                 list_box.insert(row, containers_count);
@@ -199,9 +213,9 @@ namespace Ui {
 
             button.notify["active"].connect(() => {
                 if (button.active) {
-                    this.container_status_change_request(Docker.Model.ContainerStatus.RUNNING, container);
-                } else {
                     this.container_status_change_request(Docker.Model.ContainerStatus.PAUSED, container);
+                } else {
+                    this.container_status_change_request(Docker.Model.ContainerStatus.RUNNING, container);
                 }
             });
             
@@ -293,3 +307,5 @@ namespace Ui {
         }
     }
 }
+
+

@@ -23,10 +23,10 @@ public class ApplicationController : GLib.Object {
             try {
                 string message = "";
                 if (requested_status == Docker.Model.ContainerStatus.PAUSED) {
-                    repository.containers().unpause(container);    
+                    repository.containers().pause(container);    
                     message = "Container %s successfully unpaused".printf(container.id);
                 } else if (requested_status == Docker.Model.ContainerStatus.RUNNING) {
-                    repository.containers().pause(container);
+                    repository.containers().unpause(container);
                     message = "Container %s successfully paused".printf(container.id);
                 }
 
