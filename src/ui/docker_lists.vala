@@ -189,9 +189,15 @@ namespace Ui {
                     Gtk.MenuButton mb = new Gtk.MenuButton();
                     menu.show_all();
                     mb.popup = menu;
+                    
                     menu.container_status_change_request.connect((status, container) => {
                         this.container_status_change_request(status, container);
                     });
+                    
+                    menu.container_remove_request.connect(() => {
+                        this.container_remove_request(container); 
+                    });
+                    
                     row_layout.attach(mb,              3, 0, 1, 1);                    
                 }
 

@@ -55,24 +55,31 @@ namespace Ui {
        }
     }
     
-    public class ContainerMenu : IDockerContainerActionable, Gtk.Menu {
+    public interface IRemoveableContainerMenu : IDockerContainerActionable, Gtk.Menu {
+        
+        protected void append_remove_menu_item(Docker.Model.Container container) {
+            var menu_item  = new Gtk.ImageMenuItem.with_mnemonic("_Remove");
+            var menu_image = new Gtk.Image();
+            menu_image.set_from_icon_name("user-trash-symbolic", Gtk.IconSize.MENU);
+            menu_item.always_show_image = true;
+            menu_item.set_image(menu_image);
+                
+            menu_item.activate.connect(() => {
+                this.container_remove_request(container);
+            });
+            
+            this.add(menu_item);
+        }
+    }    
+    
+    public class ContainerMenu : IDockerContainerActionable, IRemoveableContainerMenu, Gtk.Menu {
        
         protected Docker.Model.Container container;
         
         public ContainerMenu(Docker.Model.Container container) {
             this.container = container;
         }
-        
-        protected void append_remove_menu_item() {
-            var menu_item = new Gtk.MenuItem.with_mnemonic("_Remove");
-            
-            menu_item.activate.connect(() => {
-                this.container_remove_request(this.container);
-            });
-            
-            this.add(menu_item);
-        }
-        
+ 
         protected void append_separator_menu_item() {
             this.add(new Gtk.SeparatorMenuItem());
         }
@@ -86,7 +93,7 @@ namespace Ui {
             
             this.append_play_pause_menu_item(container);
             this.append_separator_menu_item();
-            this.append_remove_menu_item();
+            this.append_remove_menu_item(container);
         }
     }
     
@@ -97,7 +104,7 @@ namespace Ui {
             
             this.append_play_pause_menu_item(container);
             this.append_separator_menu_item();
-            this.append_remove_menu_item();
+            this.append_remove_menu_item(container);
         }
     }
 }
