@@ -3,6 +3,8 @@ namespace Ui {
     public interface IDockerContainerActionable {
         public signal void container_status_change_request(Docker.Model.ContainerStatus status, Docker.Model.Container container);
         public signal void container_remove_request(Docker.Model.Container container);
+        public signal void container_start_request(Docker.Model.Container container);
+        public signal void container_stop_request(Docker.Model.Container container);
     }
     
     public interface IDockerList : Gtk.Container {
@@ -180,8 +182,8 @@ namespace Ui {
                 row_layout.attach(label_creation_date, 1, 1, 1, 1);
     
                 if (Docker.Model.ContainerStatus.is_active(current_status)) {
-                    Gtk.Button button_pause = create_button_pause(current_status, container);
-                    row_layout.attach(button_pause,    2, 0, 1, 1);
+                    Gtk.Button button_start_stop = create_button_stop_start(true, container);
+                    row_layout.attach(button_start_stop,2, 0, 1, 1);
                 }
 
                 ContainerMenu? menu = Ui.ContainerMenuFactory.create(container);
@@ -197,7 +199,7 @@ namespace Ui {
                     menu.container_remove_request.connect(() => {
                         this.container_remove_request(container); 
                     });
-                    
+
                     row_layout.attach(mb,              3, 0, 1, 1);                    
                 }
 
@@ -211,17 +213,17 @@ namespace Ui {
             return containers_count;
         }
 
-        private Gtk.Button create_button_pause(Docker.Model.ContainerStatus current_status, Docker.Model.Container container) {
+        private Gtk.Button create_button_stop_start(bool is_active, Docker.Model.Container container) {
  
-            Ui.PauseButton button = new Ui.PauseButton.from_active_rule(() => {
-                return current_status == Docker.Model.ContainerStatus.PAUSED;
+            Ui.StartStopButton button = new Ui.StartStopButton.from_active_rule(() => {
+                return is_active;
             });
 
             button.notify["active"].connect(() => {
                 if (button.active) {
-                    this.container_status_change_request(Docker.Model.ContainerStatus.PAUSED, container);
+                    this.container_stop_request(container);
                 } else {
-                    this.container_status_change_request(Docker.Model.ContainerStatus.RUNNING, container);
+                    this.container_start_request(container);
                 }
             });
             

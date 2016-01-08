@@ -23,11 +23,9 @@ public class ApplicationController : GLib.Object {
             try {
                 string message = "";
                 if (requested_status == Docker.Model.ContainerStatus.PAUSED) {
-                    stdout.puts("paused c\n");
                     repository.containers().pause(container);    
                     message = "Container %s successfully unpaused".printf(container.id);
                 } else if (requested_status == Docker.Model.ContainerStatus.RUNNING) {
-                    stdout.puts("unpaused c\n");
                     repository.containers().unpause(container);
                     message = "Container %s successfully paused".printf(container.id);
                 }
@@ -66,6 +64,34 @@ public class ApplicationController : GLib.Object {
             });
             
             msg.show();  
+        });
+        
+        containers_list.container_start_request.connect((container) => {
+            try {
+                
+                repository.containers().stop(container);
+                string message = "Container %s successfully stopped".printf(container.id);
+
+                this.refresh_container_list();                
+                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
+                
+            } catch (Docker.IO.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+        });
+        
+        containers_list.container_stop_request.connect((container) => {
+            try {
+                
+                repository.containers().stop(container);
+                string message = "Container %s successfully started".printf(container.id);
+
+                this.refresh_container_list();                
+                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
+                
+            } catch (Docker.IO.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
         });
     }
     

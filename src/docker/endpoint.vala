@@ -158,6 +158,48 @@ namespace Docker {
             }
         }
         
+         /**
+         * Start a single container
+         */
+        public void start(Docker.Model.Container container) throws IO.RequestError {
+        
+            try {
+                var response = this.client.send("POST /containers/%s/start".printf(container.id));
+                
+                if (response.status == 204) {
+                    return;
+                } else if (response.status == 404) {
+                    throw new IO.RequestError.FATAL("No such container");
+                } else if (response.status == 500) {
+                    throw new IO.RequestError.FATAL("Docker daemon fatal error");
+                }
+                
+            } catch (IO.RequestError e) {
+                throw new IO.RequestError.FATAL("Error while starting container %s : %s".printf(container.id, e.message));
+            }
+        }
+        
+       /**
+         * Start a single container
+         */
+        public void stop(Docker.Model.Container container) throws IO.RequestError {
+        
+            try {
+                var response = this.client.send("POST /containers/%s/stop".printf(container.id));
+                
+                if (response.status == 204) {
+                    return;
+                } else if (response.status == 404) {
+                    throw new IO.RequestError.FATAL("No such container");
+                } else if (response.status == 500) {
+                    throw new IO.RequestError.FATAL("Docker daemon fatal error");
+                }
+                
+            } catch (IO.RequestError e) {
+                throw new IO.RequestError.FATAL("Error while stoping container %s : %s".printf(container.id, e.message));
+            }
+        }        
+        
         /**
          * Parse containers payload
          */ 

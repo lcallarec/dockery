@@ -55,4 +55,20 @@ namespace Ui {
             this.set_active_from_rule(rule);
         }
     }
+    
+    public class StartStopButton : IconToggleButton {
+        
+        construct {
+            active_icon_name    = "media-playback-start-symbolic";
+            inactive_icon_name  = "media-playback-stop-symbolic";
+        }
+        
+        public StartStopButton() {
+            base();
+        }
+        
+        public StartStopButton.from_active_rule(ActiveRule rule) {
+            this.set_active_from_rule(rule);
+        }
+    }
 }
