@@ -280,7 +280,6 @@ namespace Ui {
 
             var label = new Gtk.Label(container.command);
             label.halign = Gtk.Align.START;
-            label.valign = Gtk.Align.START;
             label.set_hexpand(true);
             label.set_selectable(true);
 
