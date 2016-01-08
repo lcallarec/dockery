@@ -1,7 +1,7 @@
 namespace Ui {
     
     public class ContainerMenuFactory {
-        public static ContainerMenu create(Docker.Model.Container container) {
+        public static ContainerMenu? create(Docker.Model.Container container) {
             
             switch(container.status) {
                 case Docker.Model.ContainerStatus.RUNNING:
@@ -9,13 +9,13 @@ namespace Ui {
                 case Docker.Model.ContainerStatus.PAUSED:
                     return new PausedContainerMenu(container);
                 case Docker.Model.ContainerStatus.CREATED:
-                    return new PausedContainerMenu(container);
+                    return null;
                 case Docker.Model.ContainerStatus.RESTARTING:
-                    return new PausedContainerMenu(container);
+                    return null;
                 case Docker.Model.ContainerStatus.EXITED:
-                    return new PausedContainerMenu(container);
+                    return null;
                 default:
-                    return new PausedContainerMenu(container);
+                    return null;
             }
         }
     }
@@ -44,7 +44,7 @@ namespace Ui {
             this.add(menu_item);
        }
        
-       private void add_play_pause_menu_item_listener(Gtk.MenuItem menu_item, Docker.Model.Container container) {
+       protected void add_play_pause_menu_item_listener(Gtk.MenuItem menu_item, Docker.Model.Container container) {
             menu_item.activate.connect(() => {
                 if (container.status == Docker.Model.ContainerStatus.PAUSED) {
                     this.container_status_change_request(Docker.Model.ContainerStatus.RUNNING, container);
@@ -90,10 +90,14 @@ namespace Ui {
         }
     }
     
-    internal class PausedContainerMenu : RunningContainerMenu {
+    internal class PausedContainerMenu : IPauseableContainerMenu, ContainerMenu {
 
         public PausedContainerMenu(Docker.Model.Container container) {
             base(container);
+            
+            this.append_play_pause_menu_item(container);
+            this.append_separator_menu_item();
+            this.append_remove_menu_item();
         }
     }
 }

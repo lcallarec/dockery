@@ -155,17 +155,7 @@ namespace Ui {
                 containers_count++;
                                                                         
                 Gtk.ListBoxRow row = new Gtk.ListBoxRow();
-
-                Gtk.MenuButton mb = new Gtk.MenuButton();
-                
-                ContainerMenu menu = Ui.ContainerMenuFactory.create(container);
-                menu.container_status_change_request.connect((status, container) => {
-                    this.container_status_change_request(status, container);
-                });
-                
-                menu.show_all();
-                mb.popup = menu;
-                
+             
                 //For Gtk 3.14+ only
                 row.set_selectable(false);
 
@@ -194,7 +184,17 @@ namespace Ui {
                     row_layout.attach(button_pause,    2, 0, 1, 1);
                 }
 
-                row_layout.attach(mb,                  3, 0, 1, 1);
+                ContainerMenu? menu = Ui.ContainerMenuFactory.create(container);
+                if (null != menu) {
+                    Gtk.MenuButton mb = new Gtk.MenuButton();
+                    menu.show_all();
+                    mb.popup = menu;
+                    menu.container_status_change_request.connect((status, container) => {
+                        this.container_status_change_request(status, container);
+                    });
+                    row_layout.attach(mb,              3, 0, 1, 1);                    
+                }
+
                 row_layout.attach(separator,           0, 2, 5, 2);
                 
                 list_box.insert(row, containers_count);
