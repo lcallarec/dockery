@@ -30,11 +30,14 @@ namespace Docker {
             
             StringBuilder request_builder = new StringBuilder(message); 
             request_builder.append(UnixSocketClient.HTTP_METHOD_HEADER_SUFFIX);
+            
+            string query = request_builder.str;
                 
             var conn = this.create_connection();
                
             try {
-                conn.output_stream.write(request_builder.str.data);
+                stdout.printf("Request : %s", query);
+                conn.output_stream.write(query.data);
             } catch(GLib.IOError e) {
                 string err_message = "IO error : %s".printf(e.message);
                 throw new IO.RequestError.FATAL(err_message);

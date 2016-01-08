@@ -33,8 +33,17 @@ namespace Docker.IO {
                     
                     payload = stream.read_line(null).strip();
                 }
+                
+                stdout.printf("Response status : %d\n", status);
+                
+                foreach (var header in headers.entries) {
+                      stdout.printf("Response header : %s : %s\n", header.key, header.value);
+                }    
+                
+                stdout.printf("Response payload : %s\n", payload);
+                
             } catch (IOError e) {
-                stdout.printf(e.message);
+                stdout.printf("IO error : %s", e.message);
             }
             
             stream.close();

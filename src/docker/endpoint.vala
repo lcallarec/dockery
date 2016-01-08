@@ -87,7 +87,6 @@ namespace Docker {
                 
                 var message_builder = new StringBuilder("GET /containers/json");
                 message_builder.append(filter_builder.build());        
-                stdout.printf(message_builder.str + "\n");
                 return parse_containers_list_payload(this.client.send(message_builder.str).payload, status);
 
             } catch (IO.RequestError e) {
@@ -165,7 +164,6 @@ namespace Docker {
         
             try {
                 var response = this.client.send("POST /containers/%s/start".printf(container.id));
-                stdout.printf("start %d\n", response.status);
                 if (response.status == 204) {
                     return;
                 } else if (response.status == 304) {
@@ -188,7 +186,6 @@ namespace Docker {
         
             try {
                 var response = this.client.send("POST /containers/%s/stop".printf(container.id));
-           stdout.printf("stop %d\n", response.status);
                 if (response.status == 204) {
                     return;
                 } else if (response.status == 304) {
