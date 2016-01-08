@@ -69,6 +69,21 @@ public class ApplicationController : GLib.Object {
         containers_list.container_start_request.connect((container) => {
             try {
                 
+                repository.containers().start(container);
+                string message = "Container %s successfully started".printf(container.id);
+
+                this.refresh_container_list();                
+                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
+                
+            } catch (Docker.IO.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+                          this.refresh_container_list();  
+            }
+        });
+        
+        containers_list.container_stop_request.connect((container) => {
+            try {
+                
                 repository.containers().stop(container);
                 string message = "Container %s successfully stopped".printf(container.id);
 
@@ -77,20 +92,7 @@ public class ApplicationController : GLib.Object {
                 
             } catch (Docker.IO.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
-        });
-        
-        containers_list.container_stop_request.connect((container) => {
-            try {
-                
-                repository.containers().stop(container);
-                string message = "Container %s successfully started".printf(container.id);
-
-                this.refresh_container_list();                
-                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
-                
-            } catch (Docker.IO.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+                          this.refresh_container_list();  
             }
         });
     }

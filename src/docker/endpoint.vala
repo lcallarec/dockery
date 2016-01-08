@@ -165,9 +165,11 @@ namespace Docker {
         
             try {
                 var response = this.client.send("POST /containers/%s/start".printf(container.id));
-                
+                stdout.printf("start %d\n", response.status);
                 if (response.status == 204) {
                     return;
+                } else if (response.status == 304) {
+                    throw new IO.RequestError.FATAL("Container already started");
                 } else if (response.status == 404) {
                     throw new IO.RequestError.FATAL("No such container");
                 } else if (response.status == 500) {
@@ -186,9 +188,11 @@ namespace Docker {
         
             try {
                 var response = this.client.send("POST /containers/%s/stop".printf(container.id));
-                
+           stdout.printf("stop %d\n", response.status);
                 if (response.status == 204) {
                     return;
+                } else if (response.status == 304) {
+                    throw new IO.RequestError.FATAL("Container already stopped");                    
                 } else if (response.status == 404) {
                     throw new IO.RequestError.FATAL("No such container");
                 } else if (response.status == 500) {

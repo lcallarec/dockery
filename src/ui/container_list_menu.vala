@@ -34,7 +34,7 @@ namespace Ui {
                 menu_item.set_image(menu_image);
             } else {
                 menu_item  = new Gtk.ImageMenuItem.with_mnemonic("_Pause container");
-                menu_image.set_from_icon_name("media-playback-stop-symbolic", Gtk.IconSize.MENU);
+                menu_image.set_from_icon_name("media-playback-pause-symbolic", Gtk.IconSize.MENU);
                 menu_item.always_show_image = true;
                 menu_item.set_image(menu_image);
             }

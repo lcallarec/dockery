@@ -171,7 +171,6 @@ namespace Ui {
                 var label_id            = create_id_label(container);
                 var label_creation_date = create_creation_date_label(container);
                 var label_command       = create_command_label(container);
-                var button_destroy      = create_button_destroy(container);
 
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
 
@@ -181,10 +180,8 @@ namespace Ui {
                 row_layout.attach(label_command,       1, 0, 1, 1);
                 row_layout.attach(label_creation_date, 1, 1, 1, 1);
     
-                if (Docker.Model.ContainerStatus.is_active(current_status)) {
-                    Gtk.Button button_start_stop = create_button_stop_start(true, container);
-                    row_layout.attach(button_start_stop,2, 0, 1, 1);
-                }
+                Gtk.Button button_start_stop = create_button_stop_start(Docker.Model.ContainerStatus.is_active(current_status), container);
+                row_layout.attach(button_start_stop,2, 0, 1, 1);
 
                 ContainerMenu? menu = Ui.ContainerMenuFactory.create(container);
                 if (null != menu) {
@@ -221,23 +218,12 @@ namespace Ui {
 
             button.notify["active"].connect(() => {
                 if (button.active) {
-                    this.container_stop_request(container);
-                } else {
                     this.container_start_request(container);
+                } else {
+                    this.container_stop_request(container);
                 }
             });
             
-            return button;
-        }
-
-        private Gtk.Button create_button_destroy(Docker.Model.Container container) {
-            
-            Gtk.Button button = new Gtk.Button.from_icon_name("user-trash-symbolic", Gtk.IconSize.BUTTON);
-
-            button.clicked.connect(() => {
-                this.container_remove_request(container);
-            });
-
             return button;
         }
 
