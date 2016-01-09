@@ -102,13 +102,9 @@ namespace Docker {
             try {
                 var response = this.client.send("POST /containers/%s/pause".printf(container.id));
                 
-                if (response.status == 204) {
-                    return;
-                } else if (response.status == 404) {
-                    throw new IO.RequestError.FATAL("No such container");
-                } else if (response.status == 500) {
-                    throw new IO.RequestError.FATAL("Docker daemon fatal error");
-                }
+                var error_messages = create_error_messages();
+                 
+                this.throw_error_from_status_code(204, response.status, error_messages);
                 
             } catch (IO.RequestError e) {
                 throw new IO.RequestError.FATAL("Error while pausing container %s : %s".printf(container.id, e.message));
@@ -123,13 +119,10 @@ namespace Docker {
             try {
                 var response = this.client.send("POST /containers/%s/unpause".printf(container.id));
                 
-                if (response.status == 204) {
-                    return;
-                } else if (response.status == 404) {
-                    throw new IO.RequestError.FATAL("No such container");
-                } else if (response.status == 500) {
-                    throw new IO.RequestError.FATAL("Docker daemon fatal error");
-                }
+                var error_messages = create_error_messages();
+                error_messages.set(304, "Container already started");
+                 
+                this.throw_error_from_status_code(204, response.status, error_messages);
                 
             } catch (IO.RequestError e) {
                 throw new IO.RequestError.FATAL("Error while unpausing container %s : %s".printf(container.id, e.message));
@@ -144,13 +137,10 @@ namespace Docker {
             try {
                 var response = this.client.send("DELETE /containers/%s".printf(container.id));
                 
-                if (response.status == 204) {
-                    return;
-                } else if (response.status == 404) {
-                    throw new IO.RequestError.FATAL("No such container");
-                } else if (response.status == 500) {
-                    throw new IO.RequestError.FATAL("Docker daemon fatal error");
-                }
+                var error_messages = create_error_messages();
+                error_messages.set(304, "Container already started");
+                 
+                this.throw_error_from_status_code(204, response.status, error_messages);
                 
             } catch (IO.RequestError e) {
                 throw new IO.RequestError.FATAL("Error while killing container %s : %s".printf(container.id, e.message));
@@ -164,15 +154,11 @@ namespace Docker {
         
             try {
                 var response = this.client.send("POST /containers/%s/start".printf(container.id));
-                if (response.status == 204) {
-                    return;
-                } else if (response.status == 304) {
-                    throw new IO.RequestError.FATAL("Container already started");
-                } else if (response.status == 404) {
-                    throw new IO.RequestError.FATAL("No such container");
-                } else if (response.status == 500) {
-                    throw new IO.RequestError.FATAL("Docker daemon fatal error");
-                }
+                
+                var error_messages = create_error_messages();
+                error_messages.set(304, "Container already started");
+                 
+                this.throw_error_from_status_code(204, response.status, error_messages);
                 
             } catch (IO.RequestError e) {
                 throw new IO.RequestError.FATAL("Error while starting container %s : %s".printf(container.id, e.message));
@@ -186,20 +172,32 @@ namespace Docker {
         
             try {
                 var response = this.client.send("POST /containers/%s/stop".printf(container.id));
-                if (response.status == 204) {
-                    return;
-                } else if (response.status == 304) {
-                    throw new IO.RequestError.FATAL("Container already stopped");                    
-                } else if (response.status == 404) {
-                    throw new IO.RequestError.FATAL("No such container");
-                } else if (response.status == 500) {
-                    throw new IO.RequestError.FATAL("Docker daemon fatal error");
-                }
+                
+                var error_messages = create_error_messages();
+                error_messages.set(304, "Container already stopped");
+                 
+                this.throw_error_from_status_code(204, response.status, error_messages);
                 
             } catch (IO.RequestError e) {
                 throw new IO.RequestError.FATAL("Error while stoping container %s : %s".printf(container.id, e.message));
             }
         }        
+        
+        /**
+         * Throw error with the right message or do nothing if actual code == ok_status_code
+         */ 
+        private void throw_error_from_status_code(
+            int ok_status_code,
+            int actual_code,
+            Gee.HashMap<int, string> map
+        ) throws IO.RequestError {
+            if (actual_code != ok_status_code) {
+                string? message = map.get(actual_code);
+                if (message != null) {
+                    throw new IO.RequestError.FATAL(map[actual_code]);                    
+                }
+            }
+        }
         
         /**
          * Parse containers payload
@@ -236,6 +234,18 @@ namespace Docker {
             }
 
             return containers;
+        }
+        
+        /**
+         * Create and return a base HashMap of status code => messages, compatible with all container requests 
+         */ 
+        private Gee.HashMap<int, string> create_error_messages() {
+            
+            var error_messages = new Gee.HashMap<int, string>();
+            error_messages.set(404, "No such container");
+            error_messages.set(500, "Docker daemon fatal error");
+            
+            return error_messages;
         }
     }
 }
