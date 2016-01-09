@@ -1,5 +1,12 @@
 namespace Ui {
     
+    public interface IDockerContainerActionable {
+        public signal void container_status_change_request(Docker.Model.ContainerStatus status, Docker.Model.Container container);
+        public signal void container_remove_request(Docker.Model.Container container);
+        public signal void container_start_request(Docker.Model.Container container);
+        public signal void container_stop_request(Docker.Model.Container container);
+    }
+    
     public interface IDockerList : Gtk.Container {
         /**
          * Remove all child widgets from the container
@@ -9,9 +16,6 @@ namespace Ui {
                 this.remove(widget);
             });
         }
-        
-        public signal void container_status_change_request(Docker.Model.ContainerStatus status, Docker.Model.Container container);
-        public signal void container_remove_request(Docker.Model.Container container);
     }
     
     public class DockerImagesList : IDockerList, Gtk.ListBox {
@@ -26,6 +30,7 @@ namespace Ui {
               foreach(Docker.Model.Image image in images) {
                                             
                 Gtk.ListBoxRow row = new Gtk.ListBoxRow();
+                             
                 //For Gtk 3.14+ only                
                 row.set_selectable(false);
 
@@ -44,7 +49,7 @@ namespace Ui {
                 row_layout.attach(label_creation_date, 1, 1, 1, 1);
                 
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
-                 row_layout.attach(separator, 0, 2, 2, 2);
+                row_layout.attach(separator, 0, 2, 2, 2);
                 
                 size += 1;
 
@@ -124,7 +129,7 @@ namespace Ui {
         }        
     }
     
-    public class DockerContainersList : IDockerList, Gtk.Box {
+    public class DockerContainersList : IDockerList, IDockerContainerActionable, Gtk.Box {
         
         protected Gtk.Notebook notebook = new Gtk.Notebook();
         
@@ -152,7 +157,8 @@ namespace Ui {
                 containers_count++;
                                                                         
                 Gtk.ListBoxRow row = new Gtk.ListBoxRow();
-                //For Gtk 3.14+ only                
+             
+                //For Gtk 3.14+ only
                 row.set_selectable(false);
 
                 Gtk.Grid row_layout = new Gtk.Grid();
@@ -165,8 +171,7 @@ namespace Ui {
                 var label_id            = create_id_label(container);
                 var label_creation_date = create_creation_date_label(container);
                 var label_command       = create_command_label(container);
-                var button_destroy      = create_button_destroy(container);
-                
+
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
 
                 //attach (        Widget child,        int left, int top, int width = 1, int height = 1)
@@ -175,12 +180,26 @@ namespace Ui {
                 row_layout.attach(label_command,       1, 0, 1, 1);
                 row_layout.attach(label_creation_date, 1, 1, 1, 1);
     
-                if (Docker.Model.ContainerStatus.is_active(current_status)) {
-                    Gtk.Button button_pause = create_button_pause(current_status, container);
-                    row_layout.attach(button_pause,    2, 0, 1, 1);
+                Gtk.Button button_start_stop = create_button_stop_start(Docker.Model.ContainerStatus.is_active(current_status), container);
+                row_layout.attach(button_start_stop,2, 0, 1, 1);
+
+                ContainerMenu? menu = Ui.ContainerMenuFactory.create(container);
+                if (null != menu) {
+                    Gtk.MenuButton mb = new Gtk.MenuButton();
+                    menu.show_all();
+                    mb.popup = menu;
+                    
+                    menu.container_status_change_request.connect((status, container) => {
+                        this.container_status_change_request(status, container);
+                    });
+                    
+                    menu.container_remove_request.connect(() => {
+                        this.container_remove_request(container); 
+                    });
+
+                    row_layout.attach(mb,              3, 0, 1, 1);                    
                 }
-                
-                row_layout.attach(button_destroy,      3, 0, 1, 1);
+
                 row_layout.attach(separator,           0, 2, 5, 2);
                 
                 list_box.insert(row, containers_count);
@@ -191,31 +210,20 @@ namespace Ui {
             return containers_count;
         }
 
-        private Gtk.Button create_button_pause(Docker.Model.ContainerStatus current_status, Docker.Model.Container container) {
+        private Gtk.Button create_button_stop_start(bool is_active, Docker.Model.Container container) {
  
-            Ui.PauseButton button = new Ui.PauseButton.from_active_rule(() => {
-                return current_status == Docker.Model.ContainerStatus.PAUSED;
+            Ui.StartStopButton button = new Ui.StartStopButton.from_active_rule(() => {
+                return is_active;
             });
 
             button.notify["active"].connect(() => {
                 if (button.active) {
-                    this.container_status_change_request(Docker.Model.ContainerStatus.RUNNING, container);
+                    this.container_start_request(container);
                 } else {
-                    this.container_status_change_request(Docker.Model.ContainerStatus.PAUSED, container);
+                    this.container_stop_request(container);
                 }
             });
             
-            return button;
-        }
-
-        private Gtk.Button create_button_destroy(Docker.Model.Container container) {
-            
-            Gtk.Button button = new Gtk.Button.from_icon_name("user-trash-symbolic", Gtk.IconSize.BUTTON);
-
-            button.clicked.connect(() => {
-                this.container_remove_request(container);
-            });
-
             return button;
         }
 
@@ -272,7 +280,6 @@ namespace Ui {
 
             var label = new Gtk.Label(container.command);
             label.halign = Gtk.Align.START;
-            label.valign = Gtk.Align.START;
             label.set_hexpand(true);
             label.set_selectable(true);
 
@@ -293,3 +300,5 @@ namespace Ui {
         }
     }
 }
+
+
