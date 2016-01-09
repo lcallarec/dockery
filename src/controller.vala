@@ -29,12 +29,12 @@ public class ApplicationController : GLib.Object {
                     repository.containers().unpause(container);
                     message = "Container %s successfully paused".printf(container.id);
                 }
-
-                this.refresh_container_list();                
+                this.refresh_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
                 
             } catch (Docker.IO.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+                this.refresh_container_list();
             }
         });
         
@@ -71,13 +71,12 @@ public class ApplicationController : GLib.Object {
                 
                 repository.containers().start(container);
                 string message = "Container %s successfully started".printf(container.id);
-
-                this.refresh_container_list();                
+                this.refresh_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
                 
             } catch (Docker.IO.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                          this.refresh_container_list();  
+                this.refresh_container_list();
             }
         });
         
@@ -86,13 +85,11 @@ public class ApplicationController : GLib.Object {
                 
                 repository.containers().stop(container);
                 string message = "Container %s successfully stopped".printf(container.id);
-
-                this.refresh_container_list();                
+                this.refresh_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
                 
             } catch (Docker.IO.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                          this.refresh_container_list();  
             }
         });
     }
@@ -112,6 +109,8 @@ public class ApplicationController : GLib.Object {
                 
             } catch (Docker.IO.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+                this.refresh_image_list();
+                this.refresh_container_list();
             }
         });
     }
