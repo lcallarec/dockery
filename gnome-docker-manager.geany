@@ -28,13 +28,17 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=0
-FILE_NAME_0=1793;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fui%2Fdocker_lists.vala;0;4
-FILE_NAME_1=1564;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fui%2Fcontainer_list_menu.vala;0;4
-FILE_NAME_2=1738;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fdocker%2Fmodel.vala;0;4
-FILE_NAME_3=4440;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fcontroller.vala;0;4
-FILE_NAME_4=3065;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fmain.vala;0;4
-FILE_NAME_5=1327;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fui%2Fmain.vala;0;4
+current_page=3
+FILE_NAME_0=2151;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fui%2Fheader.vala;0;4
+FILE_NAME_1=0;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fui%2Fdocker%2Flist%2Fimages.vala;0;4
+FILE_NAME_2=1493;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fui%2Fdocker%2Fcommon.vala;0;4
+FILE_NAME_3=5221;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fcontroller.vala;0;4
+FILE_NAME_4=623;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fui%2Fdocker%2Fmenus.vala;0;4
+FILE_NAME_5=1739;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fdocker%2Fclient.vala;0;4
+FILE_NAME_6=0;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fui%2Fdocker%2Flist%2Fcontainers.vala;0;4
+FILE_NAME_7=650;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fui%2Fmain.vala;0;4
+FILE_NAME_8=1530;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fmain.vala;0;4
+FILE_NAME_9=0;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fui%2Fsidebar.vala;0;4
 
 [VTE]
 last_dir=/home/lcallarec/projets/git/gnome-docker-manager/src

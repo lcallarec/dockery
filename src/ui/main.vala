@@ -2,16 +2,25 @@ namespace Ui {
 
    public class MainApplicationView : GLib.Object {
 
+        public HeaderBar                     headerbar;
+        public Gtk.InfoBar                   infobar;
         public Gtk.Box                       workspace;
         public SideBar                       sidebar;
         public Ui.Docker.List.Containers     containers;
         public Ui.Docker.List.Images         images;
         private ListBuilder                  docker_view;
 
-        public MainApplicationView() {
+        public MainApplicationView(string docker_host) {
+
             this.workspace = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+
+            this.headerbar = new Ui.HeaderBar(docker_host);
+
+            this.infobar = new Gtk.InfoBar();
+            infobar.set_no_show_all(true);
+
             this.docker_view = new ListBuilder();
-            
+           
             Gtk.Stack stack = new Gtk.Stack();
             stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE);
 

@@ -54,9 +54,6 @@ public class DockerManager : Gtk.Window {
         //Add application icons to degault icon theme
         new Gtk.IconTheme().get_default().add_resource_path("/org/lcallarec/gnome-docker-manager/resources/icons");
 
-        //Repository
-        this.repository = new Docker.Repository(new Docker.UnixSocketClient("d"));
-
         //Titlebar
         var titlebar = create_titlebar();
         this.set_titlebar(titlebar);
@@ -65,25 +62,19 @@ public class DockerManager : Gtk.Window {
         Gtk.Box main_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         this.add(main_box);
 
-        //Headerbar
-        var headerbar = create_headerbar(docker_host);
-        main_box.pack_start(headerbar, false, true, 5);
-        main_box.pack_start(new Gtk.Separator(Gtk.Orientation.HORIZONTAL), false, true, 0);
-
-        //InfoBar
-        var infobar = create_infobar();
-        main_box.pack_start(infobar, false, true, 1);
-
         //// START
         //Main Views
-        Ui.MainApplicationView views = new Ui.MainApplicationView();
+        Ui.MainApplicationView views = new Ui.MainApplicationView(docker_host);
 
         //Workspace
+        main_box.pack_start(views.headerbar, false, true, 5);
+        main_box.pack_start(new Gtk.Separator(Gtk.Orientation.HORIZONTAL), false, true, 0);
+        main_box.pack_start(views.infobar, false, true, 1);
         main_box.pack_start(views.workspace, true, true, 0);
 
         //ApplicationController
-        this.ac = new ApplicationController(this, views, new MessageDispatcher(infobar));
-        ac.listen_headerbar(headerbar);
+        this.ac = new ApplicationController(this, views, new MessageDispatcher(views.infobar));
+        ac.listen_headerbar();
         ac.listen_container_view();
     }
 
@@ -94,19 +85,6 @@ public class DockerManager : Gtk.Window {
         titlebar.title = "Gnome Docker Manager";
 
         return titlebar;
-    }
-
-    private Ui.HeaderBar create_headerbar(string docker_host) {
-
-        Ui.HeaderBar headerbar = new Ui.HeaderBar(docker_host);
-        return headerbar;
-    }
-
-    private Gtk.InfoBar create_infobar() {
-
-        Gtk.InfoBar infobar = new Gtk.InfoBar();
-        infobar.set_no_show_all(true);
-        return infobar;
     }
 }
 

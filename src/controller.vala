@@ -90,9 +90,9 @@ public class ApplicationController : GLib.Object {
         });
     }
 
-    public void listen_headerbar(Ui.HeaderBar headerbar) {
+    public void listen_headerbar() {
 
-        headerbar.docker_daemon_lookup_request.connect((docker_path) => {
+        view.headerbar.docker_daemon_lookup_request.connect((docker_path) => {
 
             try {
 
@@ -129,6 +129,17 @@ public class ApplicationController : GLib.Object {
     }
 
     protected Docker.Repository create_repository(string docker_path) {
-        return new Docker.Repository(new Docker.UnixSocketClient(docker_path));
+        
+        var client = new Docker.UnixSocketClient(docker_path);
+        
+        client.response_success.connect((response) => {
+            this.view.headerbar.connected_to_docker_daemon(true);
+        });
+        
+        client.request_error.connect((response) => {
+            this.view.headerbar.connected_to_docker_daemon(false);
+        });
+        
+        return new Docker.Repository(client);
     }
 }
