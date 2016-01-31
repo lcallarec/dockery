@@ -15,7 +15,7 @@ indent_type=0
 indent_hard_tab_width=8
 detect_indent=false
 detect_indent_width=false
-indent_mode=2
+indent_mode=3
 
 [project]
 name=gnome-docker-manager
@@ -28,14 +28,16 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=1
-FILE_NAME_0=1440;Vala;0;EUTF-8;1;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fdocker%2Frepository.vala;0;4
-FILE_NAME_1=216;Vala;0;EUTF-8;1;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fmain.vala;0;4
-FILE_NAME_2=159;Vala;0;EUTF-8;1;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fview%2Fimages.vala;0;4
-FILE_NAME_3=156;Vala;0;EUTF-8;1;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fstore%2Fstore.vala;0;4
+current_page=0
+FILE_NAME_0=1793;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fui%2Fdocker_lists.vala;0;4
+FILE_NAME_1=1564;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fui%2Fcontainer_list_menu.vala;0;4
+FILE_NAME_2=1738;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fdocker%2Fmodel.vala;0;4
+FILE_NAME_3=4440;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fcontroller.vala;0;4
+FILE_NAME_4=3065;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fmain.vala;0;4
+FILE_NAME_5=1327;Vala;0;EUTF-8;0;1;0;%2Fhome%2Flcallarec%2Fprojets%2Fgit%2Fgnome-docker-manager%2Fsrc%2Fui%2Fmain.vala;0;4
 
 [VTE]
-last_dir=/home/lcallarec/projets/git
+last_dir=/home/lcallarec/projets/git/gnome-docker-manager/src
 
 [prjorg]
 source_patterns=*.c;*.C;*.cpp;*.cxx;*.c++;*.cc;*.m;
@@ -51,5 +53,8 @@ ValaFT_00_CM=valac -c "%f"
 ValaFT_00_WD=
 filetypes=Vala;
 ValaFT_01_LB=_Construire
-ValaFT_01_CM=valac -g --save-temps --pkg gtk+-3.0 --pkg libsoup-2.4  --pkg gio-2.0  --pkg gio-unix-2.0 --pkg gee-0.8 --pkg json-glib-1.0 "main.vala" docker/*.vala  store/*.vala   view/*.vala -o gdocker
+ValaFT_01_CM=valac -g --save-temps --pkg gtk+-3.0 --pkg libsoup-2.4  --pkg gio-2.0  --pkg gio-unix-2.0 --pkg gee-0.8 --pkg json-glib-1.0 "main.vala" docker/*.vala  view/*.vala -o gdocker
 ValaFT_01_WD=/home/lcallarec/projets/git/gnome-docker-manager/src
+NF_00_LB=_Make
+NF_00_CM=make
+NF_00_WD=
