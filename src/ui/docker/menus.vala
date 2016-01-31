@@ -1,33 +1,35 @@
-namespace Ui {
+namespace Ui.Docker.Menu {
+    
+    using global::Docker.Model;
     
     public class ContainerMenuFactory {
-        public static ContainerMenu? create(Docker.Model.Container container) {
-            
+        public static ContainerMenu? create(Container container) {
+
             switch(container.status) {
-                case Docker.Model.ContainerStatus.RUNNING:
+                case ContainerStatus.RUNNING:
                     return new RunningContainerMenu(container);
-                case Docker.Model.ContainerStatus.PAUSED:
+                case ContainerStatus.PAUSED:
                     return new PausedContainerMenu(container);
-                case Docker.Model.ContainerStatus.CREATED:
+                case ContainerStatus.CREATED:
                     return null;
-                case Docker.Model.ContainerStatus.RESTARTING:
+                case ContainerStatus.RESTARTING:
                     return null;
-                case Docker.Model.ContainerStatus.EXITED:
+                case ContainerStatus.EXITED:
                     return null;
                 default:
                     return null;
             }
         }
     }
-    
-    internal interface IPauseableContainerMenu : IDockerContainerActionable, Gtk.Menu {
-       
-        protected void append_play_pause_menu_item(Docker.Model.Container container) {
-           
+
+    internal interface PauseableContainer : Ui.Docker.ContainerActionable, Gtk.Menu {
+
+        protected void append_play_pause_menu_item(Container container) {
+
             Gtk.ImageMenuItem menu_item;
             var menu_image = new Gtk.Image();
-           
-            if (container.status == Docker.Model.ContainerStatus.PAUSED) {
+
+            if (container.status == ContainerStatus.PAUSED) {
                 menu_item  = new Gtk.ImageMenuItem.with_mnemonic("_Unpause container");
                 menu_image.set_from_icon_name("media-playback-start-symbolic", Gtk.IconSize.MENU);
                 menu_item.always_show_image = true;
@@ -38,70 +40,70 @@ namespace Ui {
                 menu_item.always_show_image = true;
                 menu_item.set_image(menu_image);
             }
-                       
+
             this.add_play_pause_menu_item_listener(menu_item, container);
-            
+
             this.add(menu_item);
        }
-       
-       protected void add_play_pause_menu_item_listener(Gtk.MenuItem menu_item, Docker.Model.Container container) {
+
+       protected void add_play_pause_menu_item_listener(Gtk.MenuItem menu_item, Container container) {
             menu_item.activate.connect(() => {
-                if (container.status == Docker.Model.ContainerStatus.PAUSED) {
-                    this.container_status_change_request(Docker.Model.ContainerStatus.RUNNING, container);
-                } else if (container.status == Docker.Model.ContainerStatus.RUNNING) {
-                    this.container_status_change_request(Docker.Model.ContainerStatus.PAUSED, container);
+                if (container.status == ContainerStatus.PAUSED) {
+                    this.container_status_change_request(ContainerStatus.RUNNING, container);
+                } else if (container.status == ContainerStatus.RUNNING) {
+                    this.container_status_change_request(ContainerStatus.PAUSED, container);
                 }
             });
        }
     }
-  
-    public interface IRemoveableContainerMenu : IDockerContainerActionable, Gtk.Menu {
-        
-        protected void append_remove_menu_item(Docker.Model.Container container) {
+
+    public interface RemoveableContainer : Ui.Docker.ContainerActionable, Gtk.Menu {
+
+        protected void append_remove_menu_item(Container container) {
             var menu_item  = new Gtk.ImageMenuItem.with_mnemonic("_Remove");
             var menu_image = new Gtk.Image();
             menu_image.set_from_icon_name("user-trash-symbolic", Gtk.IconSize.MENU);
             menu_item.always_show_image = true;
             menu_item.set_image(menu_image);
-                
+
             menu_item.activate.connect(() => {
                 this.container_remove_request(container);
             });
-            
+
             this.add(menu_item);
         }
-    }    
-    
-    public class ContainerMenu : IDockerContainerActionable, IRemoveableContainerMenu, Gtk.Menu {
-       
-        protected Docker.Model.Container container;
-        
-        public ContainerMenu(Docker.Model.Container container) {
+    }
+
+    public class ContainerMenu : Ui.Docker.ContainerActionable, RemoveableContainer, Gtk.Menu {
+
+        protected Container container;
+
+        public ContainerMenu(Container container) {
             this.container = container;
         }
- 
+
         protected void append_separator_menu_item() {
             this.add(new Gtk.SeparatorMenuItem());
         }
     }
-    
-    internal class RunningContainerMenu : IPauseableContainerMenu, ContainerMenu {
-        
-        public RunningContainerMenu(Docker.Model.Container container) {
-            
+
+    internal class RunningContainerMenu : PauseableContainer, ContainerMenu {
+
+        public RunningContainerMenu(Container container) {
+
             base(container);
-            
+
             this.append_play_pause_menu_item(container);
             this.append_separator_menu_item();
             this.append_remove_menu_item(container);
         }
     }
-    
-    internal class PausedContainerMenu : IPauseableContainerMenu, ContainerMenu {
 
-        public PausedContainerMenu(Docker.Model.Container container) {
+    internal class PausedContainerMenu : PauseableContainer, ContainerMenu {
+
+        public PausedContainerMenu(Container container) {
             base(container);
-            
+
             this.append_play_pause_menu_item(container);
             this.append_separator_menu_item();
             this.append_remove_menu_item(container);

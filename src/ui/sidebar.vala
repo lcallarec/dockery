@@ -1,5 +1,6 @@
 namespace Ui {
-    private class SideBar : Gtk.ListBox {
+    
+    public class SideBar : Gtk.ListBox {
         
         private const int8 ROW_HEIGHT = 30;
         

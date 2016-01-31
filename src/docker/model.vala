@@ -109,7 +109,13 @@ namespace Docker.Model {
                 return _exited;
             }
         }
-
+        
+        public int length {
+            get {
+                return running.size + paused.size + restarting.size + exited.size;
+            }
+        }
+        
        /**
         * Add an array of containers to the given status stack
         */
