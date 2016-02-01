@@ -56,7 +56,7 @@ namespace Docker.Model {
             
             set {
                 _names = value;
-                name   = value[0];
+                name   = value[0].replace("/", "");
             }
         }
         
