@@ -44,7 +44,7 @@ public class ApplicationController : GLib.Object {
                 "Really remove the container %s (%s)?".printf(container.name, container.id)
             );
 
-            msg.response.connect ((response_id) => {
+            msg.response.connect((response_id) => {
                 switch (response_id) {
                     case Gtk.ResponseType.OK:
                         repository.containers().remove(container);
@@ -73,7 +73,7 @@ public class ApplicationController : GLib.Object {
 
             } catch (Docker.IO.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                this.view.containers.init(null);
+                this.init_container_list();
             }
         });
 
@@ -88,6 +88,34 @@ public class ApplicationController : GLib.Object {
             } catch (Docker.IO.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
+        });
+        
+        view.containers.container_rename_request.connect((container, label) => {
+             
+            var pop = new Gtk.Popover(label);
+            pop.position = Gtk.PositionType.BOTTOM;
+             
+            var box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+            box.margin = 5;
+            box.pack_start(new Gtk.Label("New name"), false, true, 5);
+             
+            var entry = new Gtk.Entry();
+            entry.set_text(label.get_text());
+             
+            entry.activate.connect (() => {
+                try {
+                    repository.containers().rename(container, entry.text);
+                    this.init_container_list();                     
+                } catch (Docker.IO.RequestError e) {
+                    message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+                }
+            });
+             
+            box.pack_end(entry, false, true, 5);
+            
+            pop.add(box);
+             
+            pop.show_all();
         });
     }
 
