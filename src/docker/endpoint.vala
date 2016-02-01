@@ -197,7 +197,7 @@ namespace Docker {
                 this.throw_error_from_status_code(204, response.status, error_messages);
                 
             } catch (IO.RequestError e) {
-                throw new IO.RequestError.FATAL("Error while stoping container %s : %s".printf(container.id, e.message));
+                throw new IO.RequestError.FATAL("Error while renaming container %s : %s".printf(container.id, e.message));
             }
         }       
         
