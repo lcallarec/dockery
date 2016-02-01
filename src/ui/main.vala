@@ -28,11 +28,15 @@ namespace Ui {
             workspace.pack_start(sidebar, false, true, 0);
 
             this.containers = this.docker_view.create_containers_view();
+            this.containers.init(null);
+                        
             Gtk.ScrolledWindow containers_scrolled = new Gtk.ScrolledWindow(null, null);
             containers_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
             containers_scrolled.add(containers);
 
             this.images = this.docker_view.create_images_view();
+            this.images.init(null);
+            
             Gtk.ScrolledWindow images_scrolled = new Gtk.ScrolledWindow(null, null);
             images_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
             images_scrolled.add(images);

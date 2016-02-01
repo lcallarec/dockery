@@ -6,13 +6,16 @@ namespace Ui.Docker.List {
 
         private ImageViewable list;
 
-        public int refresh(Image[] images, bool show_after_refresh = false) {
+        /**
+         * Init the images view from a given (nullable) list of images 
+         */
+        public int init(Image[]? images, bool show_after_refresh = true) {
             
             if (show_after_refresh == true) {
                 this.flush();   
             }
             
-            if (images.length > 0) {
+            if (null != images && images.length > 0) {
                 list = new ImagesFilled();
             } else {
                 list = new ImagesEmpty();
@@ -20,7 +23,7 @@ namespace Ui.Docker.List {
 
             this.pack_start(list, true, true, 0);
             this.show_all();
-            return list.refresh(images, show_after_refresh);
+            return list.init(images, show_after_refresh);
         }
     }
 
@@ -37,7 +40,7 @@ namespace Ui.Docker.List {
          * Flush all child widgets from the view
          * Add new rows from images array
          */
-        public int refresh(Image[] images, bool show_after_refresh = false) {
+        public int init(Image[]? images, bool show_after_refresh = true) {
             return 0;
         }
     }
@@ -47,10 +50,9 @@ namespace Ui.Docker.List {
         protected int size = 0;
 
         /**
-         * Flush all child widgets from the view
-         * Add new rows from images array
+         * Init the images view from a given (nullable) list of images
          */
-        public int refresh(Image[] images, bool show_after_refresh = false) {
+        public int init(Image[]? images, bool show_after_refresh = true) {
             this.flush();
             int images_count = this.hydrate(images);
 

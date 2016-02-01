@@ -2,7 +2,7 @@ namespace Ui.Docker {
     
     using global::Docker.Model;
     
-    public interface ContainerActionable {
+    public interface ContainerActionable : GLib.Object {
         public signal void container_status_change_request(ContainerStatus status, Container container);
         public signal void container_remove_request(Container container);
         public signal void container_start_request(Container container);
@@ -23,19 +23,20 @@ namespace Ui.Docker {
     public interface ImageViewable : Gtk.Widget {
 
         /**
-         * Flush all child widgets from the view
-         * Add new rows from images array
+         * Init the images view from a given (nullable) list of images
          */
-        public abstract int refresh(Image[] images, bool show_after_refresh = false);
+        public abstract int init(Image[]? images, bool show_after_refresh = true);
     }
 
+    /**
+     * 
+     */ 
     public interface ContainerViewable : Gtk.Widget {
 
         /**
-         * Flush all child widgets from the view
-         * Add new rows from containers array
+         * Init the container view from a given (nullable) list of containers and return it
          */
-        public abstract int refresh(Containers containers, bool show_after_refresh = false);
+        public abstract Ui.Docker.List.Containers init(Containers? containers, bool show_after_refresh = true);
     }
     
     public interface IconMessageBoxBuilder {
