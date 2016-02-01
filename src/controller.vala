@@ -17,7 +17,7 @@ public class ApplicationController : GLib.Object {
     public void listen_container_view() {
 
         view.containers.container_status_change_request.connect((requested_status, container) => {
-
+                stdout.puts("CHANGE STATUS\n");
             try {
                 string message = "";
                 if (requested_status == Docker.Model.ContainerStatus.PAUSED) {
@@ -27,7 +27,7 @@ public class ApplicationController : GLib.Object {
                     repository.containers().unpause(container);
                     message = "Container %s successfully paused".printf(container.id);
                 }
-                this.refresh_container_list();
+                this.init_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
 
             } catch (Docker.IO.RequestError e) {
@@ -48,7 +48,7 @@ public class ApplicationController : GLib.Object {
                 switch (response_id) {
                     case Gtk.ResponseType.OK:
                         repository.containers().remove(container);
-                        this.refresh_container_list();
+                        this.init_container_list();
                         break;
                     case Gtk.ResponseType.CANCEL:
                         break;
@@ -65,14 +65,15 @@ public class ApplicationController : GLib.Object {
 
         view.containers.container_start_request.connect((container) => {
             try {
+                stdout.puts("START CON\n");
                 repository.containers().start(container);
                 string message = "Container %s successfully started".printf(container.id);
-                this.refresh_container_list();
+                this.init_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
 
             } catch (Docker.IO.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                this.view.containers.refresh(null, true);
+                this.view.containers.init(null);
             }
         });
 
@@ -81,7 +82,7 @@ public class ApplicationController : GLib.Object {
 
                 repository.containers().stop(container);
                 string message = "Container %s successfully stopped".printf(container.id);
-                this.refresh_container_list();
+                this.init_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
 
             } catch (Docker.IO.RequestError e) {
@@ -90,33 +91,33 @@ public class ApplicationController : GLib.Object {
         });
     }
 
-    public void listen_headerbar(Ui.HeaderBar headerbar) {
+    public void listen_headerbar() {
 
-        headerbar.docker_daemon_lookup_request.connect((docker_path) => {
+        view.headerbar.docker_daemon_lookup_request.connect((docker_path) => {
 
             try {
 
                 this.repository = create_repository(docker_path);
 
-                this.refresh_image_list();
-                this.refresh_container_list();
+                this.init_image_list();
+                this.init_container_list();
 
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
 
             } catch (Docker.IO.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                this.view.images.refresh(null, true);
-                this.view.containers.refresh(new Docker.Model.Containers(), true);
+                this.view.images.init(null);
+                this.view.containers.init(null);
             }
         });
     }
 
-    protected void refresh_image_list() throws Docker.IO.RequestError {
+    protected void init_image_list() throws Docker.IO.RequestError {
         Docker.Model.Image[]? images = repository.images().list();
-        this.view.images.refresh(images, true);
+        this.view.images.init(images);
     }
 
-    protected void refresh_container_list() throws Docker.IO.RequestError {
+    protected void init_container_list() throws Docker.IO.RequestError {
 
         var container_collection = new Docker.Model.Containers();
 
@@ -125,10 +126,21 @@ public class ApplicationController : GLib.Object {
             container_collection.add(status, containers);
         }
 
-        this.view.containers.refresh(container_collection, true);
+        this.view.containers.init(container_collection);
     }
 
     protected Docker.Repository create_repository(string docker_path) {
-        return new Docker.Repository(new Docker.UnixSocketClient(docker_path));
+        
+        var client = new Docker.UnixSocketClient(docker_path);
+        
+        client.response_success.connect((response) => {
+            this.view.headerbar.connected_to_docker_daemon(true);
+        });
+        
+        client.request_error.connect((response) => {
+            this.view.headerbar.connected_to_docker_daemon(false);
+        });
+        
+        return new Docker.Repository(client);
     }
 }

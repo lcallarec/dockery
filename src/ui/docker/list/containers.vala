@@ -1,61 +1,43 @@
 namespace Ui.Docker.List {
     
     using global::Docker.Model;
-    
-    public class Containers : ContainerViewable, ContainerActionable, Flushable, Gtk.Box {
+        
+   
+    public class Containers : Flushable, ContainerViewable, ContainerActionable, Gtk.Box {
 
-        private ContainerViewable list;
-
-        public int refresh(global::Docker.Model.Containers containers, bool show_after_refresh = false) {
-            
-            if (show_after_refresh == true) {
-                this.flush();   
-            }
-            
-            if (containers.length > 0) {
-                list = new ContainersFilled();
-            } else {
-                list = new ContainersEmpty();
-            }
-
-            this.pack_start(list, true, true, 0);
-            this.show_all();
-            return list.refresh(containers, show_after_refresh);
-        }
-    }
-    
-    public class ContainersEmpty : Flushable, ContainerViewable, ContainerActionable, Gtk.VBox {
-
-        public ContainersEmpty() {
-            
-            var box = IconMessageBoxBuilder.create_icon_message_box("No container found", "docker-symbolic");
-            
-            this.pack_start(box, true, true, 0);
-        }
+        protected Gtk.Notebook notebook;
+        protected Gtk.Box empty_box;
 
         /**
-         * Flush all child widgets from the view
-         * Add new rows from containers list
-         */
-        public int refresh(global::Docker.Model.Containers containers, bool show_after_refresh = false) {
-            return 0;
-        }
-    }
+         * Init the container view from a given (nullable) list of containers and return it
+         */ 
+        public Containers init(global::Docker.Model.Containers? containers, bool show_after_refresh = true) {
+            
+            this.flush();
+            
+            if (null == containers) {
+                this.notebook  =  null;
+                this.empty_box = IconMessageBoxBuilder.create_icon_message_box("No container found", "docker-symbolic");
+                this.pack_start(this.empty_box, true, true, 0);
+                return this;
+            }
+            
+            this.notebook  =  new Gtk.Notebook();
+            this.empty_box = null;
 
-    
-    public class ContainersFilled : Flushable, ContainerViewable, ContainerActionable, Gtk.Box {
+            this.pack_start(this.notebook, true, true, 0);            
+            foreach(ContainerStatus status in ContainerStatus.all()) {
+                var c = containers.get_by_status(status);
+                if (c.is_empty == false) {
+                    this.hydrate(status, c);
+                }
+            }
+            
+            if (true == show_after_refresh) {
+                this.show_all();
+            }
 
-        protected Gtk.Notebook notebook = new Gtk.Notebook();
-
-        public void flush() {
-            notebook.@foreach((widget) => {
-                notebook.detach_tab(widget);
-            });
-        }
-
-        public ContainersFilled() {
-            notebook.name = "notebook";
-            pack_start(notebook, true, true, 0);
+            return this;
         }
 
         /**
@@ -65,8 +47,8 @@ namespace Ui.Docker.List {
 
             int containers_count = 0;
             Gtk.ListBox list_box = new Gtk.ListBox();
-
-             foreach(Container container in containers) {
+            
+            foreach(Container container in containers) {
 
                 containers_count++;
 
@@ -124,6 +106,16 @@ namespace Ui.Docker.List {
             return containers_count;
         }
 
+        public void flush() {
+            if (null != this.empty_box) {
+                this.remove(this.empty_box);                
+            }
+
+            if (null != this.notebook) {
+                this.remove(this.notebook);
+            }
+        }
+
         private Gtk.Button create_button_stop_start(bool is_active, Container container) {
 
             Ui.StartStopButton button = new Ui.StartStopButton.from_active_rule(() => {
@@ -139,27 +131,6 @@ namespace Ui.Docker.List {
             });
 
             return button;
-        }
-
-        /**
-         * Flush all child widgets from the view
-         * Add new rows from containers list
-         */
-        public int refresh(global::Docker.Model.Containers containers, bool show_after_refresh = false) {
-            this.flush();
-            int containers_count = 0;
-            foreach(ContainerStatus status in ContainerStatus.all()) {
-                var c = containers.get_by_status(status);
-                if (c.is_empty == false) {
-                    containers_count = this.hydrate(status, c);
-                }
-            }
-            this.show_all();
-            if (true == show_after_refresh) {
-                this.show_all();
-            }
-
-            return containers_count;
         }
 
         /**

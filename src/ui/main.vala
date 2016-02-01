@@ -2,16 +2,25 @@ namespace Ui {
 
    public class MainApplicationView : GLib.Object {
 
+        public HeaderBar                     headerbar;
+        public Gtk.InfoBar                   infobar;
         public Gtk.Box                       workspace;
         public SideBar                       sidebar;
         public Ui.Docker.List.Containers     containers;
         public Ui.Docker.List.Images         images;
         private ListBuilder                  docker_view;
 
-        public MainApplicationView() {
+        public MainApplicationView(string docker_host) {
+
             this.workspace = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+
+            this.headerbar = new Ui.HeaderBar(docker_host);
+
+            this.infobar = new Gtk.InfoBar();
+            infobar.set_no_show_all(true);
+
             this.docker_view = new ListBuilder();
-            
+           
             Gtk.Stack stack = new Gtk.Stack();
             stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE);
 
@@ -19,11 +28,15 @@ namespace Ui {
             workspace.pack_start(sidebar, false, true, 0);
 
             this.containers = this.docker_view.create_containers_view();
+            this.containers.init(null);
+                        
             Gtk.ScrolledWindow containers_scrolled = new Gtk.ScrolledWindow(null, null);
             containers_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
             containers_scrolled.add(containers);
 
             this.images = this.docker_view.create_images_view();
+            this.images.init(null);
+            
             Gtk.ScrolledWindow images_scrolled = new Gtk.ScrolledWindow(null, null);
             images_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
             images_scrolled.add(images);
