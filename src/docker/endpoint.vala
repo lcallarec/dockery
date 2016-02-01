@@ -156,7 +156,7 @@ namespace Docker {
                 var response = this.client.send("POST /containers/%s/start".printf(container.id));
                 
                 var error_messages = create_error_messages();
-                error_messages.set(304, "Container already started");
+                error_messages.set(409, "Name already assigned to another container");
                  
                 this.throw_error_from_status_code(204, response.status, error_messages);
                 
@@ -165,7 +165,7 @@ namespace Docker {
             }
         }
         
-       /**
+        /**
          * Start a single container
          */
         public void stop(Docker.Model.Container container) throws IO.RequestError {
@@ -182,6 +182,24 @@ namespace Docker {
                 throw new IO.RequestError.FATAL("Error while stoping container %s : %s".printf(container.id, e.message));
             }
         }        
+        
+        /**
+         * Rename a single container
+         */
+        public void rename(Docker.Model.Container container, string name) throws IO.RequestError {
+        
+            try {
+                var response = this.client.send("POST /containers/%s/rename?name=%s".printf(container.id, name));
+                
+                var error_messages = create_error_messages();
+                error_messages.set(304, "Container already stopped");
+                 
+                this.throw_error_from_status_code(204, response.status, error_messages);
+                
+            } catch (IO.RequestError e) {
+                throw new IO.RequestError.FATAL("Error while stoping container %s : %s".printf(container.id, e.message));
+            }
+        }       
         
         /**
          * Throw error with the right message or do nothing if actual code == ok_status_code
