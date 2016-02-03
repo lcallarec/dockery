@@ -93,20 +93,20 @@ public class DockerManager : Gtk.Window {
  */
 public class MessageDispatcher : GLib.Object {
 
-    private Gtk.InfoBar dialog;
+    private Gtk.InfoBar infobar;
 
     private Gtk.Label label;
 
-    public MessageDispatcher(Gtk.InfoBar infobar) {
-        dialog = infobar;
-        label  = new Gtk.Label(null);
-        dialog.get_content_area().add(label);
+    public MessageDispatcher(Gtk.InfoBar bar) {
+        infobar = bar;
+        label   = new Gtk.Label(null);
+        infobar.get_content_area().add(label);
     }
 
     public void dispatch(Gtk.MessageType type, string message) {
-        dialog.set_message_type(type);
+        infobar.set_message_type(type);
         label.label = message;
-        dialog.show();
+        infobar.show();
         label.show();
     }
 }
