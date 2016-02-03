@@ -93,6 +93,11 @@ namespace Ui.Docker.List {
                         this.container_remove_request(container);
                     });
 
+                    menu.container_rename_request.connect(() => {
+                        this.container_rename_request(container, label_name);
+                    });
+
+
                     row_layout.attach(mb,              3, 0, 1, 1);
                 }
 

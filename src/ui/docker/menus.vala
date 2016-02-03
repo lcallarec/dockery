@@ -57,10 +57,28 @@ namespace Ui.Docker.Menu {
        }
     }
 
+    public interface RenamableContainer:  Ui.Docker.ContainerActionable, Gtk.Menu {
+         
+         protected void append_rename_menu_item(Container container) {
+
+            var menu_item  = new Gtk.ImageMenuItem.with_mnemonic("Re_name container");
+            var menu_image = new Gtk.Image();
+            menu_image.set_from_icon_name("view-more-horizontal-symbolic", Gtk.IconSize.MENU);
+            menu_item.always_show_image = true;
+            menu_item.set_image(menu_image);
+
+            menu_item.activate.connect(() => {
+                this.container_rename_request(container);
+            });
+
+            this.add(menu_item);
+       }
+    }
+
     public interface RemoveableContainer : Ui.Docker.ContainerActionable, Gtk.Menu {
 
         protected void append_remove_menu_item(Container container) {
-            var menu_item  = new Gtk.ImageMenuItem.with_mnemonic("_Remove");
+            var menu_item  = new Gtk.ImageMenuItem.with_mnemonic("_Remove container");
             var menu_image = new Gtk.Image();
             menu_image.set_from_icon_name("user-trash-symbolic", Gtk.IconSize.MENU);
             menu_item.always_show_image = true;
@@ -74,12 +92,13 @@ namespace Ui.Docker.Menu {
         }
     }
 
-    public class ContainerMenu : Ui.Docker.ContainerActionable, RemoveableContainer, Gtk.Menu {
+    public class ContainerMenu : Ui.Docker.ContainerActionable, RemoveableContainer, RenamableContainer, Gtk.Menu {
 
         protected Container container;
 
         public ContainerMenu(Container container) {
             this.container = container;
+            this.append_rename_menu_item(container);
         }
 
         protected void append_separator_menu_item() {
@@ -92,7 +111,7 @@ namespace Ui.Docker.Menu {
         public RunningContainerMenu(Container container) {
 
             base(container);
-
+            
             this.append_play_pause_menu_item(container);
             this.append_separator_menu_item();
             this.append_remove_menu_item(container);

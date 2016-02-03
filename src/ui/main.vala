@@ -18,6 +18,11 @@ namespace Ui {
 
             this.infobar = new Gtk.InfoBar();
             infobar.set_no_show_all(true);
+            infobar.show_close_button = true;
+
+            infobar.response.connect((id) => {
+                infobar.hide();
+            });
 
             this.docker_view = new ListBuilder();
            

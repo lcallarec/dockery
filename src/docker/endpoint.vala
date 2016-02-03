@@ -104,7 +104,7 @@ namespace Docker {
                 
                 var error_messages = create_error_messages();
                  
-                this.throw_error_from_status_code(204, response.status, error_messages);
+                this.throw_error_from_status_code(204, response, error_messages);
                 
             } catch (IO.RequestError e) {
                 throw new IO.RequestError.FATAL("Error while pausing container %s : %s".printf(container.id, e.message));
@@ -122,7 +122,7 @@ namespace Docker {
                 var error_messages = create_error_messages();
                 error_messages.set(304, "Container already started");
                  
-                this.throw_error_from_status_code(204, response.status, error_messages);
+                this.throw_error_from_status_code(204, response, error_messages);
                 
             } catch (IO.RequestError e) {
                 throw new IO.RequestError.FATAL("Error while unpausing container %s : %s".printf(container.id, e.message));
@@ -140,7 +140,7 @@ namespace Docker {
                 var error_messages = create_error_messages();
                 error_messages.set(304, "Container already started");
                  
-                this.throw_error_from_status_code(204, response.status, error_messages);
+                this.throw_error_from_status_code(204, response, error_messages);
                 
             } catch (IO.RequestError e) {
                 throw new IO.RequestError.FATAL("Error while killing container %s : %s".printf(container.id, e.message));
@@ -156,16 +156,16 @@ namespace Docker {
                 var response = this.client.send("POST /containers/%s/start".printf(container.id));
                 
                 var error_messages = create_error_messages();
-                error_messages.set(304, "Container already started");
+                error_messages.set(409, "Name already assigned to another container");
                  
-                this.throw_error_from_status_code(204, response.status, error_messages);
+                this.throw_error_from_status_code(204, response, error_messages);
                 
             } catch (IO.RequestError e) {
                 throw new IO.RequestError.FATAL("Error while starting container %s : %s".printf(container.id, e.message));
             }
         }
         
-       /**
+        /**
          * Start a single container
          */
         public void stop(Docker.Model.Container container) throws IO.RequestError {
@@ -176,7 +176,7 @@ namespace Docker {
                 var error_messages = create_error_messages();
                 error_messages.set(304, "Container already stopped");
                  
-                this.throw_error_from_status_code(204, response.status, error_messages);
+                this.throw_error_from_status_code(204, response, error_messages);
                 
             } catch (IO.RequestError e) {
                 throw new IO.RequestError.FATAL("Error while stoping container %s : %s".printf(container.id, e.message));
@@ -184,19 +184,41 @@ namespace Docker {
         }        
         
         /**
+         * Rename a single container
+         */
+        public void rename(Docker.Model.Container container) throws IO.RequestError {
+        
+            try {
+                var response = this.client.send("POST /containers/%s/rename?name=%s".printf(container.id, container.name));
+                
+                var error_messages = create_error_messages();
+                error_messages.set(304, "Container already stopped");
+                 
+                this.throw_error_from_status_code(204, response, error_messages);
+                
+            } catch (IO.RequestError e) {
+                throw new IO.RequestError.FATAL("Error while renaming container %s : %s".printf(container.id, e.message));
+            }
+        }       
+        
+        /**
          * Throw error with the right message or do nothing if actual code == ok_status_code
+         * If paylod is not empty, then the message is fetched from the response payload
          */ 
         private void throw_error_from_status_code(
             int ok_status_code,
-            int actual_code,
+            IO.Response response,
             Gee.HashMap<int, string> map
         ) throws IO.RequestError {
-            if (actual_code != ok_status_code) {
-                string? message = map.get(actual_code);
-                if (message != null) {
-                    throw new IO.RequestError.FATAL(map[actual_code]);                    
+            
+            if (response.status != ok_status_code) {
+                string? message = map.get(response.status);
+                if (null != message) {
+                    message = response.payload;
                 }
-            }
+                
+                throw new IO.RequestError.FATAL(message);
+            }    
         }
         
         /**
