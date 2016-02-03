@@ -92,6 +92,23 @@ namespace Ui.Docker.Menu {
         }
     }
 
+    public interface KillableContainer : Ui.Docker.ContainerActionable, Gtk.Menu {
+
+        protected void append_kill_menu_item(Container container) {
+            var menu_item  = new Gtk.ImageMenuItem.with_mnemonic("_Kill container");
+            var menu_image = new Gtk.Image();
+            menu_image.set_from_icon_name("process-stop-symbolic", Gtk.IconSize.MENU);
+            menu_item.always_show_image = true;
+            menu_item.set_image(menu_image);
+
+            menu_item.activate.connect(() => {
+                this.container_kill_request(container);
+            });
+
+            this.add(menu_item);
+        }
+    }
+
     public class ContainerMenu : Ui.Docker.ContainerActionable, RemoveableContainer, RenamableContainer, Gtk.Menu {
 
         protected Container container;
@@ -106,13 +123,15 @@ namespace Ui.Docker.Menu {
         }
     }
 
-    internal class RunningContainerMenu : PauseableContainer, ContainerMenu {
+    internal class RunningContainerMenu : PauseableContainer, KillableContainer, ContainerMenu {
 
         public RunningContainerMenu(Container container) {
 
             base(container);
             
             this.append_play_pause_menu_item(container);
+            this.append_separator_menu_item();
+            this.append_kill_menu_item(container);
             this.append_separator_menu_item();
             this.append_remove_menu_item(container);
         }
