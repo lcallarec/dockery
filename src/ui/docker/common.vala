@@ -8,6 +8,7 @@ namespace Ui.Docker {
         public signal void container_start_request(Container container);
         public signal void container_stop_request(Container container);
         public signal void container_rename_request(Container container, Gtk.Label? label = null);
+        public signal void container_kill_request(Container container);
     }
 
     public interface Flushable : Gtk.Container {

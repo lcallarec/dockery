@@ -90,6 +90,19 @@ public class ApplicationController : GLib.Object {
             }
         });
         
+        view.containers.container_kill_request.connect((container) => {
+
+            try {
+                repository.containers().kill(container);
+                string message = "Container %s successfully killed".printf(container.id);
+                this.init_container_list();
+                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
+
+            } catch (Docker.IO.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+        });
+        
         view.containers.container_rename_request.connect((container, label) => {
              
             var pop = new Gtk.Popover(label);

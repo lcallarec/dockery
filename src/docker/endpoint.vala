@@ -147,7 +147,7 @@ namespace Docker {
             }
         }
         
-         /**
+        /**
          * Start a single container
          */
         public void start(Docker.Model.Container container) throws IO.RequestError {
@@ -179,9 +179,27 @@ namespace Docker {
                 this.throw_error_from_status_code(204, response, error_messages);
                 
             } catch (IO.RequestError e) {
-                throw new IO.RequestError.FATAL("Error while stoping container %s : %s".printf(container.id, e.message));
+                throw new IO.RequestError.FATAL("Error while killing container %s : %s".printf(container.id, e.message));
             }
         }        
+        
+        /**
+         * Kill a single container
+         */
+        public void kill(Docker.Model.Container container) throws IO.RequestError {
+        
+            try {
+                var response = this.client.send("POST /containers/%s/kill".printf(container.id));
+                
+                var error_messages = create_error_messages();
+                error_messages.set(304, "Container already stopped");
+                 
+                this.throw_error_from_status_code(204, response, error_messages);
+                
+            } catch (IO.RequestError e) {
+                throw new IO.RequestError.FATAL("Error while stoping container %s : %s".printf(container.id, e.message));
+            }
+        }              
         
         /**
          * Rename a single container

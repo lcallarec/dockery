@@ -96,6 +96,10 @@ namespace Ui.Docker.List {
                     menu.container_rename_request.connect(() => {
                         this.container_rename_request(container, label_name);
                     });
+                    
+                    menu.container_kill_request.connect(() => {
+                        this.container_kill_request(container);
+                    });
 
 
                     row_layout.attach(mb,              3, 0, 1, 1);
