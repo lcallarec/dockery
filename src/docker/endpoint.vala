@@ -186,10 +186,10 @@ namespace Docker {
         /**
          * Rename a single container
          */
-        public void rename(Docker.Model.Container container, string name) throws IO.RequestError {
+        public void rename(Docker.Model.Container container) throws IO.RequestError {
         
             try {
-                var response = this.client.send("POST /containers/%s/rename?name=%s".printf(container.id, name));
+                var response = this.client.send("POST /containers/%s/rename?name=%s".printf(container.id, container.name));
                 
                 var error_messages = create_error_messages();
                 error_messages.set(304, "Container already stopped");

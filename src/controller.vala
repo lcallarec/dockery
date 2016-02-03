@@ -17,7 +17,7 @@ public class ApplicationController : GLib.Object {
     public void listen_container_view() {
 
         view.containers.container_status_change_request.connect((requested_status, container) => {
-                stdout.puts("CHANGE STATUS\n");
+
             try {
                 string message = "";
                 if (requested_status == Docker.Model.ContainerStatus.PAUSED) {
@@ -64,8 +64,8 @@ public class ApplicationController : GLib.Object {
         });
 
         view.containers.container_start_request.connect((container) => {
+
             try {
-                stdout.puts("START CON\n");
                 repository.containers().start(container);
                 string message = "Container %s successfully started".printf(container.id);
                 this.init_container_list();
@@ -101,19 +101,23 @@ public class ApplicationController : GLib.Object {
              
             var entry = new Gtk.Entry();
             entry.set_text(label.get_text());
+            
+            box.pack_end(entry, false, true, 5);
+            
+            pop.add(box);
              
             entry.activate.connect (() => {
                 try {
-                    repository.containers().rename(container, entry.text);
-                    this.init_container_list();                     
+                    container.name = entry.text;
+                    
+                    repository.containers().rename(container);
+                    
+                    this.init_container_list();
+                    
                 } catch (Docker.IO.RequestError e) {
                     message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                 }
             });
-             
-            box.pack_end(entry, false, true, 5);
-            
-            pop.add(box);
              
             pop.show_all();
         });

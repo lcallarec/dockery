@@ -1,5 +1,63 @@
 namespace Docker.Model {
+
+    errordomain ContainerUpdateError {
+        BAD_NAME
+    }
+
+    /*
+     * Interface for model validation
+     */ 
+    public interface Validatable {
+
+        /**
+         * Validate object properties. Return null when no properties failed during validation.
+         */ 
+        public abstract ValidationFailures? validate();
+    }
+
+    /*
+     * Represent a validation failures. Should always contains a non-empty failures object. 
+     */
+    public class ValidationFailures {
+        /** Failures */
+        private Gee.HashMap<string, Gee.ArrayList<string>> failures = new Gee.HashMap<string, Gee.ArrayList<string>>();
+    
+        /**
+         * Add a failure message to a given property
+         * */
+        public void add(string property, string message) {
+            
+            Gee.ArrayList<string> property_failures;
+            
+            if(failures.has_key(property)) {
+                property_failures = failures.get(property);
+            } else {
+                property_failures = new Gee.ArrayList<string>();
+            }
+            
+            property_failures.add(message);
+            
+            failures.set(property, property_failures);
+        }
         
+        /**
+         * Return the number of current failed fields
+         */ 
+        public int size {
+            get {
+                return failures.size;
+            }
+        }
+        
+        /**
+         * Return the failures object
+         */ 
+        public Gee.HashMap<string, Gee.ArrayList<string>> get() {
+            return failures;
+        }
+        
+    }
+
     /**
      * Base model
      */
@@ -44,11 +102,16 @@ namespace Docker.Model {
     /**
      * Container model
      */
-    public class Container : Model {
+    public class Container : Model, Validatable {
+        
+        /** attribute for name properties */
         private string[] _names;
         
         public string command {get; set;}
         
+        /** 
+         * Container names property
+         */         
         public string[] names {
             get {
                 return _names;
@@ -60,12 +123,31 @@ namespace Docker.Model {
             }
         }
         
+        /** 
+         * Container name property
+         */ 
         public string name {get; set;}
-        
+                
         public ContainerStatus status {get; set;}
         
         public string get_status_string() {
             return ContainerStatusConverter.convert_from_enum(status);
+        }
+        
+        /** @inherit */
+        public ValidationFailures? validate() {
+            
+            ValidationFailures failures = new ValidationFailures();
+            
+            if (false == Regex.match_simple("^[a-zA-Z0-9][a-zA-Z0-9_.-]+$", name)) {
+                failures.add("name", "Container name must match [a-zA-Z0-9][a-zA-Z0-9_.-]");
+            }
+            
+            if (failures.size > 0) {
+                return failures;
+            }
+            
+            return null;
         }
     }
     
