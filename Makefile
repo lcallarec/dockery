@@ -13,8 +13,18 @@ gnome-docker-file:
         -o gdocker
         
 install:
-	cp -f gdocker /usr/local/bin
+	cp -f gdocker /usr/bin/gdocker
 	$(MAKE) clean
+	$(MAKE) install-desktop-entry
+
+install-desktop-entry:
+	rm -rf /usr/local/share/applications/docker-manager.desktop
+	cp -f desktop/docker-manager.desktop /usr/local/share/applications/docker-manager.desktop
+	chmod 0777 /usr/local/share/applications/docker-manager.desktop
+	cp desktop/icons/docker-manager.svg /usr/share/icons/hicolor/scalable/apps/docker-manager.png
+	cp desktop/icons/docker-managerx256.png /usr/share/icons/hicolor/256x256/apps/docker-manager.png
+	cp desktop/icons/docker-managerx48.png /usr/share/icons/hicolor/48x48/apps/docker-manager.png
+	gtk-update-icon-cache /usr/share/icons/hicolor
     
 clean:
 	find . -type f -name '*.c' -delete && rm gdocker

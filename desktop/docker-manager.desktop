@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Docker Manager
+Comment=DTC lulu
+Icon=docker-manager
+StartupNotify=false
+Categories=Development;GTK;
+Terminal=false
+Exec=/usr/bin/gdocker
+Version=1.0
+

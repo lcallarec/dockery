@@ -12,6 +12,8 @@ public class DockerManager : Gtk.Window {
 
     private Gtk.InfoBar infobar { get; set;}
 
+    private const string APPLICATION_NAME = "Docker manager";
+
     private ApplicationController ac;
 
     private Ui.MainApplicationView views;
@@ -39,21 +41,24 @@ public class DockerManager : Gtk.Window {
     public DockerManager () {
 
         Object(window_position: Gtk.WindowPosition.CENTER);
-
+        
         this.set_default_size(700, 600);
         this.destroy.connect(Gtk.main_quit);
 
         //Css provider
         var provider = new Gtk.CssProvider();
-        provider.load_from_path("resources/css/main.css");
+        provider.load_from_resource("/org/lcallarec/gnome-docker-manager/resources/css/main.css");
 
         var screen = Gdk.Screen.get_default();
-        Gtk.StyleContext context = new Gtk.StyleContext();
-        context.add_provider_for_screen(screen, provider, 600);
+        Gtk.StyleContext.add_provider_for_screen(screen, provider, 600);
 
         //Add application icons to degault icon theme
         new Gtk.IconTheme().get_default().add_resource_path("/org/lcallarec/gnome-docker-manager/resources/icons");
 
+        //Window Application name & Icon
+        this.set_wmclass(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_NAME);
+        this.set_icon_name("docker-icon");
+       
         //Titlebar
         var titlebar = create_titlebar();
         this.set_titlebar(titlebar);
