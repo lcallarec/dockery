@@ -12,6 +12,8 @@ public class DockerManager : Gtk.Window {
 
     private Gtk.InfoBar infobar { get; set;}
 
+    private const string APPLICATION_NAME = "Docker manager";
+
     private ApplicationController ac;
 
     private Ui.MainApplicationView views;
@@ -53,6 +55,10 @@ public class DockerManager : Gtk.Window {
 
         //Add application icons to degault icon theme
         new Gtk.IconTheme().get_default().add_resource_path("/org/lcallarec/gnome-docker-manager/resources/icons");
+
+        //Window Application name & Icon
+        this.set_wmclass(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_NAME);
+        this.set_icon_name("docker-icon");
        
         //Titlebar
         var titlebar = create_titlebar();
