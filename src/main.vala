@@ -50,8 +50,7 @@ public class DockerManager : Gtk.Window {
         provider.load_from_resource("/org/lcallarec/gnome-docker-manager/resources/css/main.css");
 
         var screen = Gdk.Screen.get_default();
-        Gtk.StyleContext context = new Gtk.StyleContext();
-        context.add_provider_for_screen(screen, provider, 600);
+        Gtk.StyleContext.add_provider_for_screen(screen, provider, 600);
 
         //Add application icons to degault icon theme
         new Gtk.IconTheme().get_default().add_resource_path("/org/lcallarec/gnome-docker-manager/resources/icons");
