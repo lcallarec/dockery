@@ -1,6 +1,6 @@
 # gnome-docker-manager
 
-[![Build Status](https://travis-ci.com/lcallarec/gnome-docker-manager.svg?token=y2yRMecfAVSqyoW4PUq8)](https://travis-ci.com/lcallarec/gnome-docker-manager)
+[![Build Status](https://travis-ci.org/lcallarec/gnome-docker-manager.svg?branch=master)](https://travis-ci.org/lcallarec/gnome-docker-manager)
 
 (very early stage of development)
 
