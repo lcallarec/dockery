@@ -19,7 +19,9 @@ Support GTK+3 from 3.10 (fallbacks) to 3.18 (latest).
 
 Be sure these librairies are installed :
 
-* valac (`apt-get install libvala-0.22-dev valac-0.22 `, `apt-get install libgtk-3-dev`)
+* build-essential (`apt-get install build-essential`)
+* Gtk3+ header files (`apt-get install libgtk-3-dev`)
+* valac (`apt-get install libvala-0.22-dev valac-0.22 `)
 * libsoup-2.4
 * gio-2.0
 * gio-unix-2.0
@@ -35,4 +37,3 @@ sudo make install
 ```
 gdocker
 ```
-
