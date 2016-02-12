@@ -11,6 +11,10 @@ namespace Ui.Docker {
         public signal void container_kill_request(Container container);
     }
 
+    public interface ImageActionable : GLib.Object {
+        public signal void image_remove_request(Image image);
+    }
+
     public interface Flushable : Gtk.Container {
         /**
          * Remove all child widgets from the container

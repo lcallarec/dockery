@@ -22,7 +22,7 @@ namespace Ui.Docker.Menu {
         }
     }
 
-    public class ContainerMenu : Ui.Docker.ContainerActionable, Gtk.Menu {
+    public class ContainerMenu : Ui.Docker.ContainerActionable, Menu {
 
         protected Container container;
 
@@ -31,11 +31,7 @@ namespace Ui.Docker.Menu {
             
             this.append_rename_menu_item();
         }
-        
-        protected void append_separator_menu_item() {
-            this.add(new Gtk.SeparatorMenuItem());
-        }
-        
+
         protected void append_play_pause_menu_item() {
 
             Gtk.ImageMenuItem menu_item;
@@ -85,25 +81,7 @@ namespace Ui.Docker.Menu {
                 this.container_kill_request(container);
             });
         }
-        
-        protected void append_menu_item(string mnemonic_label, string icon_name, MenuActivateAction action) {
-            
-            var menu_item  = new Gtk.ImageMenuItem.with_mnemonic(mnemonic_label);
-            var menu_image = new Gtk.Image();
-            
-            menu_image.set_from_icon_name(icon_name, Gtk.IconSize.MENU);
-            menu_item.always_show_image = true;
-            menu_item.set_image(menu_image);
-
-            menu_item.activate.connect(() => action());
-
-            this.add(menu_item);
-        }        
-        
-        /**
-         * Delegate for menu activate signal 
-         */ 
-        public delegate void MenuActivateAction ();
+  
     }
 
     internal class RunningContainerMenu : ContainerMenu {

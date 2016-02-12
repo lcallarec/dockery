@@ -25,7 +25,8 @@ namespace Ui.Docker.List {
             this.notebook  =  new Gtk.Notebook();
             this.empty_box = null;
 
-            this.pack_start(this.notebook, true, true, 0);            
+            this.pack_start(this.notebook, true, true, 0);
+            
             foreach(ContainerStatus status in ContainerStatus.all()) {
                 var c = containers.get_by_status(status);
                 if (c.is_empty == false) {

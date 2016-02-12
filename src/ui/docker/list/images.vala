@@ -2,7 +2,7 @@ namespace Ui.Docker.List {
 
     using global::Docker.Model;
 
-    public class Images : ImageViewable, Flushable, Gtk.Box {
+    public class Images : ImageViewable, Flushable, ImageActionable, Gtk.Box {
 
         private ImageViewable list;
 
@@ -27,7 +27,7 @@ namespace Ui.Docker.List {
         }
     }
 
-    public class ImagesEmpty : Flushable, ImageViewable, Gtk.VBox {
+    public class ImagesEmpty : Flushable, ImageViewable, ImageActionable, Gtk.VBox {
 
         public ImagesEmpty() {
             
@@ -45,7 +45,7 @@ namespace Ui.Docker.List {
         }
     }
 
-    public class ImagesFilled : Flushable, ImageViewable, Gtk.ListBox {
+    public class ImagesFilled : Flushable, ImageViewable, ImageActionable, Gtk.ListBox {
 
         protected int size = 0;
 
@@ -88,6 +88,19 @@ namespace Ui.Docker.List {
                 row_layout.attach(label_id,            0, 1, 1, 1);
                 row_layout.attach(label_size,          1, 0, 1, 1);
                 row_layout.attach(label_creation_date, 1, 1, 1, 1);
+
+                Ui.Docker.Menu.ImageMenu menu = Ui.Docker.Menu.ImageMenuFactory.create(image);
+
+                Gtk.MenuButton mb = new Gtk.MenuButton();
+                
+                menu.show_all();
+                mb.popup = menu;
+
+                menu.image_remove_request.connect(() => {
+                    this.image_remove_request(image);
+                });
+
+                row_layout.attach(mb,        2, 0, 1, 1);
 
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
                 row_layout.attach(separator, 0, 2, 2, 2);
