@@ -4,6 +4,8 @@
 
 ## Features
 
+![Main SC](docs/resources/screenshots/main.png)
+
 * Connect to a local docker deamon via socket (http support coming soon)
 * Get container list and execute some basic actions
   - update status (KILL, PAUSE, STOP, START)
