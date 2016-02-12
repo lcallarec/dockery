@@ -1,8 +1,10 @@
 # gnome-docker-manager
 
+[![Build Status](https://travis-ci.com/lcallarec/gnome-docker-manager.svg?token=y2yRMecfAVSqyoW4PUq8)](https://travis-ci.com/lcallarec/gnome-docker-manager)
+
 (very early stage of development)
 
-## Compile ans install instructions
+## Compile and install instructions
 
 Be sure these librairies are installed :
 
