@@ -2,73 +2,48 @@ namespace Ui.Docker.List {
 
     using global::Docker.Model;
 
-    public class Images : ImageViewable, Flushable, ImageActionable, Gtk.Box {
-
-        private ImageViewable list;
-
+    public class Images : Flushable, ImageViewable, ImageActionable, Gtk.Box {
+        
+        protected Gtk.Box empty_box;
+        
         /**
          * Init the images view from a given (nullable) list of images 
          */
-        public int init(Image[]? images, bool show_after_refresh = true) {
+        public Images init(Image[]? images, bool show_after_refresh = true) {
             
-            if (show_after_refresh == true) {
-                this.flush();   
-            }
+            this.flush();   
             
             if (null != images && images.length > 0) {
-                list = new ImagesFilled();
+                
+                this.hydrate(images);
+                
+                if (show_after_refresh == true) {
+                    this.show_all();
+                }
+                
+                return this;
+                
             } else {
-                list = new ImagesEmpty();
+
+                var empty_box = IconMessageBoxBuilder.create_icon_message_box("No image found", "docker-symbolic");
+                this.pack_start(empty_box, true, true, 0);
+                
+                if (show_after_refresh == true) {
+                    this.show_all();
+                }
+                
+                return this;
             }
-
-            this.pack_start(list, true, true, 0);
-            this.show_all();
-            return list.init(images, show_after_refresh);
-        }
-    }
-
-    public class ImagesEmpty : Flushable, ImageViewable, ImageActionable, Gtk.VBox {
-
-        public ImagesEmpty() {
-            
-            var box = IconMessageBoxBuilder.create_icon_message_box("No image found", "docker-symbolic");
-
-            this.pack_start(box, true, true, 0);
-        }
-
-        /**
-         * Flush all child widgets from the view
-         * Add new rows from images array
-         */
-        public int init(Image[]? images, bool show_after_refresh = true) {
-            return 0;
-        }
-    }
-
-    public class ImagesFilled : Flushable, ImageViewable, ImageActionable, Gtk.ListBox {
-
-        protected int size = 0;
-
-        /**
-         * Init the images view from a given (nullable) list of images
-         */
-        public int init(Image[]? images, bool show_after_refresh = true) {
-            this.flush();
-            int images_count = this.hydrate(images);
-
-            if (true == show_after_refresh) {
-                this.show_all();
-            }
-
-            return images_count;
         }
 
         /**
          * Add new rows from images array
          */
         private int hydrate(Image[] images) {
-
-              foreach(Image image in images) {
+            int images_count = 0;
+            Gtk.ListBox list_box = new Gtk.ListBox();
+            
+            foreach(Image image in images) {
 
                 Gtk.ListBoxRow row = new Gtk.ListBoxRow();
 
@@ -97,6 +72,7 @@ namespace Ui.Docker.List {
                 mb.popup = menu;
 
                 menu.image_remove_request.connect(() => {
+                    stdout.puts("list\n");
                     this.image_remove_request(image);
                 });
 
@@ -105,12 +81,14 @@ namespace Ui.Docker.List {
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
                 row_layout.attach(separator, 0, 2, 2, 2);
 
-                size += 1;
+                images_count += 1;
 
-                this.insert(row, size);
+                list_box.insert(row, images_count);
             }
 
-            return size;
+            this.pack_start(list_box, true, true, 0);
+
+            return images_count;
         }
 
         /**

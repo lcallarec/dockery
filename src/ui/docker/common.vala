@@ -31,7 +31,7 @@ namespace Ui.Docker {
         /**
          * Init the images view from a given (nullable) list of images
          */
-        public abstract int init(Image[]? images, bool show_after_refresh = true);
+        public abstract Ui.Docker.List.Images init(Image[]? images, bool show_after_refresh = true);
     }
 
     /**

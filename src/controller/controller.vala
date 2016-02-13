@@ -47,8 +47,50 @@ public abstract class BaseApplicationController : GLib.Object {
             msg.response.connect((response_id) => {
                 switch (response_id) {
                     case Gtk.ResponseType.OK:
-                        repository.containers().remove(container);
-                        this.init_container_list();
+                    
+                        try {
+                            repository.containers().remove(container);
+                        } catch (Docker.IO.RequestError e) {
+                            message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+                        }
+
+                        this.init_container_list();                        
+                        
+                        break;
+                    case Gtk.ResponseType.CANCEL:
+                        break;
+                    case Gtk.ResponseType.DELETE_EVENT:
+                        break;
+                }
+
+                msg.destroy();
+
+            });
+
+            msg.show();
+        });
+
+        view.images.image_remove_request.connect((image) => {
+                    stdout.puts("view\n");
+            Gtk.MessageDialog msg = new Gtk.MessageDialog(
+                window, Gtk.DialogFlags.MODAL,
+                Gtk.MessageType.WARNING,
+                Gtk.ButtonsType.OK_CANCEL,
+                "Really remove the image %s (%s)?".printf(image.tag, image.id)
+            );
+
+            msg.response.connect((response_id) => {
+                switch (response_id) {
+                    case Gtk.ResponseType.OK:
+                    
+                        try {
+                            repository.images().remove(image);
+                        } catch (Docker.IO.RequestError e) {
+                            message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+                        }
+                        
+                        this.init_image_list();
+                        
                         break;
                     case Gtk.ResponseType.CANCEL:
                         break;
@@ -130,8 +172,14 @@ public abstract class BaseApplicationController : GLib.Object {
     }
 
     protected void init_image_list() throws Docker.IO.RequestError {
-        Docker.Model.Image[]? images = repository.images().list();
-        this.view.images.init(images);
+        Docker.Model.Image[]? images = null;
+        try {
+            images = repository.images().list();
+        } catch (Docker.IO.RequestError e) {
+            message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+        } finally {
+            this.view.images.init(images);
+        }
     }
 
     protected void init_container_list() throws Docker.IO.RequestError {
