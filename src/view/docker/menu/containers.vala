@@ -11,7 +11,7 @@ namespace View.Docker.Menu {
                 case ContainerStatus.PAUSED:
                     return new PausedContainerMenu(container);
                 case ContainerStatus.EXITED:
-                    return null;
+                    return new ExitedContainerMenu(container);
                 case ContainerStatus.CREATED:
                     return null;
                 case ContainerStatus.RESTARTING:
@@ -104,6 +104,16 @@ namespace View.Docker.Menu {
             base(container);
 
             this.append_play_pause_menu_item();
+            this.append_separator_menu_item();
+            this.append_remove_menu_item();
+        }
+    }
+    
+    internal class ExitedContainerMenu : ContainerMenu {
+        
+        public ExitedContainerMenu(Container container) {
+            base(container);
+            
             this.append_separator_menu_item();
             this.append_remove_menu_item();
         }
