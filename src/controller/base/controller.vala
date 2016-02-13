@@ -3,7 +3,7 @@
  */
 public class ApplicationController : BaseApplicationController {
     
-    public ApplicationController(Gtk.Window window, Ui.MainApplicationView view, MessageDispatcher message_dispatcher) {
+    public ApplicationController(Gtk.Window window, View.MainApplicationView view, MessageDispatcher message_dispatcher) {
         base(window, view, message_dispatcher);
     }
     

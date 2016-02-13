@@ -6,9 +6,9 @@ public abstract class BaseApplicationController : GLib.Object {
     protected Sdk.Docker.Repository repository;
     protected Gtk.Window window;
     protected MessageDispatcher message_dispatcher;
-    protected Ui.MainApplicationView view;
+    protected View.MainApplicationView view;
 
-    public BaseApplicationController(Gtk.Window window, Ui.MainApplicationView view, MessageDispatcher message_dispatcher) {
+    public BaseApplicationController(Gtk.Window window, View.MainApplicationView view, MessageDispatcher message_dispatcher) {
         this.message_dispatcher = message_dispatcher;
         this.view               = view;
         this.window             = window;

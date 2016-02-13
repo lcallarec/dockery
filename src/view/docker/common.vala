@@ -1,4 +1,4 @@
-namespace Ui.Docker {
+namespace View.Docker {
     
     using global::Sdk.Docker.Model;
     
@@ -31,7 +31,7 @@ namespace Ui.Docker {
         /**
          * Init the images view from a given (nullable) list of images
          */
-        public abstract Ui.Docker.List.Images init(Image[]? images, bool show_after_refresh = true);
+        public abstract View.Docker.List.Images init(Image[]? images, bool show_after_refresh = true);
     }
 
     /**
@@ -42,7 +42,7 @@ namespace Ui.Docker {
         /**
          * Init the container view from a given (nullable) list of containers and return it
          */
-        public abstract Ui.Docker.List.BaseContainers init(Containers? containers, bool show_after_refresh = true);
+        public abstract View.Docker.List.BaseContainers init(Containers? containers, bool show_after_refresh = true);
     }
     
     public interface IconMessageBoxBuilder {

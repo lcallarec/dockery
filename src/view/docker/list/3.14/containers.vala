@@ -1,4 +1,4 @@
-namespace Ui.Docker.List {
+namespace View.Docker.List {
     
     using global::Sdk.Docker.Model;
            

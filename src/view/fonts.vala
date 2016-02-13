@@ -1,4 +1,4 @@
-namespace Ui {
+namespace View {
     
     internal class Fonts {
 

@@ -1,4 +1,4 @@
-namespace Ui.Docker.List {
+namespace View.Docker.List {
 
     using global::Sdk.Docker.Model;
 
@@ -64,7 +64,7 @@ namespace Ui.Docker.List {
                 row_layout.attach(label_size,          1, 0, 1, 1);
                 row_layout.attach(label_creation_date, 1, 1, 1, 1);
 
-                Ui.Docker.Menu.ImageMenu menu = Ui.Docker.Menu.ImageMenuFactory.create(image);
+                View.Docker.Menu.ImageMenu menu = View.Docker.Menu.ImageMenuFactory.create(image);
 
                 Gtk.MenuButton mb = new Gtk.MenuButton();
                 

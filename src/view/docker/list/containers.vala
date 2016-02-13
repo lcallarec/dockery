@@ -1,4 +1,4 @@
-namespace Ui.Docker.List {
+namespace View.Docker.List {
     
     using global::Sdk.Docker.Model;
         
@@ -79,7 +79,7 @@ namespace Ui.Docker.List {
                 Gtk.Button button_start_stop = create_button_stop_start(ContainerStatus.is_active(current_status), container);
                 row_layout.attach(button_start_stop,2, 0, 1, 1);
 
-                Ui.Docker.Menu.ContainerMenu? menu = Ui.Docker.Menu.ContainerMenuFactory.create(container);
+                View.Docker.Menu.ContainerMenu? menu = View.Docker.Menu.ContainerMenuFactory.create(container);
                 if (null != menu) {
                     Gtk.MenuButton mb = new Gtk.MenuButton();
                     menu.show_all();
@@ -132,7 +132,7 @@ namespace Ui.Docker.List {
 
         private Gtk.Button create_button_stop_start(bool is_active, Container container) {
 
-            Ui.StartStopButton button = new Ui.StartStopButton.from_active_rule(() => {
+            View.StartStopButton button = new View.StartStopButton.from_active_rule(() => {
                 return is_active;
             });
 

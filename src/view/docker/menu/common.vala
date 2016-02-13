@@ -1,4 +1,4 @@
-namespace Ui.Docker.Menu {
+namespace View.Docker.Menu {
     
     
     public abstract class Menu : Gtk.Menu {

@@ -1,4 +1,4 @@
-namespace Ui.Docker.Menu {
+namespace View.Docker.Menu {
     
     using global::Sdk.Docker.Model;
     
@@ -8,7 +8,7 @@ namespace Ui.Docker.Menu {
         }
     }
 
-    public class ImageMenu : Ui.Docker.ImageActionable, Menu {
+    public class ImageMenu : View.Docker.ImageActionable, Menu {
 
         protected Image image;
 

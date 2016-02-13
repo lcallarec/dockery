@@ -16,7 +16,7 @@ public abstract class BaseDockerManager : Gtk.Window {
 
     private ApplicationController ac;
 
-    private Ui.MainApplicationView views;
+    private View.MainApplicationView views;
 
     public static void main (string[] args) {
         Gtk.init(ref args);
@@ -68,7 +68,7 @@ public abstract class BaseDockerManager : Gtk.Window {
 
         //// START
         //Main Views
-        Ui.MainApplicationView views = new Ui.MainApplicationView(docker_host);
+        View.MainApplicationView views = new View.MainApplicationView(docker_host);
 
         //Workspace
         main_box.pack_start(views.headerbar, false, true, 5);

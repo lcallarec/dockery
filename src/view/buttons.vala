@@ -1,4 +1,4 @@
-namespace Ui {
+namespace View {
 
     /**
      * ActiveRule delegate is used by toggle or switch mechanism to determine the active state at runtime
