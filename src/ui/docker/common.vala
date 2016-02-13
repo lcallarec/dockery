@@ -1,6 +1,6 @@
 namespace Ui.Docker {
     
-    using global::Docker.Model;
+    using global::Sdk.Docker.Model;
     
     public interface ContainerActionable : GLib.Object {
         public signal void container_status_change_request(ContainerStatus status, Container container);

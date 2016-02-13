@@ -1,7 +1,8 @@
 #!/bin/bash
 GTK_VERSION=$1
 
-BASE_VALA_SRC_FILES="src/*.vala src/controller/*.vala src/docker/*.vala src/ui/*.vala  src/ui/docker/*.vala src/ui/docker/list/*.vala src/ui/docker/menu/*.vala"
+BASE_VALA_SRC_FILES="src/*.vala src/controller/*.vala src/ui/*.vala  src/ui/docker/*.vala
+                     src/ui/docker/list/*.vala src/ui/docker/menu/*.vala src/sdk/docker/*.vala src/sdk/docker/model/*.vala "
 
 case $GTK_VERSION in
     "3.10" | "3.11" | "3.12" | "3.13" )

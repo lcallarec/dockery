@@ -7,7 +7,7 @@ public class ApplicationController : BaseApplicationController {
         base(window, view, message_dispatcher);
     }
     
-    protected override void handle_container_rename(Docker.Model.Container container, Gtk.Label label) {
+    protected override void handle_container_rename(Sdk.Docker.Model.Container container, Gtk.Label label) {
 
     }
 }

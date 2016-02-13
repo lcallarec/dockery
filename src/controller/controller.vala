@@ -3,7 +3,7 @@
  */
 public abstract class BaseApplicationController : GLib.Object {
 
-    protected Docker.Repository repository;
+    protected Sdk.Docker.Repository repository;
     protected Gtk.Window window;
     protected MessageDispatcher message_dispatcher;
     protected Ui.MainApplicationView view;
@@ -20,17 +20,17 @@ public abstract class BaseApplicationController : GLib.Object {
 
             try {
                 string message = "";
-                if (requested_status == Docker.Model.ContainerStatus.PAUSED) {
+                if (requested_status == Sdk.Docker.Model.ContainerStatus.PAUSED) {
                     repository.containers().pause(container);
                     message = "Container %s successfully unpaused".printf(container.id);
-                } else if (requested_status == Docker.Model.ContainerStatus.RUNNING) {
+                } else if (requested_status == Sdk.Docker.Model.ContainerStatus.RUNNING) {
                     repository.containers().unpause(container);
                     message = "Container %s successfully paused".printf(container.id);
                 }
                 this.init_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
 
-            } catch (Docker.IO.RequestError e) {
+            } catch (Sdk.Docker.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
@@ -50,7 +50,7 @@ public abstract class BaseApplicationController : GLib.Object {
                     
                         try {
                             repository.containers().remove(container);
-                        } catch (Docker.IO.RequestError e) {
+                        } catch (Sdk.Docker.RequestError e) {
                             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                         }
 
@@ -85,7 +85,7 @@ public abstract class BaseApplicationController : GLib.Object {
                     
                         try {
                             repository.images().remove(image);
-                        } catch (Docker.IO.RequestError e) {
+                        } catch (Sdk.Docker.RequestError e) {
                             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                         }
                         
@@ -113,7 +113,7 @@ public abstract class BaseApplicationController : GLib.Object {
                 this.init_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
 
-            } catch (Docker.IO.RequestError e) {
+            } catch (Sdk.Docker.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                 this.init_container_list();
             }
@@ -127,7 +127,7 @@ public abstract class BaseApplicationController : GLib.Object {
                 this.init_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
 
-            } catch (Docker.IO.RequestError e) {
+            } catch (Sdk.Docker.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
@@ -140,7 +140,7 @@ public abstract class BaseApplicationController : GLib.Object {
                 this.init_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
 
-            } catch (Docker.IO.RequestError e) {
+            } catch (Sdk.Docker.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
@@ -163,7 +163,7 @@ public abstract class BaseApplicationController : GLib.Object {
 
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
 
-            } catch (Docker.IO.RequestError e) {
+            } catch (Sdk.Docker.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                 this.view.images.init(null);
                 this.view.containers.init(null);
@@ -171,22 +171,22 @@ public abstract class BaseApplicationController : GLib.Object {
         });
     }
 
-    protected void init_image_list() throws Docker.IO.RequestError {
-        Docker.Model.Image[]? images = null;
+    protected void init_image_list() throws Sdk.Docker.RequestError {
+        Sdk.Docker.Model.Image[]? images = null;
         try {
             images = repository.images().list();
-        } catch (Docker.IO.RequestError e) {
+        } catch (Sdk.Docker.RequestError e) {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
         } finally {
             this.view.images.init(images);
         }
     }
 
-    protected void init_container_list() throws Docker.IO.RequestError {
+    protected void init_container_list() throws Sdk.Docker.RequestError {
 
-        var container_collection = new Docker.Model.Containers();
+        var container_collection = new Sdk.Docker.Model.Containers();
 
-        foreach(Docker.Model.ContainerStatus status in Docker.Model.ContainerStatus.all()) {
+        foreach(Sdk.Docker.Model.ContainerStatus status in Sdk.Docker.Model.ContainerStatus.all()) {
             var containers = repository.containers().list(status);
             container_collection.add(status, containers);
         }
@@ -194,9 +194,9 @@ public abstract class BaseApplicationController : GLib.Object {
         this.view.containers.init(container_collection);
     }
 
-    protected Docker.Repository create_repository(string docker_path) {
+    protected Sdk.Docker.Repository create_repository(string docker_path) {
         
-        var client = new Docker.UnixSocketClient(docker_path);
+        var client = new Sdk.Docker.UnixSocketClient(docker_path);
         
         client.response_success.connect((response) => {
             this.view.headerbar.connected_to_docker_daemon(true);
@@ -206,9 +206,9 @@ public abstract class BaseApplicationController : GLib.Object {
             this.view.headerbar.connected_to_docker_daemon(false);
         });
         
-        return new Docker.Repository(client);
+        return new Sdk.Docker.Repository(client);
     }
     
     
-    protected abstract void handle_container_rename(Docker.Model.Container container, Gtk.Label label);
+    protected abstract void handle_container_rename(Sdk.Docker.Model.Container container, Gtk.Label label);
 }

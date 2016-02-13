@@ -1,6 +1,6 @@
 namespace Ui.Docker.List {
     
-    using global::Docker.Model;
+    using global::Sdk.Docker.Model;
         
    
     public abstract class BaseContainers : Flushable, ContainerViewable, ContainerActionable, Gtk.Box {
@@ -11,7 +11,7 @@ namespace Ui.Docker.List {
         /**
          * Init the container view from a given (nullable) list of containers and return it
          */ 
-        public BaseContainers init(global::Docker.Model.Containers? containers, bool show_after_refresh = true) {
+        public BaseContainers init(global::Sdk.Docker.Model.Containers? containers, bool show_after_refresh = true) {
             
             this.flush();
             

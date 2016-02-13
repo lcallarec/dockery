@@ -1,4 +1,4 @@
-namespace Docker.Model {
+namespace Sdk.Docker.Model {
 
     errordomain ContainerUpdateError {
         BAD_NAME

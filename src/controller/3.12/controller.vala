@@ -7,7 +7,7 @@ public class ApplicationController : BaseApplicationController {
         base(window, view, message_dispatcher);
     }
     
-    protected override void handle_container_rename(Docker.Model.Container container, Gtk.Label label) {
+    protected override void handle_container_rename(Sdk.Docker.Model.Container container, Gtk.Label label) {
         
         var pop = new Gtk.Popover(label);
         pop.position = Gtk.PositionType.BOTTOM;
@@ -31,7 +31,7 @@ public class ApplicationController : BaseApplicationController {
                 
                 this.init_container_list();
                 
-            } catch (Docker.IO.RequestError e) {
+            } catch (Sdk.Docker.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });

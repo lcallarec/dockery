@@ -1,6 +1,6 @@
 namespace Ui.Docker.List {
 
-    using global::Docker.Model;
+    using global::Sdk.Docker.Model;
 
     public class Images : Flushable, ImageViewable, ImageActionable, Gtk.Box {
         

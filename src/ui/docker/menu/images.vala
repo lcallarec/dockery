@@ -1,6 +1,6 @@
 namespace Ui.Docker.Menu {
     
-    using global::Docker.Model;
+    using global::Sdk.Docker.Model;
     
     public class ImageMenuFactory {
         public static ImageMenu create(Image image) {

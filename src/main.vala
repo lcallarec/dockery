@@ -8,7 +8,7 @@ public abstract class BaseDockerManager : Gtk.Window {
 
     private string docker_host = "/var/run/docker.sock";
 
-    private Docker.Repository repository;
+    private Sdk.Docker.Repository repository;
 
     private Gtk.InfoBar infobar { get; set;}
 
