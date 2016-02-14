@@ -71,38 +71,50 @@ public abstract class BaseApplicationController : GLib.Object {
         });
 
         view.images.image_remove_request.connect((image) => {
-                    stdout.puts("view\n");
-            Gtk.MessageDialog msg = new Gtk.MessageDialog(
-                window, Gtk.DialogFlags.MODAL,
-                Gtk.MessageType.WARNING,
-                Gtk.ButtonsType.OK_CANCEL,
-                "Really remove the image %s (%s)?".printf(image.tag, image.id)
-            );
 
-            msg.response.connect((response_id) => {
+            var dialog = new View.Dialog.with_buttons(350, 100, "Remove Docker image", window);
+
+            dialog.add_button("No !", Gtk.ResponseType.CLOSE);
+            Gtk.Widget yes_button = dialog.add_button("Yes !", Gtk.ResponseType.APPLY);
+            yes_button.get_style_context().add_class("destructive-action");
+            
+            var body = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 5);
+            
+            Gtk.Label label = new Gtk.Label("Really remove image %s ?".printf(image.id));
+            
+            body.pack_start(label, false, true, 0);
+            
+            dialog.add_body(body);
+            
+            dialog.response.connect((source, response_id) => {
+
                 switch (response_id) {
-                    case Gtk.ResponseType.OK:
+                    case Gtk.ResponseType.APPLY:
                     
                         try {
-                            repository.images().remove(image);
+                            this.repository.images().remove(image);
                         } catch (Sdk.Docker.RequestError e) {
                             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                         }
-                        
+
                         this.init_image_list();
+                        dialog.destroy();
                         
                         break;
                     case Gtk.ResponseType.CANCEL:
                         break;
                     case Gtk.ResponseType.DELETE_EVENT:
                         break;
+                    case Gtk.ResponseType.CLOSE:
+                        break;                        
                 }
+                
+                dialog.destroy();
 
-                msg.destroy();
 
             });
 
-            msg.show();
+            dialog.show_all();
         });
 
         view.containers.container_start_request.connect((container) => {

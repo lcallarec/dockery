@@ -72,7 +72,6 @@ namespace View.Docker.List {
                 mb.popup = menu;
 
                 menu.image_remove_request.connect(() => {
-                    stdout.puts("list\n");
                     this.image_remove_request(image);
                 });
 

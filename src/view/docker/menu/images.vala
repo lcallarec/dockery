@@ -20,7 +20,6 @@ namespace View.Docker.Menu {
 
         protected void append_remove_menu_item() {
             this.append_menu_item("_Remove image", "user-trash-symbolic", () => {
-                stdout.puts("menu\n");
                 this.image_remove_request(image);
             });
         }
