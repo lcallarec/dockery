@@ -78,7 +78,7 @@ namespace View.Docker.List {
                 row_layout.attach(mb,        2, 0, 1, 1);
 
                 Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
-                row_layout.attach(separator, 0, 2, 2, 2);
+                row_layout.attach(separator, 0, 2, 3, 2);
 
                 images_count += 1;
 
