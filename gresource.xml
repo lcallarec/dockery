@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/lcallarec/gnome-docker-manager">
+  <gresource prefix="/org/lcallarec/gnome-docker-manager/">
+    <file>resources/icons/16x16/apps/docker-icon.png</file>
+    <file>resources/icons/16x16/devices/docker-symbolic.svg</file>
     <file>resources/icons/scalable/devices/docker-symbolic.svg</file>
     <file>resources/icons/scalable/apps/docker-icon.svg</file>    
     <file>resources/css/main.css</file>

@@ -4,7 +4,7 @@
  * Laurent Callarec <l.callarec@gmail.com>
  *
  */
-public abstract class BaseDockerManager : Gtk.Window {
+public class DockerManager : Gtk.Window {
 
     private string docker_host = "/var/run/docker.sock";
 
@@ -38,7 +38,7 @@ public abstract class BaseDockerManager : Gtk.Window {
         Gtk.main();
     }
 
-    public BaseDockerManager () {
+    public DockerManager () {
 
         Object(window_position: Gtk.WindowPosition.CENTER);
         
@@ -52,10 +52,10 @@ public abstract class BaseDockerManager : Gtk.Window {
         Gtk.StyleContext.add_provider_for_screen(screen, provider, 600);
 
         //Add application icons to degault icon theme
-        this.set_icon_theme("resources/icons");
+        this.set_icon_theme("resources/icons/");
 
         //Window Application name & Icon
-        this.set_wmclass(BaseDockerManager.APPLICATION_NAME, BaseDockerManager.APPLICATION_NAME);
+        this.set_wmclass(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_NAME);
         this.set_icon_name("docker-icon");
        
         //Titlebar
@@ -82,9 +82,26 @@ public abstract class BaseDockerManager : Gtk.Window {
         ac.listen_container_view();
     }
     
-    protected abstract Gtk.CssProvider create_css_provider(string css_path);
+    protected Gtk.CssProvider create_css_provider(string css_path) {
 
-    protected abstract void set_icon_theme(string icon_path);
+        var provider = new Gtk.CssProvider();
+
+        #if GTK_LTE_3_14
+        provider.load_from_path(css_path);
+        #endif
+
+        #if GTK_GTE_3_16
+        provider.load_from_resource("/org/lcallarec/gnome-docker-manager/" + css_path);
+        #endif
+
+        return provider;
+    }
+
+    protected void set_icon_theme(string icon_path) {
+        #if GTK_GTE_3_16
+        Gtk.IconTheme().get_default().add_resource_path("/org/lcallarec/gnome-docker-manager/" + icon_path);
+        #endif
+    }
     
     private Gtk.HeaderBar create_titlebar() {
 

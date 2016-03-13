@@ -1,7 +1,6 @@
 [Desktop Entry]
 Type=Application
 Name=Docker Manager
-Comment=DTC lulu
 Icon=docker-manager
 StartupNotify=false
 Categories=Development;GTK;

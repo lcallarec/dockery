@@ -3,7 +3,7 @@ namespace View.Docker.List {
     using global::Sdk.Docker.Model;
         
    
-    public abstract class BaseContainers : Flushable, ContainerViewable, ContainerActionable, Gtk.Box {
+    public class Containers : Flushable, ContainerViewable, ContainerActionable, Gtk.Box {
 
         protected Gtk.Notebook notebook;
         protected Gtk.Box empty_box;
@@ -11,7 +11,7 @@ namespace View.Docker.List {
         /**
          * Init the container view from a given (nullable) list of containers and return it
          */ 
-        public BaseContainers init(global::Sdk.Docker.Model.Containers? containers, bool show_after_refresh = true) {
+        public Containers init(global::Sdk.Docker.Model.Containers? containers, bool show_after_refresh = true) {
             
             this.flush();
             
@@ -128,7 +128,9 @@ namespace View.Docker.List {
         /**
          * Decorate the row for specific gtk3+ versions
          */ 
-        protected abstract void decorate_row(Gtk.ListBoxRow row);
+        protected void decorate_row(Gtk.ListBoxRow row) {
+
+        }
 
         private Gtk.Button create_button_stop_start(bool is_active, Container container) {
 

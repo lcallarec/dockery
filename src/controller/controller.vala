@@ -1,14 +1,14 @@
 /*
- * BaseApplicationController is listening to all signals emitted by the view layer
+ * ApplicationController is listening to all signals emitted by the view layer
  */
-public abstract class BaseApplicationController : GLib.Object {
+public class ApplicationController : GLib.Object {
 
     protected Sdk.Docker.Repository repository;
     protected Gtk.Window window;
     protected MessageDispatcher message_dispatcher;
     protected View.MainApplicationView view;
 
-    public BaseApplicationController(Gtk.Window window, View.MainApplicationView view, MessageDispatcher message_dispatcher) {
+    public ApplicationController(Gtk.Window window, View.MainApplicationView view, MessageDispatcher message_dispatcher) {
         this.message_dispatcher = message_dispatcher;
         this.view               = view;
         this.window             = window;
@@ -222,5 +222,37 @@ public abstract class BaseApplicationController : GLib.Object {
     }
     
     
-    protected abstract void handle_container_rename(Sdk.Docker.Model.Container container, Gtk.Label label);
+    protected void handle_container_rename(Sdk.Docker.Model.Container container, Gtk.Label label) {
+
+        #if GTK_GTE_3_16
+        var pop = new Gtk.Popover(label);
+        pop.position = Gtk.PositionType.BOTTOM;
+
+        var box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+        box.margin = 5;
+        box.pack_start(new Gtk.Label("New name"), false, true, 5);
+
+        var entry = new Gtk.Entry();
+        entry.set_text(label.get_text());
+
+        box.pack_end(entry, false, true, 5);
+
+        pop.add(box);
+
+        entry.activate.connect (() => {
+            try {
+                container.name = entry.text;
+
+                repository.containers().rename(container);
+
+                this.init_container_list();
+
+            } catch (Sdk.Docker.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+        });
+
+        pop.show_all();
+        #endif
+    }
 }
