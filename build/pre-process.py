@@ -126,7 +126,4 @@ if __name__ == '__main__':
 
 	for version in gtk_versions.get_versions_after(sys.argv[3]):
 		pre_processor.pre_process_for("GTK_GTE_" + version.replace(".", "_"))
-        
-	for version in gtk_versions.get_versions_after(sys.argv[3]):
-		pre_processor.clean_pre_process("GTK_")    
-        
+        pre_processor.clean_pre_process("GTK_")

@@ -9,9 +9,9 @@ public class ApplicationController : GLib.Object {
     protected View.MainApplicationView view;
 
     public ApplicationController(Gtk.Window window, View.MainApplicationView view, MessageDispatcher message_dispatcher) {
-        this.message_dispatcher = message_dispatcher;
-        this.view               = view;
         this.window             = window;
+        this.view               = view;
+        this.message_dispatcher = message_dispatcher;
     }
 
     public void listen_container_view() {
@@ -73,9 +73,10 @@ public class ApplicationController : GLib.Object {
         view.images.image_remove_request.connect((image) => {
 
             var dialog = new View.Dialog.with_buttons(350, 100, "Remove Docker image", window);
-
+            
             dialog.add_button("No !", Gtk.ResponseType.CLOSE);
             Gtk.Widget yes_button = dialog.add_button("Yes !", Gtk.ResponseType.APPLY);
+            
             yes_button.get_style_context().add_class("destructive-action");
             
             var body = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 5);

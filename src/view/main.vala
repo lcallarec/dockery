@@ -6,8 +6,8 @@ namespace View {
         public Gtk.InfoBar                   infobar;
         public Gtk.Box                       workspace;
         public SideBar                       sidebar;
-        public View.Docker.List.Containers     containers;
-        public View.Docker.List.Images         images;
+        public View.Docker.List.Containers   containers;
+        public View.Docker.List.Images       images;
         private ListBuilder                  docker_view;
 
         public MainApplicationView(string docker_host) {
