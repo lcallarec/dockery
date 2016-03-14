@@ -2,10 +2,11 @@ GtkInfoBar.error {
     background: #ED4747;
 }
 
-GtkButton.button.close {
+GtkInfoBar GtkButton.button.close {
     background: inherit;
     border: 0;
     text-shadow: none;
-    outline: none;
+    outline: none;./gdocker
+    xx
     box-shadow: none;
 }
