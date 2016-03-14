@@ -45,6 +45,9 @@ namespace View.Docker {
         public abstract View.Docker.List.Containers init(Containers? containers, bool show_after_refresh = true);
     }
     
+    /**
+     * Return a box containing a big icon and a message
+     */ 
     public interface IconMessageBoxBuilder {
         
         public static Gtk.Box create_icon_message_box(string message, string icon_name) {
