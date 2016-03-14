@@ -99,7 +99,7 @@ public class DockerManager : Gtk.Window {
 
     protected void set_icon_theme(string icon_path) {
         #if GTK_GTE_3_16
-        Gtk.IconTheme().get_default().add_resource_path("/org/lcallarec/gnome-docker-manager/" + icon_path);
+        new Gtk.IconTheme().get_default().add_resource_path("/org/lcallarec/gnome-docker-manager/" + icon_path);
         #endif
     }
     
