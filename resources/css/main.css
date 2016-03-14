@@ -6,7 +6,6 @@ GtkInfoBar GtkButton.button.close {
     background: inherit;
     border: 0;
     text-shadow: none;
-    outline: none;./gdocker
-    xx
+    outline: none;
     box-shadow: none;
 }
