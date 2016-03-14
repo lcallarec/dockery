@@ -16,7 +16,7 @@ namespace Sdk.Docker.Model {
     }
 
     /*
-     * Represent a validation failures. Should always contains a non-empty failures object. 
+     * Represent a validation failure. Should always contains a non-empty failures object. 
      */
     public class ValidationFailures {
         /** Failures */
@@ -122,6 +122,8 @@ namespace Sdk.Docker.Model {
                 name   = value[0].replace("/", "");
             }
         }
+        
+        public string image_id {get; set;}
         
         /** 
          * Container name property
@@ -379,12 +381,13 @@ namespace Sdk.Docker.Model {
             return image;
         }
         
-        public Container create_container(string id, int64 created_at, string command, string[] names, ContainerStatus status) {
+        public Container create_container(string id, int64 created_at, string command, string image_id, string[] names, ContainerStatus status) {
             
             Container container  = new Container();
             container.full_id    = id;
             container.created_at = new DateTime.from_unix_local(created_at);
             container.command    = command;
+            container.image_id   = image_id;
             container.names      = names;
             container.status     = status;
            
