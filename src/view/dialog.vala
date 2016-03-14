@@ -15,7 +15,7 @@ namespace View {
 
         public Dialog.with_buttons(int width, int height, string? title, Gtk.Window? parent, bool is_modal = true, int use_header_bar = 1) {
 
-            #if GTK_3_18
+            #if GTK_GTE_3_18
             Object(use_header_bar: use_header_bar);
             #endif
             
