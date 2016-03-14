@@ -169,7 +169,7 @@ namespace Sdk.Docker {
             } catch (RequestError e) {
                 throw new RequestError.FATAL("Error while stoping container %s : %s".printf(container.id, e.message));
             }
-        }              
+        }
         
         /**
          * Rename a single container
@@ -188,8 +188,36 @@ namespace Sdk.Docker {
             } catch (RequestError e) {
                 throw new RequestError.FATAL("Error while renaming container %s : %s".printf(container.id, e.message));
             }
-        }       
-  
+        }
+
+        /**
+         * Rename a single container
+         * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers
+         */
+        public Sdk.Docker.Model.Containers find_by_image(Sdk.Docker.Model.Image image) throws RequestError {
+        
+            try {
+
+                var container_collections = new Sdk.Docker.Model.Containers();
+
+                foreach(Sdk.Docker.Model.ContainerStatus status in Sdk.Docker.Model.ContainerStatus.all()) {
+                  
+                    Sdk.Docker.Model.Container[]? containers = list(status);
+                   
+                    foreach(Sdk.Docker.Model.Container container in containers) {
+                        if (image.full_id == container.image_id) {
+                            container_collections.add(status, {container});
+                        }
+                    }
+                }
+                
+                return container_collections;
+                
+            } catch (RequestError e) {
+                throw new RequestError.FATAL("Error while fetching containers by image %s (%s)".printf(image.id, e.message));
+            }
+        }   
+
         /**
          * Parse containers payload
          */ 
@@ -216,6 +244,7 @@ namespace Sdk.Docker {
                         node.get_object().get_string_member("Id"),
                         node.get_object().get_int_member("Created"),
                         node.get_object().get_string_member("Command"),
+                        node.get_object().get_string_member("ImageID"),
                         names,
                         status
                     );
