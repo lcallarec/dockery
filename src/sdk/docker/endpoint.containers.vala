@@ -99,11 +99,19 @@ namespace Sdk.Docker {
         
         /**
          * Remove a single container
+         * Force option : when set to true, will force the removal of running containers
          */
-        public void remove(Sdk.Docker.Model.Container container) throws RequestError {
+        public void remove(Sdk.Docker.Model.Container container, bool force = false) throws RequestError {
         
             try {
-                var response = this.client.send("DELETE /containers/%s".printf(container.id));
+                
+                StringBuilder message = new StringBuilder("DELETE /containers/%s".printf(container.id));
+                
+                if (force == true) {
+                    message.append("?force=true");
+                }
+
+                var response = this.client.send(message.str);
                 
                 var error_messages = create_error_messages();
                  

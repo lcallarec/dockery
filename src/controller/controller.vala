@@ -72,44 +72,9 @@ public class ApplicationController : GLib.Object {
 
         view.images.image_remove_request.connect((image) => {
             
-            
-            Gtk.ListStore ls =  new Gtk.ListStore(2, typeof (string),  typeof (string));
-            
             Sdk.Docker.Model.Containers linked_containers = this.repository.containers().find_by_image(image);
-            foreach(Sdk.Docker.Model.ContainerStatus status in Sdk.Docker.Model.ContainerStatus.all()) {
 
-                Gtk.TreeIter iter;      
-                foreach(Sdk.Docker.Model.Container c in linked_containers.get_by_status(status)) {
-                    ls.append (out iter);    
-                    ls.set (iter, 0, c.name, 1, c.get_status_string());
-                }
-            }
-            
-            Gtk.TreeView? tv = null;
-            if (linked_containers.length > 0) {
-                tv = new Gtk.TreeView();
-                tv.insert_column_with_attributes(-1, "Id", new Gtk.CellRendererText(), "text", 0);
-                tv.insert_column_with_attributes(-1, "Status", new Gtk.CellRendererText(), "text", 1);
-                tv.set_model(ls);
-            }
-
-            var dialog = new View.Dialog.with_buttons(350, 100, "Remove Docker image", window);
-            
-            dialog.add_button("No !", Gtk.ResponseType.CLOSE);
-            Gtk.Widget yes_button = dialog.add_button("Yes !", Gtk.ResponseType.APPLY);
-            
-            yes_button.get_style_context().add_class("destructive-action");
-            
-            var body = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 5);
-            
-            var empty_box = View.Docker.IconMessageBoxBuilder.create_icon_message_box(("Really remove image %s ?".printf(image.id)), "media-optical-symbolic");
-            //body.pack_start(empty_box, true, true, 0);
-            
-            if (null != tv) {
-                body.pack_start(tv, false, false, 0);  
-            }
-                        
-            dialog.add_body(body);
+            var dialog = new View.Docker.Dialog.RemoveImageDialog(linked_containers, image, window);
             
             dialog.response.connect((source, response_id) => {
 
@@ -117,11 +82,22 @@ public class ApplicationController : GLib.Object {
                     case Gtk.ResponseType.APPLY:
                     
                         try {
-                            this.repository.images().remove(image);
+                            
+                            if (linked_containers.length > 0) {
+                                foreach(Sdk.Docker.Model.ContainerStatus status in Sdk.Docker.Model.ContainerStatus.all()) {
+                                    foreach(Sdk.Docker.Model.Container container in linked_containers.get_by_status(status)) {
+                                        this.repository.containers().remove(container, true);
+                                    }
+                                }
+                            }
+                           
+                            this.repository.images().remove(image, true);
+
                         } catch (Sdk.Docker.RequestError e) {
                             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                         }
 
+                        this.init_container_list();
                         this.init_image_list();
                         dialog.destroy();
                         
@@ -135,7 +111,6 @@ public class ApplicationController : GLib.Object {
                 }
                 
                 dialog.destroy();
-
 
             });
 

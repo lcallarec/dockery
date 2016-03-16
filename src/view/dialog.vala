@@ -9,12 +9,8 @@ namespace View {
             this.border_width = 5;
         }
         
-        public Dialog(int width, int height) {
-            this.set_default_size(width, height);
-        }
-
-        public Dialog.with_buttons(int width, int height, string title, Gtk.Window parent, bool is_modal = true, int use_header_bar = 1) {
-
+        public Dialog(int width, int height, string title, Gtk.Window parent, bool is_modal = true, int use_header_bar = 1) {
+            
             #if GTK_GTE_3_18
             Object(use_header_bar: use_header_bar);
             #endif
@@ -23,7 +19,6 @@ namespace View {
             this.title  = title;
             this.set_transient_for(parent);
             this.set_modal(is_modal);
-            
         }
 
         public void add_body(Gtk.Box widget) {

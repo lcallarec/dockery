@@ -7,7 +7,7 @@ namespace Sdk.Docker {
      * - List Images
      * 
      * Partial available features : 
-     * - Remove an image (missing force option)
+     * - Remove an image
      * 
      * Missing features :
      * - Search images
@@ -44,11 +44,20 @@ namespace Sdk.Docker {
         /**
          * Remove a single image
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-images
+         * 
+         * Force option : when set to true, will force the removal
          */
-        public void remove(Sdk.Docker.Model.Image image) throws RequestError {
+        public void remove(Sdk.Docker.Model.Image image, bool force = false) throws RequestError {
         
             try {
-                var response = this.client.send("DELETE /images/%s".printf(image.id));
+                
+                StringBuilder message = new StringBuilder("DELETE /images/%s".printf(image.id));
+                
+                if (force == true) {
+                    message.append("?force=true");
+                }
+                
+                var response = this.client.send(message.str);
                 
                 var error_messages = create_error_messages();
                 error_messages.set(400, "No such image");
