@@ -1,4 +1,4 @@
-namespace Ui {
+namespace View {
 
     public class HeaderBar : Gtk.Box {
         

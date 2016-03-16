@@ -1,4 +1,4 @@
-namespace Docker.IO {
+namespace Sdk.Docker {
     
     public errordomain RequestError {
         FATAL

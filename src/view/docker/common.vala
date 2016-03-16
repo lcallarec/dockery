@@ -1,6 +1,6 @@
-namespace Ui.Docker {
+namespace View.Docker {
     
-    using global::Docker.Model;
+    using global::Sdk.Docker.Model;
     
     public interface ContainerActionable : GLib.Object {
         public signal void container_status_change_request(ContainerStatus status, Container container);
@@ -9,6 +9,10 @@ namespace Ui.Docker {
         public signal void container_stop_request(Container container);
         public signal void container_rename_request(Container container, Gtk.Label? label = null);
         public signal void container_kill_request(Container container);
+    }
+
+    public interface ImageActionable : GLib.Object {
+        public signal void image_remove_request(Image image);
     }
 
     public interface Flushable : Gtk.Container {
@@ -27,7 +31,7 @@ namespace Ui.Docker {
         /**
          * Init the images view from a given (nullable) list of images
          */
-        public abstract int init(Image[]? images, bool show_after_refresh = true);
+        public abstract View.Docker.List.Images init(Image[]? images, bool show_after_refresh = true);
     }
 
     /**
@@ -38,9 +42,12 @@ namespace Ui.Docker {
         /**
          * Init the container view from a given (nullable) list of containers and return it
          */
-        public abstract Ui.Docker.List.BaseContainers init(Containers? containers, bool show_after_refresh = true);
+        public abstract View.Docker.List.Containers init(Containers? containers, bool show_after_refresh = true);
     }
     
+    /**
+     * Return a box containing a big icon and a message
+     */ 
     public interface IconMessageBoxBuilder {
         
         public static Gtk.Box create_icon_message_box(string message, string icon_name) {

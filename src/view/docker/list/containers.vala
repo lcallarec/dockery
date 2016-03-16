@@ -1,9 +1,9 @@
-namespace Ui.Docker.List {
+namespace View.Docker.List {
     
-    using global::Docker.Model;
+    using global::Sdk.Docker.Model;
         
    
-    public abstract class BaseContainers : Flushable, ContainerViewable, ContainerActionable, Gtk.Box {
+    public class Containers : Flushable, ContainerViewable, ContainerActionable, Gtk.Box {
 
         protected Gtk.Notebook notebook;
         protected Gtk.Box empty_box;
@@ -11,7 +11,7 @@ namespace Ui.Docker.List {
         /**
          * Init the container view from a given (nullable) list of containers and return it
          */ 
-        public BaseContainers init(global::Docker.Model.Containers? containers, bool show_after_refresh = true) {
+        public Containers init(global::Sdk.Docker.Model.Containers? containers, bool show_after_refresh = true) {
             
             this.flush();
             
@@ -25,7 +25,8 @@ namespace Ui.Docker.List {
             this.notebook  =  new Gtk.Notebook();
             this.empty_box = null;
 
-            this.pack_start(this.notebook, true, true, 0);            
+            this.pack_start(this.notebook, true, true, 0);
+            
             foreach(ContainerStatus status in ContainerStatus.all()) {
                 var c = containers.get_by_status(status);
                 if (c.is_empty == false) {
@@ -78,7 +79,7 @@ namespace Ui.Docker.List {
                 Gtk.Button button_start_stop = create_button_stop_start(ContainerStatus.is_active(current_status), container);
                 row_layout.attach(button_start_stop,2, 0, 1, 1);
 
-                Ui.Docker.Menu.ContainerMenu? menu = Ui.Docker.Menu.ContainerMenuFactory.create(container);
+                View.Docker.Menu.ContainerMenu? menu = View.Docker.Menu.ContainerMenuFactory.create(container);
                 if (null != menu) {
                     Gtk.MenuButton mb = new Gtk.MenuButton();
                     menu.show_all();
@@ -127,11 +128,13 @@ namespace Ui.Docker.List {
         /**
          * Decorate the row for specific gtk3+ versions
          */ 
-        protected abstract void decorate_row(Gtk.ListBoxRow row);
+        protected void decorate_row(Gtk.ListBoxRow row) {
+
+        }
 
         private Gtk.Button create_button_stop_start(bool is_active, Container container) {
 
-            Ui.StartStopButton button = new Ui.StartStopButton.from_active_rule(() => {
+            View.StartStopButton button = new View.StartStopButton.from_active_rule(() => {
                 return is_active;
             });
 

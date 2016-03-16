@@ -1,15 +1,15 @@
-namespace Docker {
+namespace Sdk.Docker {
     
-    public interface IRepository : GLib.Object {
+    public interface EndpointAware {
         
         public abstract ImageEndpoint images();
         
         public abstract ContainerEndpoint containers();
     }
 
-    public class Repository : IRepository, GLib.Object {
+    public class Repository : EndpointAware, GLib.Object {
         
-        public IO.Response response     { get; protected set;}
+        public Response response     { get; protected set;}
 
         public ImageEndpoint images() {
             return this._images;

@@ -1,13 +1,13 @@
-namespace Docker {
+namespace Sdk.Docker {
 
     public interface Client : GLib.Object {
 
-        public abstract IO.Response send(string message) throws IO.RequestError;
+        public abstract Response send(string message) throws RequestError;
         
         /**
          * This signal is emitted just after a valid and handled response has been created
          */ 
-        public signal void response_success(IO.Response response);
+        public signal void response_success(Response response);
         
         /**
          * This signal is emitted just after a request error
@@ -20,7 +20,7 @@ namespace Docker {
         
         public string path { get; protected set;}
         
-        public abstract IO.Response send(string message) throws IO.RequestError;
+        public abstract Response send(string message) throws RequestError;
     }
 
     public class UnixSocketClient : RestClient {
@@ -36,7 +36,7 @@ namespace Docker {
         /**
          * Send a message to docker daemon and return the response
          */ 
-        public override IO.Response send(string message) throws IO.RequestError {
+        public override Response send(string message) throws RequestError {
             
             StringBuilder request_builder = new StringBuilder(message); 
             request_builder.append(UnixSocketClient.HTTP_METHOD_HEADER_SUFFIX);
@@ -51,10 +51,10 @@ namespace Docker {
             } catch(GLib.IOError e) {
                 this.request_error(query);
                 string err_message = "IO error : %s".printf(e.message);
-                throw new IO.RequestError.FATAL(err_message);
+                throw new RequestError.FATAL(err_message);
             }
 
-            var response = new IO.SocketResponse(new DataInputStream(conn.input_stream));
+            var response = new SocketResponse(new DataInputStream(conn.input_stream));
             
             this.response_success(response);
             
@@ -64,7 +64,7 @@ namespace Docker {
         /**
          * Create the connection to docker daemon
          */    
-        private SocketConnection? create_connection() throws IO.RequestError {
+        private SocketConnection? create_connection() throws RequestError {
             try {
                 return this.client.connect(new UnixSocketAddress(this.path));    
             } catch (GLib.Error e) {
@@ -73,7 +73,7 @@ namespace Docker {
                     this.path,
                     e.message
                 );
-                throw new IO.RequestError.FATAL(err_message);
+                throw new RequestError.FATAL(err_message);
             }
         }
     }
