@@ -351,7 +351,7 @@ namespace Sdk.Docker.Model {
             double current_size = double.parse(bytes);
             string current_size_formatted = bytes.to_string() + SizeFormatter.SIZE_UNITS[0];  
 
-            for (int i = 1; i<= SizeFormatter.SIZE_UNITS.length; i++) {
+            for (int i = 0; i<= SizeFormatter.SIZE_UNITS.length; i++) {
                 if (current_size < SizeFormatter.KFACTOR) {
                      return GLib.Math.round(current_size).to_string() + SizeFormatter.SIZE_UNITS[i];
                 }                
