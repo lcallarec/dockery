@@ -393,5 +393,27 @@ namespace Sdk.Docker.Model {
            
             return container;
         }
+        
+        public HubImage create_hub_image(string description, bool is_official, bool is_automated, string name, int star_count) {
+            
+            HubImage hi = new HubImage();
+            hi.description  = description;
+            hi.is_official  = is_official;
+            hi.is_automated = is_automated;
+            hi.name         = name;
+            hi.star_count   = star_count;
+
+            return hi;
+        }
+    }
+    
+    public class HubImage : GLib.Object {
+        
+        public string description  { get; set;}
+        public bool   is_official  { get; set;}
+        public bool   is_automated { get; set;}
+        public string name         { get; set;}
+        public int    star_count   { get; set;}
+        
     }
 }
