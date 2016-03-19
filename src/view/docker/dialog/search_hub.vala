@@ -24,13 +24,16 @@ namespace View.Docker.Dialog {
             
             var body = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
             
+            var scrolled_window = new Gtk.ScrolledWindow (null, null);
+            scrolled_window.add(get_treeview());
+            
             var search_entry = new Gtk.Entry();
             this.on_search(search_entry);
             search_entry.width_chars = 30;
             search_entry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "edit-find-symbolic");
  
             body.pack_start(search_entry, false, false, 5);
-            body.pack_start(get_treeview(), false, true, 5);
+            body.pack_start(scrolled_window, false, true, 5);
 
             this.add_body(body);
         }
@@ -71,7 +74,7 @@ namespace View.Docker.Dialog {
                 treeview.hexpand = true;
         
                 treeview.insert_column_with_attributes(-1, "Name", new Gtk.CellRendererText(), "text", 0);
-                treeview.insert_column_with_attributes(-1, "Descriptrion", new Gtk.CellRendererText(), "text", 1);
+                treeview.insert_column_with_attributes(-1, "Description", new Gtk.CellRendererText(), "text", 1);
                 treeview.insert_column_with_attributes(-1, "Official ?", new Gtk.CellRendererText(), "text", 2);
                 treeview.insert_column_with_attributes(-1, "Automated ?", new Gtk.CellRendererText(), "text", 3);
                 treeview.insert_column_with_attributes(-1, "Stars", new Gtk.CellRendererText(), "text", 4);
