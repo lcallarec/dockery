@@ -22,18 +22,16 @@ namespace View.Docker.Dialog {
             
             base(500, 100, "Search image in Docker hub", parent, false, 0);
             
-            var body = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+            var body = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
             
             var search_entry = new Gtk.Entry();
             this.on_search(search_entry);
             search_entry.width_chars = 30;
             search_entry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "edit-find-symbolic");
  
-            body.pack_start(search_entry, true, true, 5);
-            body.pack_start(get_treeview(), true, true, 5);
-                        
-                        
-                        
+            body.pack_start(search_entry, false, false, 5);
+            body.pack_start(get_treeview(), false, true, 5);
+
             this.add_body(body);
         }
        
@@ -42,7 +40,6 @@ namespace View.Docker.Dialog {
 
             Gtk.TreeIter iter;
             liststore.clear();
-                        
             foreach(Sdk.Docker.Model.HubImage image in images) {
                 liststore.append (out iter);    
                 liststore.set(iter, 0, image.name, 1, image.description, 2, image.is_official.to_string(), 3, image.is_automated.to_string(), 4, image.star_count.to_string());
