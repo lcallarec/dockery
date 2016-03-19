@@ -106,7 +106,7 @@ namespace Sdk.Docker {
                 var nodes = parser.get_root().get_array().get_elements();
         
                 foreach (unowned Json.Node node in nodes) {
-                    images += model_factory.create_image(
+                    images += new Model.Image.from(
                         node.get_object().get_string_member("Id"),
                         node.get_object().get_int_member("Created"),
                         node.get_object().get_array_member("RepoTags").get_string_element(0),
@@ -133,7 +133,7 @@ namespace Sdk.Docker {
                 var nodes = parser.get_root().get_array().get_elements();
         
                 foreach (unowned Json.Node node in nodes) {
-                    hi += model_factory.create_hub_image(
+                    hi += new Model.HubImage.from(
                         node.get_object().get_string_member("description"),
                         node.get_object().get_boolean_member("is_official"),
                         node.get_object().get_boolean_member("is_automated"),

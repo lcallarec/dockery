@@ -7,8 +7,6 @@ namespace Sdk.Docker {
         
         protected Client client;
         
-        protected Model.ModelFactory model_factory = new Model.ModelFactory();
-        
         protected RequestQueryStringBuilder filter_builder = new RequestQueryStringBuilder();
         
         public Endpoint(Client client) {

@@ -82,12 +82,24 @@ namespace Sdk.Docker.Model {
      * Image model
      */
     public class Image : Model {
+
         private uint _raw_size;
         private string _size;
 
         public string repository {get; set;}
         public string tag {get; set;}
 
+        public Image.from(string id, int64 created_at, string repotags, uint size) {
+            
+            string[] _repotags = repotags.split(":", 2);
+            
+            this.full_id    = id;
+            this.created_at = new DateTime.from_unix_local(created_at);
+            this.repository = _repotags[0];
+            this.tag        = _repotags[1];
+            this.raw_size   = size;             
+        }
+        
         public uint raw_size { 
             get { return _raw_size; }
             set { _raw_size = value; size = value.to_string();}
@@ -97,17 +109,28 @@ namespace Sdk.Docker.Model {
             get { return _size; }
             set { _size = SizeFormatter.string_bytes_to_human(value); }
         }
+        
+        
     }
     
     /**
      * Container model
      */
     public class Container : Model, Validatable {
-        
+
         /** attribute for name properties */
         private string[] _names;
         
         public string command {get; set;}
+
+        public Container.from(string id, int64 created_at, string command, string image_id, string[] names, ContainerStatus status) {
+            this.full_id    = id;
+            this.created_at = new DateTime.from_unix_local(created_at);
+            this.command    = command;
+            this.image_id   = image_id;
+            this.names      = names;
+            this.status     = status;
+        }
         
         /** 
          * Container names property
@@ -132,6 +155,7 @@ namespace Sdk.Docker.Model {
                 
         public ContainerStatus status {get; set;}
         
+
         public string get_status_string() {
             return ContainerStatusConverter.convert_from_enum(status);
         }
@@ -361,52 +385,7 @@ namespace Sdk.Docker.Model {
             return current_size_formatted;
         }
     }
-    
-    /**
-     * Create model object from raw values
-     */
-    public class ModelFactory {
-        
-        public Image create_image(string id, int64 created_at, string repotags, uint size) {
-            
-            string[0] _repotags = repotags.split(":", 2);
-            
-            Image image = new Image();
-            image.full_id    = id;
-            image.created_at = new DateTime.from_unix_local(created_at);
-            image.repository = _repotags[0];
-            image.tag        = _repotags[1];
-            image.raw_size   = size;             
-
-            return image;
-        }
-        
-        public Container create_container(string id, int64 created_at, string command, string image_id, string[] names, ContainerStatus status) {
-            
-            Container container  = new Container();
-            container.full_id    = id;
-            container.created_at = new DateTime.from_unix_local(created_at);
-            container.command    = command;
-            container.image_id   = image_id;
-            container.names      = names;
-            container.status     = status;
-           
-            return container;
-        }
-        
-        public HubImage create_hub_image(string description, bool is_official, bool is_automated, string name, int star_count) {
-            
-            HubImage hi = new HubImage();
-            hi.description  = description;
-            hi.is_official  = is_official;
-            hi.is_automated = is_automated;
-            hi.name         = name;
-            hi.star_count   = star_count;
-
-            return hi;
-        }
-    }
-    
+ 
     public class HubImage : GLib.Object {
         
         public string description  { get; set;}
@@ -415,5 +394,12 @@ namespace Sdk.Docker.Model {
         public string name         { get; set;}
         public int    star_count   { get; set;}
         
+        public HubImage.from(string description, bool is_official, bool is_automated, string name, int star_count) {
+            this.description  = description;
+            this.is_official  = is_official;
+            this.is_automated = is_automated;
+            this.name         = name;
+            this.star_count   = star_count;
+        }
     }
 }

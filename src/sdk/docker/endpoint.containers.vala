@@ -255,7 +255,7 @@ namespace Sdk.Docker {
                         names[i] = names_node.get_string_element(i);
                     }
 
-                    containers += model_factory.create_container(
+                    containers += new Model.Container.from(
                         node.get_object().get_string_member("Id"),
                         node.get_object().get_int_member("Created"),
                         node.get_object().get_string_member("Command"),
