@@ -71,6 +71,29 @@ namespace Sdk.Docker {
         }
         
         /**
+         * Search an image in Docker hub
+         * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#search-images
+         */
+        public Model.HubImage[] search(string term) throws RequestError {
+        
+            try {
+
+                var response = this.client.send("GET /images/search?term=%s".printf(term));
+             
+                var error_messages = create_error_messages();
+                error_messages.set(400, "No such image");
+                error_messages.set(409, "Can't remove the image");
+                 
+                this.throw_error_from_status_code(200, response, error_messages);
+                
+                return parse_images_search_list_payload(response.payload);
+                
+            } catch (RequestError e) {
+                throw new RequestError.FATAL("Error while searching for %s in docker hub".printf(term));
+            }
+        }
+        
+        /**
          * Parse images list response payload
          */ 
         private Model.Image[] parse_images_list_payload(string payload) {
@@ -83,8 +106,6 @@ namespace Sdk.Docker {
                 var nodes = parser.get_root().get_array().get_elements();
         
                 foreach (unowned Json.Node node in nodes) {
-                    node.get_object().get_array_member("RepoTags").get_string_element(0);
-
                     images += model_factory.create_image(
                         node.get_object().get_string_member("Id"),
                         node.get_object().get_int_member("Created"),
@@ -98,6 +119,34 @@ namespace Sdk.Docker {
 
             return images;
         }
+        
+        /**
+         * Parse images search list response payload
+         */ 
+        private Model.HubImage[] parse_images_search_list_payload(string payload) {
+
+            Model.HubImage[] hi = {};
+            try {
+                var parser = new Json.Parser();
+                parser.load_from_data(payload);
+                
+                var nodes = parser.get_root().get_array().get_elements();
+        
+                foreach (unowned Json.Node node in nodes) {
+                    hi += model_factory.create_hub_image(
+                        node.get_object().get_string_member("description"),
+                        node.get_object().get_boolean_member("is_official"),
+                        node.get_object().get_boolean_member("is_automated"),
+                        node.get_object().get_string_member("name"),
+                        (int) node.get_object().get_int_member("star_count")
+                    );
+                }
+            } catch (Error e) {
+                return hi;
+            }
+
+            return hi;
+        }        
 
     }
 }
