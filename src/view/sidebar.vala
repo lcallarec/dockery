@@ -1,10 +1,15 @@
 namespace View {
     
-    public class SideBar : Gtk.ListBox {
+    using View.Docker.Dialog;
+    
+    public class SideBar : Gtk.ListBox, DockerHubSearchableImage {
         
         private const int8 ROW_HEIGHT = 30;
         
-        public SideBar(Gtk.Stack stack) {
+        private Gtk.Window parent_window;
+        
+        public SideBar(Gtk.Window parent_window, Gtk.Stack stack) {
+            this.parent_window = parent_window;
             width_request = 150;
             row_activated.connect((row) => {
                 stack.set_visible_child_name(row.name);
@@ -55,7 +60,10 @@ namespace View {
             var images_row_label = new Gtk.Label("Images");
             images_row_label.halign = Gtk.Align.START;
         
-            images_row.add(images_box);
+            Gtk.EventBox eb = new Gtk.EventBox();
+            eb.add(images_box);
+        
+            images_row.add(eb);
             
             var icon = new Gtk.Image();
             icon.set_from_icon_name("media-optical-symbolic", Gtk.IconSize.BUTTON);
@@ -65,6 +73,53 @@ namespace View {
             images_box.pack_start(images_row_label);
         
             add(images_row);
+            
+            add_menu_to_images_row(eb);
+        }
+        
+        public void set_images(Sdk.Docker.Model.HubImage[] images) {
+            
+        }
+        
+        private void add_menu_to_images_row(Gtk.EventBox eb) {
+            
+            Gtk.Popover popover = new Gtk.Popover(eb);
+            popover.position = Gtk.PositionType.BOTTOM;
+            
+            var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 5);
+            
+            var search_button = new Gtk.Button.from_icon_name("edit-find-symbolic", Gtk.IconSize.BUTTON);
+            search_button.set_tooltip_text("Search image on Docker hub");
+            
+            search_button.clicked.connect (() => {
+
+                var dialog = new SearchHubDialog(parent_window);
+                dialog.search_image_in_docker_hub.connect((target, term) => {
+                    this.search_image_in_docker_hub(dialog, term);
+                });
+                
+                dialog.show_all();
+
+            });
+        
+            box.pack_start(search_button, false, true, 0);
+            
+            popover.add(box);
+            
+            eb.button_press_event.connect((e) => {
+                if (3 == e.button) {
+                    Gdk.Rectangle t = {
+                        (int) e.x, (int) e.y, 10, 10
+                    };
+                    popover.pointing_to = t;
+                    popover.show_all();
+                    return true;    
+                }
+                
+                return false;
+                
+            });
+            
         }
     }
 }

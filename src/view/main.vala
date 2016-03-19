@@ -9,9 +9,13 @@ namespace View {
         public View.Docker.List.Containers   containers;
         public View.Docker.List.Images       images;
         private ListBuilder                  docker_view;
-
-        public MainApplicationView(string docker_host) {
-
+        
+        private Gtk.Window                   window;
+        
+        public MainApplicationView(Gtk.Window window, string docker_host) {
+            
+            this.window = window;
+            
             this.workspace = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
 
             this.headerbar = new View.HeaderBar(docker_host);
@@ -29,7 +33,7 @@ namespace View {
             Gtk.Stack stack = new Gtk.Stack();
             stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE);
 
-            this.sidebar = new View.SideBar(stack);
+            this.sidebar = new View.SideBar(window, stack);
             workspace.pack_start(sidebar, false, true, 0);
 
             this.containers = this.docker_view.create_containers_view();

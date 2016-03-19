@@ -15,7 +15,13 @@ public class ApplicationController : GLib.Object {
     }
 
     public void listen_container_view() {
-
+        
+        
+        view.sidebar.search_image_in_docker_hub.connect((target, term) => {
+            Sdk.Docker.Model.HubImage[] images =  repository.images().search(term);  
+            target.set_images(images);
+        });
+        
         view.containers.container_status_change_request.connect((requested_status, container) => {
 
             try {
@@ -220,7 +226,6 @@ public class ApplicationController : GLib.Object {
         
         return new Sdk.Docker.Repository(client);
     }
-    
     
     protected void handle_container_rename(Sdk.Docker.Model.Container container, Gtk.Label label) {
 
