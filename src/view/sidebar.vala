@@ -82,7 +82,7 @@ namespace View {
         }
         
         private void add_menu_to_images_row(Gtk.EventBox eb) {
-            
+            #if GTK_GTE_3_16
             Gtk.Popover popover = new Gtk.Popover(eb);
             popover.position = Gtk.PositionType.BOTTOM;
             
@@ -119,7 +119,7 @@ namespace View {
                 return false;
                 
             });
-            
+            #endif
         }
     }
 }
