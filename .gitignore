@@ -1,2 +1,5 @@
 *.c
 *.geany
+gdocker
+build
+.idea

@@ -3,7 +3,7 @@ namespace View.Docker.List {
     using global::Sdk.Docker.Model;
         
    
-    public class Containers : Flushable, ContainerViewable, ContainerActionable, Gtk.Box {
+    public class Containers : Flushable, ContainerViewable, Signals.ContainerRequestAction, Gtk.Box {
 
         protected Gtk.Notebook notebook;
         protected Gtk.Box empty_box;

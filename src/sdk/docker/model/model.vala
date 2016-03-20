@@ -1,63 +1,5 @@
 namespace Sdk.Docker.Model {
 
-    errordomain ContainerUpdateError {
-        BAD_NAME
-    }
-
-    /*
-     * Interface for model validation
-     */ 
-    public interface Validatable {
-
-        /**
-         * Validate object properties. Return null when no properties failed during validation.
-         */ 
-        public abstract ValidationFailures? validate();
-    }
-
-    /*
-     * Represent a validation failure. Should always contains a non-empty failures object. 
-     */
-    public class ValidationFailures {
-        /** Failures */
-        private Gee.HashMap<string, Gee.ArrayList<string>> failures = new Gee.HashMap<string, Gee.ArrayList<string>>();
-    
-        /**
-         * Add a failure message to a given property
-         * */
-        public void add(string property, string message) {
-            
-            Gee.ArrayList<string> property_failures;
-            
-            if(failures.has_key(property)) {
-                property_failures = failures.get(property);
-            } else {
-                property_failures = new Gee.ArrayList<string>();
-            }
-            
-            property_failures.add(message);
-            
-            failures.set(property, property_failures);
-        }
-        
-        /**
-         * Return the number of current failed fields
-         */ 
-        public int size {
-            get {
-                return failures.size;
-            }
-        }
-        
-        /**
-         * Return the failures object
-         */ 
-        public Gee.HashMap<string, Gee.ArrayList<string>> get() {
-            return failures;
-        }
-        
-    }
-
     /**
      * Base model
      */
@@ -82,12 +24,24 @@ namespace Sdk.Docker.Model {
      * Image model
      */
     public class Image : Model {
+
         private uint _raw_size;
         private string _size;
 
         public string repository {get; set;}
         public string tag {get; set;}
 
+        public Image.from(string id, int64 created_at, string repotags, uint size) {
+            
+            string[] _repotags = repotags.split(":", 2);
+            
+            this.full_id    = id;
+            this.created_at = new DateTime.from_unix_local(created_at);
+            this.repository = _repotags[0];
+            this.tag        = _repotags[1];
+            this.raw_size   = size;             
+        }
+        
         public uint raw_size { 
             get { return _raw_size; }
             set { _raw_size = value; size = value.to_string();}
@@ -97,17 +51,28 @@ namespace Sdk.Docker.Model {
             get { return _size; }
             set { _size = SizeFormatter.string_bytes_to_human(value); }
         }
+        
+        
     }
     
     /**
      * Container model
      */
     public class Container : Model, Validatable {
-        
+
         /** attribute for name properties */
         private string[] _names;
         
         public string command {get; set;}
+
+        public Container.from(string id, int64 created_at, string command, string image_id, string[] names, ContainerStatus status) {
+            this.full_id    = id;
+            this.created_at = new DateTime.from_unix_local(created_at);
+            this.command    = command;
+            this.image_id   = image_id;
+            this.names      = names;
+            this.status     = status;
+        }
         
         /** 
          * Container names property
@@ -132,6 +97,7 @@ namespace Sdk.Docker.Model {
                 
         public ContainerStatus status {get; set;}
         
+
         public string get_status_string() {
             return ContainerStatusConverter.convert_from_enum(status);
         }
@@ -150,6 +116,23 @@ namespace Sdk.Docker.Model {
             }
             
             return null;
+        }
+    }
+    
+    public class HubImage : GLib.Object {
+        
+        public string description  { get; set;}
+        public bool   is_official  { get; set;}
+        public bool   is_automated { get; set;}
+        public string name         { get; set;}
+        public int    star_count   { get; set;}
+        
+        public HubImage.from(string description, bool is_official, bool is_automated, string name, int star_count) {
+            this.description  = description;
+            this.is_official  = is_official;
+            this.is_automated = is_automated;
+            this.name         = name;
+            this.star_count   = star_count;
         }
     }
     
@@ -334,64 +317,5 @@ namespace Sdk.Docker.Model {
 
             return status;
         }   
-    }
-
-   /**
-    * Static helper class for size formatting     
-    */
-    public class SizeFormatter {
-        
-        const string[] SIZE_UNITS   = {"B", "KB", "MB", "GB", "TB"};
-        const double KFACTOR = 1000;
-
-       /**
-        * format a string of bytes to an human readable format with units
-        */
-        public static string string_bytes_to_human(string bytes) {
-            double current_size = double.parse(bytes);
-            string current_size_formatted = bytes.to_string() + SizeFormatter.SIZE_UNITS[0];  
-
-            for (int i = 1; i<= SizeFormatter.SIZE_UNITS.length; i++) {
-                if (current_size < SizeFormatter.KFACTOR) {
-                     return GLib.Math.round(current_size).to_string() + SizeFormatter.SIZE_UNITS[i];
-                }                
-                current_size = current_size / SizeFormatter.KFACTOR;
-            }
-
-            return current_size_formatted;
-        }
-    }
-    
-    /**
-     * Create model object from raw values
-     */
-    public class ModelFactory {
-        
-        public Image create_image(string id, int64 created_at, string repotags, uint size) {
-            
-            string[0] _repotags = repotags.split(":", 2);
-            
-            Image image = new Image();
-            image.full_id    = id;
-            image.created_at = new DateTime.from_unix_local(created_at);
-            image.repository = _repotags[0];
-            image.tag        = _repotags[1];
-            image.raw_size   = size;             
-
-            return image;
-        }
-        
-        public Container create_container(string id, int64 created_at, string command, string image_id, string[] names, ContainerStatus status) {
-            
-            Container container  = new Container();
-            container.full_id    = id;
-            container.created_at = new DateTime.from_unix_local(created_at);
-            container.command    = command;
-            container.image_id   = image_id;
-            container.names      = names;
-            container.status     = status;
-           
-            return container;
-        }
     }
 }

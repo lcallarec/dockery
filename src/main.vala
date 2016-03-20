@@ -68,7 +68,7 @@ public class DockerManager : Gtk.Window {
 
         //// START
         //Main Views
-        View.MainApplicationView views = new View.MainApplicationView(docker_host);
+        View.MainApplicationView views = new View.MainApplicationView(this, docker_host);
 
         //Workspace
         main_box.pack_start(views.headerbar, false, true, 5);
@@ -79,7 +79,9 @@ public class DockerManager : Gtk.Window {
         //ApplicationController
         this.ac = new ApplicationController(this, views, new MessageDispatcher(views.infobar));
         ac.listen_headerbar();
+        ac.listen_docker_hub();
         ac.listen_container_view();
+        ac.listen_image_view();
     }
     
     protected Gtk.CssProvider create_css_provider(string css_path) {

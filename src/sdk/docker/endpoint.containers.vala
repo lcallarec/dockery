@@ -70,7 +70,8 @@ namespace Sdk.Docker {
                 var response = this.client.send("POST /containers/%s/pause".printf(container.id));
                 
                 var error_messages = create_error_messages();
-                 
+                error_messages.set(404, "No such container");
+                
                 this.throw_error_from_status_code(204, response, error_messages);
                 
             } catch (RequestError e) {
@@ -89,6 +90,7 @@ namespace Sdk.Docker {
                 
                 var error_messages = create_error_messages();
                 error_messages.set(304, "Container already started");
+                error_messages.set(404, "No such container");
                  
                 this.throw_error_from_status_code(204, response, error_messages);
                 
@@ -114,7 +116,8 @@ namespace Sdk.Docker {
                 var response = this.client.send(message.str);
                 
                 var error_messages = create_error_messages();
-                 
+                error_messages.set(404, "No such container");
+                
                 this.throw_error_from_status_code(204, response, error_messages);
                 
             } catch (RequestError e) {
@@ -133,6 +136,7 @@ namespace Sdk.Docker {
                 
                 var error_messages = create_error_messages();
                 error_messages.set(304, "Container already started");
+                error_messages.set(404, "No such container");
                  
                 this.throw_error_from_status_code(204, response, error_messages);
                 
@@ -152,6 +156,7 @@ namespace Sdk.Docker {
                 
                 var error_messages = create_error_messages();
                 error_messages.set(304, "Container already stopped");
+                error_messages.set(404, "No such container");                
                  
                 this.throw_error_from_status_code(204, response, error_messages);
                 
@@ -171,6 +176,7 @@ namespace Sdk.Docker {
                 
                 var error_messages = create_error_messages();
                 error_messages.set(304, "Container already stopped");
+                error_messages.set(404, "No such container");                
                  
                 this.throw_error_from_status_code(204, response, error_messages);
                 
@@ -189,6 +195,7 @@ namespace Sdk.Docker {
                 var response = this.client.send("POST /containers/%s/rename?name=%s".printf(container.id, container.name));
                 
                 var error_messages = create_error_messages();
+                error_messages.set(404, "No such container");
                 error_messages.set(409, "Name already assigned to another container");                
                  
                 this.throw_error_from_status_code(204, response, error_messages);
@@ -248,7 +255,7 @@ namespace Sdk.Docker {
                         names[i] = names_node.get_string_element(i);
                     }
 
-                    containers += model_factory.create_container(
+                    containers += new Model.Container.from(
                         node.get_object().get_string_member("Id"),
                         node.get_object().get_int_member("Created"),
                         node.get_object().get_string_member("Command"),

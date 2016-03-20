@@ -2,19 +2,6 @@ namespace View.Docker {
     
     using global::Sdk.Docker.Model;
     
-    public interface ContainerActionable : GLib.Object {
-        public signal void container_status_change_request(ContainerStatus status, Container container);
-        public signal void container_remove_request(Container container);
-        public signal void container_start_request(Container container);
-        public signal void container_stop_request(Container container);
-        public signal void container_rename_request(Container container, Gtk.Label? label = null);
-        public signal void container_kill_request(Container container);
-    }
-
-    public interface ImageActionable : GLib.Object {
-        public signal void image_remove_request(Image image);
-    }
-
     public interface Flushable : Gtk.Container {
         /**
          * Remove all child widgets from the container

@@ -8,7 +8,7 @@ namespace View.Docker.Menu {
         }
     }
 
-    public class ImageMenu : View.Docker.ImageActionable, Menu {
+    public class ImageMenu : Signals.ImageRequestAction, Menu {
 
         protected Image image;
 

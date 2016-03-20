@@ -15,7 +15,7 @@ public class ApplicationController : GLib.Object {
     }
 
     public void listen_container_view() {
-
+        
         view.containers.container_status_change_request.connect((requested_status, container) => {
 
             try {
@@ -70,53 +70,6 @@ public class ApplicationController : GLib.Object {
             msg.show();
         });
 
-        view.images.image_remove_request.connect((image) => {
-            
-            Sdk.Docker.Model.Containers linked_containers = this.repository.containers().find_by_image(image);
-
-            var dialog = new View.Docker.Dialog.RemoveImageDialog(linked_containers, image, window);
-            
-            dialog.response.connect((source, response_id) => {
-
-                switch (response_id) {
-                    case Gtk.ResponseType.APPLY:
-                    
-                        try {
-                            
-                            if (linked_containers.length > 0) {
-                                foreach(Sdk.Docker.Model.ContainerStatus status in Sdk.Docker.Model.ContainerStatus.all()) {
-                                    foreach(Sdk.Docker.Model.Container container in linked_containers.get_by_status(status)) {
-                                        this.repository.containers().remove(container, true);
-                                    }
-                                }
-                            }
-                           
-                            this.repository.images().remove(image, true);
-
-                        } catch (Sdk.Docker.RequestError e) {
-                            message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                        }
-
-                        this.init_container_list();
-                        this.init_image_list();
-                        dialog.destroy();
-                        
-                        break;
-                    case Gtk.ResponseType.CANCEL:
-                        break;
-                    case Gtk.ResponseType.DELETE_EVENT:
-                        break;
-                    case Gtk.ResponseType.CLOSE:
-                        break;                        
-                }
-                
-                dialog.destroy();
-
-            });
-
-            dialog.show_all();
-        });
-
         view.containers.container_start_request.connect((container) => {
 
             try {
@@ -162,6 +115,56 @@ public class ApplicationController : GLib.Object {
         });
     }
 
+    public void listen_image_view() {
+        
+         view.images.image_remove_request.connect((image) => {
+            
+            Sdk.Docker.Model.Containers linked_containers = this.repository.containers().find_by_image(image);
+
+            var dialog = new View.Docker.Dialog.RemoveImageDialog(linked_containers, image, window);
+            
+            dialog.response.connect((source, response_id) => {
+
+                switch (response_id) {
+                    case Gtk.ResponseType.APPLY:
+                    
+                        try {
+                            
+                            if (linked_containers.length > 0) {
+                                foreach(Sdk.Docker.Model.ContainerStatus status in Sdk.Docker.Model.ContainerStatus.all()) {
+                                    foreach(Sdk.Docker.Model.Container container in linked_containers.get_by_status(status)) {
+                                        this.repository.containers().remove(container, true);
+                                    }
+                                }
+                            }
+                           
+                            this.repository.images().remove(image, true);
+
+                        } catch (Sdk.Docker.RequestError e) {
+                            message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+                        }
+
+                        this.init_container_list();
+                        this.init_image_list();
+                        dialog.destroy();
+                        
+                        break;
+                    case Gtk.ResponseType.CANCEL:
+                        break;
+                    case Gtk.ResponseType.DELETE_EVENT:
+                        break;
+                    case Gtk.ResponseType.CLOSE:
+                        break;                        
+                }
+                
+                dialog.destroy();
+
+            });
+
+            dialog.show_all();
+        });
+    }
+
     public void listen_headerbar() {
 
         view.headerbar.docker_daemon_lookup_request.connect((docker_path) => {
@@ -179,6 +182,19 @@ public class ApplicationController : GLib.Object {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                 this.view.images.init(null);
                 this.view.containers.init(null);
+            }
+        });
+    }
+
+    public void listen_docker_hub() {
+        
+        view.sidebar.search_image_in_docker_hub.connect((target, term) => {
+            
+            try {
+                Sdk.Docker.Model.HubImage[] images =  repository.images().search(term);  
+                target.set_images(images);                
+            } catch (Sdk.Docker.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
     }
@@ -220,7 +236,6 @@ public class ApplicationController : GLib.Object {
         
         return new Sdk.Docker.Repository(client);
     }
-    
     
     protected void handle_container_rename(Sdk.Docker.Model.Container container, Gtk.Label label) {
 

@@ -22,7 +22,7 @@ namespace View.Docker.Menu {
         }
     }
 
-    public class ContainerMenu : View.Docker.ContainerActionable, Menu {
+    public class ContainerMenu : Signals.ContainerRequestAction, Menu {
 
         protected Container container;
 
