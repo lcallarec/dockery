@@ -2,7 +2,7 @@ namespace View {
     
     using View.Docker.Dialog;
     
-    public class SideBar : Gtk.ListBox, DockerHubSearchableImage {
+    public class SideBar : Gtk.ListBox, Signals.DockerHubImageRequestAction {
         
         private const int8 ROW_HEIGHT = 30;
         

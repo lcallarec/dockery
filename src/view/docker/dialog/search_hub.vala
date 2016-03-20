@@ -2,18 +2,10 @@ namespace View.Docker.Dialog {
     
     using global::Sdk.Docker.Model;
     
-    public interface DockerHubSearchableImage : GLib.Object {
-        
-        /** This signal should be emitted when an image is searched in docker hub */
-        public signal void search_image_in_docker_hub(DockerHubSearchableImage target, string term);
-        
-        public abstract void set_images(Sdk.Docker.Model.HubImage[] images);
-    }
-    
     /**
      * This Dialog is displayed when an image is being removed.
      */ 
-    public class SearchHubDialog : View.Dialog, DockerHubSearchableImage {
+    public class SearchHubDialog : View.Dialog, Signals.DockerHubImageRequestAction {
 
         private Gtk.ListStore liststore = new Gtk.ListStore(5, typeof (string),  typeof (string), typeof (string), typeof (string), typeof (string));
         private Gtk.TreeView treeview   = null;

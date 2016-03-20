@@ -2,7 +2,7 @@ namespace View.Docker.List {
 
     using global::Sdk.Docker.Model;
 
-    public class Images : Flushable, ImageViewable, ImageActionable, Gtk.Box {
+    public class Images : Flushable, ImageViewable, Signals.ImageRequestAction, Gtk.Box {
         
         protected Gtk.Box empty_box;
         
