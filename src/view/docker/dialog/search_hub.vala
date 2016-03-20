@@ -12,7 +12,7 @@ namespace View.Docker.Dialog {
         
         public SearchHubDialog(Gtk.Window parent) {
             
-            base(500, 100, "Search image in Docker hub", parent, false, 0);
+            base(600, 500, "Search image in Docker hub", parent, false, 0);
             
             var body = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
             
