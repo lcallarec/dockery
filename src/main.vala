@@ -78,9 +78,10 @@ public class DockerManager : Gtk.Window {
 
         //ApplicationController
         this.ac = new ApplicationController(this, views, new MessageDispatcher(views.infobar));
-        ac.listen_docker_hub();
         ac.listen_headerbar();
+        ac.listen_docker_hub();
         ac.listen_container_view();
+        ac.listen_image_view();
     }
     
     protected Gtk.CssProvider create_css_provider(string css_path) {

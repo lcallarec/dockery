@@ -70,7 +70,54 @@ public class ApplicationController : GLib.Object {
             msg.show();
         });
 
-        view.images.image_remove_request.connect((image) => {
+        view.containers.container_start_request.connect((container) => {
+
+            try {
+                repository.containers().start(container);
+                string message = "Container %s successfully started".printf(container.id);
+                this.init_container_list();
+                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
+
+            } catch (Sdk.Docker.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+                this.init_container_list();
+            }
+        });
+
+        view.containers.container_stop_request.connect((container) => {
+            try {
+
+                repository.containers().stop(container);
+                string message = "Container %s successfully stopped".printf(container.id);
+                this.init_container_list();
+                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
+
+            } catch (Sdk.Docker.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+        });
+        
+        view.containers.container_kill_request.connect((container) => {
+
+            try {
+                repository.containers().kill(container);
+                string message = "Container %s successfully killed".printf(container.id);
+                this.init_container_list();
+                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
+
+            } catch (Sdk.Docker.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+        });
+        
+        view.containers.container_rename_request.connect((container, label) => {
+            this.handle_container_rename(container, label);
+        });
+    }
+
+    public void listen_image_view() {
+        
+         view.images.image_remove_request.connect((image) => {
             
             Sdk.Docker.Model.Containers linked_containers = this.repository.containers().find_by_image(image);
 
@@ -115,50 +162,6 @@ public class ApplicationController : GLib.Object {
             });
 
             dialog.show_all();
-        });
-
-        view.containers.container_start_request.connect((container) => {
-
-            try {
-                repository.containers().start(container);
-                string message = "Container %s successfully started".printf(container.id);
-                this.init_container_list();
-                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
-
-            } catch (Sdk.Docker.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                this.init_container_list();
-            }
-        });
-
-        view.containers.container_stop_request.connect((container) => {
-            try {
-
-                repository.containers().stop(container);
-                string message = "Container %s successfully stopped".printf(container.id);
-                this.init_container_list();
-                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
-
-            } catch (Sdk.Docker.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
-        });
-        
-        view.containers.container_kill_request.connect((container) => {
-
-            try {
-                repository.containers().kill(container);
-                string message = "Container %s successfully killed".printf(container.id);
-                this.init_container_list();
-                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
-
-            } catch (Sdk.Docker.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
-        });
-        
-        view.containers.container_rename_request.connect((container, label) => {
-            this.handle_container_rename(container, label);
         });
     }
 
