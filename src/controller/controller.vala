@@ -16,12 +16,6 @@ public class ApplicationController : GLib.Object {
 
     public void listen_container_view() {
         
-        
-        view.sidebar.search_image_in_docker_hub.connect((target, term) => {
-            Sdk.Docker.Model.HubImage[] images =  repository.images().search(term);  
-            target.set_images(images);
-        });
-        
         view.containers.container_status_change_request.connect((requested_status, container) => {
 
             try {
@@ -185,6 +179,19 @@ public class ApplicationController : GLib.Object {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                 this.view.images.init(null);
                 this.view.containers.init(null);
+            }
+        });
+    }
+
+    public void listen_docker_hub() {
+        
+        view.sidebar.search_image_in_docker_hub.connect((target, term) => {
+            
+            try {
+                Sdk.Docker.Model.HubImage[] images =  repository.images().search(term);  
+                target.set_images(images);                
+            } catch (Sdk.Docker.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
     }
