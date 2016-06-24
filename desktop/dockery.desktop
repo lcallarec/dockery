@@ -1,10 +1,10 @@
 [Desktop Entry]
 Type=Application
-Name=Docker Manager
+Name=Dockery
 Icon=docker-manager
 StartupNotify=false
 Categories=Development;GTK;
 Terminal=false
-Exec=/usr/bin/gdocker
+Exec=/usr/bin/dockery
 Version=1.0
 

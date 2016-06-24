@@ -1,5 +1,5 @@
 *.c
 *.geany
-gdocker
+dockery
 build
 .idea

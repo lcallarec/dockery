@@ -1,6 +1,6 @@
-# Docker-Manager
+# Dockery
 
-[![Build Status](https://travis-ci.org/lcallarec/gnome-docker-manager.svg?branch=master)](https://travis-ci.org/lcallarec/gnome-docker-manager)
+[![Build Status](https://travis-ci.org/lcallarec/dockery.svg?branch=master)](https://travis-ci.org/lcallarec/dockery)
 
 ## Features
 
@@ -13,7 +13,7 @@
   - destroy
 * Get image list and basic informations
 
-Support GTK+3 from 3.10 (fallbacks) to 3.18 (latest).
+Support GTK+3 from 3.10 (fallbacks) to 3.20(latest).
 
 ## Compile and install instructions
 
@@ -35,5 +35,5 @@ sudo make install
 
 ## Execute
 ```
-gdocker
+dockery
 ```

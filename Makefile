@@ -17,10 +17,10 @@ compile:
         --pkg gtk+-3.0 --pkg libsoup-2.4 --pkg gio-2.0 \
         --pkg gio-unix-2.0 --pkg gee-0.8 --pkg json-glib-1.0 \
         build/source/*.vala resources.c --gresources gresource.xml \
-        -o gdocker
-        
+        -o dockery
+
 install:
-	cp -f gdocker /usr/bin/gdocker
+	cp -f gdocker /usr/bin/dockery
 	$(MAKE) clean
 	$(MAKE) install-desktop-entry
 
@@ -32,7 +32,7 @@ install-desktop-entry:
 	cp desktop/icons/docker-managerx256.png /usr/share/icons/hicolor/256x256/apps/docker-manager.png
 	cp desktop/icons/docker-managerx48.png /usr/share/icons/hicolor/48x48/apps/docker-manager.png
 	gtk-update-icon-cache /usr/share/icons/hicolor
-    
+
 clean:
 	find . -type f -name '*.c' -delete && rm gdocker
 	rm -rf build/source

@@ -12,7 +12,7 @@ public class DockerManager : Gtk.Window {
 
     private Gtk.InfoBar infobar { get; set;}
 
-    private const string APPLICATION_NAME = "Docker manager";
+    private const string APPLICATION_NAME = "Dockery";
 
     private ApplicationController ac;
 
@@ -41,7 +41,7 @@ public class DockerManager : Gtk.Window {
     public DockerManager () {
 
         Object(window_position: Gtk.WindowPosition.CENTER);
-        
+
         this.set_default_size(700, 600);
         this.destroy.connect(Gtk.main_quit);
 
@@ -57,7 +57,7 @@ public class DockerManager : Gtk.Window {
         //Window Application name & Icon
         this.set_wmclass(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_NAME);
         this.set_icon_name("docker-icon");
-       
+
         //Titlebar
         var titlebar = create_titlebar();
         this.set_titlebar(titlebar);
@@ -83,7 +83,7 @@ public class DockerManager : Gtk.Window {
         ac.listen_container_view();
         ac.listen_image_view();
     }
-    
+
     protected Gtk.CssProvider create_css_provider(string css_path) {
 
         var provider = new Gtk.CssProvider();
@@ -93,7 +93,7 @@ public class DockerManager : Gtk.Window {
         #endif
 
         #if GTK_GTE_3_16
-        provider.load_from_resource("/org/lcallarec/gnome-docker-manager/" + css_path);
+        provider.load_from_resource("/org/lcallarec/dockery/" + css_path);
         #endif
 
         return provider;
@@ -101,15 +101,15 @@ public class DockerManager : Gtk.Window {
 
     protected void set_icon_theme(string icon_path) {
         #if GTK_GTE_3_16
-        new Gtk.IconTheme().get_default().add_resource_path("/org/lcallarec/gnome-docker-manager/" + icon_path);
+        new Gtk.IconTheme().get_default().add_resource_path("/org/lcallarec/dockery/" + icon_path);
         #endif
     }
-    
+
     private Gtk.HeaderBar create_titlebar() {
 
         Gtk.HeaderBar titlebar = new Gtk.HeaderBar();
         titlebar.show_close_button = true;
-        titlebar.title = "Gnome Docker Manager";
+        titlebar.title = "Dockery";
 
         return titlebar;
     }
