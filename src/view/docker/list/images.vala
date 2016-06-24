@@ -3,145 +3,131 @@ namespace View.Docker.List {
     using global::Sdk.Docker.Model;
 
     public class Images : Flushable, ImageViewable, Signals.ImageRequestAction, Gtk.Box {
-        
+
         protected Gtk.Box empty_box;
-        
+
+        protected Gtk.ListStore liststore = new Gtk.ListStore(4, typeof (string),  typeof (string), typeof (string), typeof (string));
+
         /**
-         * Init the images view from a given (nullable) list of images 
+         * Init the images view from a given (nullable) list of images
          */
         public Images init(Image[]? images, bool show_after_refresh = true) {
-            
-            this.flush();   
-            
+
+            this.flush();
+
             if (null != images && images.length > 0) {
-                
+
                 this.hydrate(images);
-                
+
                 if (show_after_refresh == true) {
                     this.show_all();
                 }
-                
+
                 return this;
-                
+
             } else {
 
                 var empty_box = IconMessageBoxBuilder.create_icon_message_box("No image found", "docker-symbolic");
                 this.pack_start(empty_box, true, true, 0);
-                
+
                 if (show_after_refresh == true) {
                     this.show_all();
                 }
-                
+
                 return this;
             }
         }
+
+        private Gtk.TreeView get_treeview(Gtk.ListStore liststore) {
+
+            var treeview = new Gtk.TreeView();
+            treeview.set_model(liststore);
+
+            treeview.vexpand = true;
+            treeview.hexpand = true;
+
+            treeview.insert_column_with_attributes(-1, "From",       new Gtk.CellRendererText(), "text", 0);
+            treeview.insert_column_with_attributes(-1, "ID",         new Gtk.CellRendererText(), "text", 1);
+            treeview.insert_column_with_attributes(-1, "Size",       new Gtk.CellRendererText(), "text", 2);
+            treeview.insert_column_with_attributes(-1, "Created at", new Gtk.CellRendererText(), "text", 3);
+
+            treeview.set_grid_lines(Gtk.TreeViewGridLines.HORIZONTAL);
+
+            return treeview;
+
+        }
+
 
         /**
          * Add new rows from images array
          */
         private int hydrate(Image[] images) {
             int images_count = 0;
-            Gtk.ListBox list_box = new Gtk.ListBox();
-            
+
+            Gtk.TreeIter iter;
+
+            liststore.clear();
+
+            Gee.HashMap<string, Image> images_index = new Gee.HashMap<string, Image>();
+
             foreach(Image image in images) {
 
-                Gtk.ListBoxRow row = new Gtk.ListBoxRow();
+                images_index.set(image.id, image);
 
-                //For Gtk 3.14+ only
-                //row.set_selectable(false);
+                liststore.append(out iter);
 
-                Gtk.Grid row_layout = new Gtk.Grid();
-                row.add(row_layout);
+                StringBuilder sb = new StringBuilder();
+                sb.printf("%s:%s",image.repository, image.tag);
 
-                var label_repotag       = create_repotag_label(image);
-                var label_id            = create_id_label(image);
-                var label_creation_date = create_creation_date_label(image);
-                var label_size          = create_virtual_size_label(image);
-
-                //attach (Widget child, int left, int top, int width = 1, int height = 1)
-                row_layout.attach(label_repotag,       0, 0, 1, 1);
-                row_layout.attach(label_id,            0, 1, 1, 1);
-                row_layout.attach(label_size,          1, 0, 1, 1);
-                row_layout.attach(label_creation_date, 1, 1, 1, 1);
-
-                View.Docker.Menu.ImageMenu menu = View.Docker.Menu.ImageMenuFactory.create(image);
-
-                Gtk.MenuButton mb = new Gtk.MenuButton();
-                
-                menu.show_all();
-                mb.popup = menu;
-
-                menu.image_remove_request.connect(() => {
-                    this.image_remove_request(image);
-                });
-
-                row_layout.attach(mb,        2, 0, 1, 1);
-
-                Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
-                row_layout.attach(separator, 0, 2, 3, 2);
+                liststore.set(iter, 0, sb.str, 1, image.id, 2, image.size, 3, image.created_at.to_string());
 
                 images_count += 1;
 
-                list_box.insert(row, images_count);
             }
 
-            this.pack_start(list_box, true, true, 0);
+            var tv = get_treeview(liststore);
+
+            var selection = tv.get_selection();
+            selection.set_mode(Gtk.SelectionMode.SINGLE);
+
+
+            tv.button_press_event.connect((e) => {
+                if (e.button == 3) {
+                    Gtk.TreePath tp;
+                    tv.get_path_at_pos((int) e.x, (int) e.y, out tp, null, null, null);
+
+                    selection.select_path(tp);
+
+                    Gtk.TreeModel m;
+                    Gtk.TreeIter i;
+                    selection.get_selected(out m, out i);
+
+                    Value id;
+                    m.get_value(i, 1, out id);
+
+                    if (true == images_index.has_key((string) id)) {
+
+                        Image image = images_index.get((string) id);
+
+                        View.Docker.Menu.ImageMenu menu = View.Docker.Menu.ImageMenuFactory.create(image);
+                        menu.show_all();
+
+                        menu.popup(null, null, null, e.button, e.time);
+
+                        menu.image_remove_request.connect(() => {
+                            this.image_remove_request(image);
+                        });
+                    }
+
+                    return true;
+                }
+
+                return false;
+            });
+
+            this.pack_start(tv, true, true, 0);
 
             return images_count;
-        }
-
-        /**
-         * Create a repo:tab label
-         */
-        private Gtk.Label create_repotag_label(Image image) {
-
-            StringBuilder sb = new StringBuilder();
-            sb.printf("from: <b>%s:%s</b>", GLib.Markup.escape_text(image.repository), GLib.Markup.escape_text(image.tag));
-
-            var label = new Gtk.Label(null);
-            label.set_markup(sb.str);
-            label.halign = Gtk.Align.START;
-            label.valign = Gtk.Align.START;
-            label.set_selectable(true);
-            label.set_hexpand(true);
-
-            return label;
-        }
-
-        /**
-         * Create a id label
-         */
-        private Gtk.Label create_id_label(Image image) {
-
-            var label = new Gtk.Label(image.id);
-            label.halign = Gtk.Align.START;
-            label.set_selectable(true);
-
-            return label;
-        }
-
-        /**
-         * Create a creation date label
-         */
-        private Gtk.Label create_creation_date_label(Image image) {
-
-            var label = new Gtk.Label("%s: %s".printf("created at", image.created_at.to_string()));
-            label.attributes = Fonts.get_minor();
-            label.halign = Gtk.Align.START;
-            label.set_selectable(true);
-
-            return label;
-        }
-
-        /**
-         * Create a virtual size label
-         */
-        private Gtk.Label create_virtual_size_label(Image image) {
-
-            var label = new Gtk.Label(image.size);
-            label.halign = Gtk.Align.START;
-
-            return label;
         }
     }
 }
