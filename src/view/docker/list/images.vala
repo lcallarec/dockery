@@ -11,11 +11,11 @@ namespace View.Docker.List {
         /**
          * Init the images view from a given (nullable) list of images
          */
-        public Images init(Image[]? images, bool show_after_refresh = true) {
+        public Images init(Collection? images, bool show_after_refresh = true) {
 
             this.flush();
 
-            if (null != images && images.length > 0) {
+            if (null != images && images.size > 0) {
 
                 this.hydrate(images);
 
@@ -61,18 +61,18 @@ namespace View.Docker.List {
         /**
          * Add new rows from images array
          */
-        private int hydrate(Image[] images) {
+        private int hydrate(Collection<Image> images) {
             int images_count = 0;
 
             Gtk.TreeIter iter;
 
             liststore.clear();
 
-            Gee.HashMap<string, Image> images_index = new Gee.HashMap<string, Image>();
+            //Gee.HashMap<string, Image> images_index = new Gee.HashMap<string, Image>();
 
-            foreach(Image image in images) {
+            foreach(Image image in images<Image>) {
 
-                images_index.set(image.id, image);
+                //images_index.set(image.id, image);
 
                 liststore.append(out iter);
 
@@ -102,12 +102,14 @@ namespace View.Docker.List {
                     Gtk.TreeIter i;
                     selection.get_selected(out m, out i);
 
-                    Value id;
-                    m.get_value(i, 1, out id);
+                    Value oid;
+                    m.get_value(i, 1, out oid);
 
-                    if (true == images_index.has_key((string) id)) {
+                    string id = oid as string;
 
-                        Image image = images_index.get((string) id);
+                    if (images.has_id(id)) {
+
+                        Image image = images.get_by_id(id);
 
                         View.Docker.Menu.ImageMenu menu = View.Docker.Menu.ImageMenuFactory.create(image);
                         menu.show_all();

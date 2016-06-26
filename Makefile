@@ -20,20 +20,27 @@ compile:
         -o dockery
 
 install:
-	cp -f gdocker /usr/bin/dockery
+	cp -f dockery /usr/bin/dockery
 	$(MAKE) clean
 	$(MAKE) install-desktop-entry
 
 install-desktop-entry:
 	rm -rf /usr/local/share/applications/dockery.desktop
 	cp -f desktop/docker-manager.desktop /usr/local/share/applications/dockery.desktop
-	chmod 0777 /usr/local/share/applications/dockery.desktop
+	chmod 0644 /usr/local/share/applications/dockery.desktop
 	cp desktop/icons/dockery.svg /usr/share/icons/hicolor/scalable/apps/dockery.png
 	cp desktop/icons/dockeryx256.png /usr/share/icons/hicolor/256x256/apps/dockery.png
 	cp desktop/icons/dockeryx48.png /usr/share/icons/hicolor/48x48/apps/dockery.png
 	gtk-update-icon-cache /usr/share/icons/hicolor
 
 clean:
-	find . -type f -name '*.c' -delete && rm dockery
+	rm -f dockery
 	rm -rf build/source
+	find . -type f -name '*.c' -delete
+
+
+debug:
+	$(MAKE) clean
+	$(MAKE) compile
+
 
