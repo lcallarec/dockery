@@ -28,7 +28,7 @@ namespace Sdk.Docker {
           * Get a list of all images
           * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers
           */
-         public Model.Collection list() throws RequestError {
+         public Model.ImageCollection list() throws RequestError {
 
             try {
 
@@ -96,9 +96,9 @@ namespace Sdk.Docker {
         /**
          * Parse images list response payload
          */
-        private Model.Collection parse_images_list_payload(string payload) {
+        private Model.ImageCollection parse_images_list_payload(string payload) {
 
-            var images = new Model.Collection<Model.Image>();
+            var images = new Model.ImageCollection();
             try {
                 var parser = new Json.Parser();
                 parser.load_from_data(payload);

@@ -200,7 +200,7 @@ public class ApplicationController : GLib.Object {
     }
 
     protected void init_image_list() throws Sdk.Docker.RequestError {
-        Sdk.Docker.Model.Collection? images = null;
+        Sdk.Docker.Model.ImageCollection? images = null;
         try {
              images = repository.images().list();
         } catch (Sdk.Docker.RequestError e) {

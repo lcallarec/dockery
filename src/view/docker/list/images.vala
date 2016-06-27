@@ -11,7 +11,7 @@ namespace View.Docker.List {
         /**
          * Init the images view from a given (nullable) list of images
          */
-        public Images init(Collection? images, bool show_after_refresh = true) {
+        public Images init(ImageCollection images, bool show_after_refresh = true) {
 
             this.flush();
 
@@ -61,18 +61,14 @@ namespace View.Docker.List {
         /**
          * Add new rows from images array
          */
-        private int hydrate(Collection<Image> images) {
+        private int hydrate(ImageCollection images) {
             int images_count = 0;
 
             Gtk.TreeIter iter;
 
             liststore.clear();
 
-            //Gee.HashMap<string, Image> images_index = new Gee.HashMap<string, Image>();
-
-            foreach(Image image in images<Image>) {
-
-                //images_index.set(image.id, image);
+            foreach(Image image in images) {
 
                 liststore.append(out iter);
 

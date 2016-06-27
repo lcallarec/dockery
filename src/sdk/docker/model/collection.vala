@@ -8,7 +8,7 @@ namespace Sdk.Docker.Model {
 
         }
 
-        public void add(Model item) {
+        public new void add(Model item) {
             id_idx.set(item.id, item);
             base.add(item);
         }
