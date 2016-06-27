@@ -119,7 +119,7 @@ public class ApplicationController : GLib.Object {
 
          view.images.image_remove_request.connect((image) => {
 
-            Sdk.Docker.Model.Containers linked_containers = this.repository.containers().find_by_image(image);
+            Sdk.Docker.Model.ContainerCollection linked_containers = this.repository.containers().find_by_image(image);
 
             var dialog = new View.Docker.Dialog.RemoveImageDialog(linked_containers, image, window);
 
@@ -130,7 +130,7 @@ public class ApplicationController : GLib.Object {
 
                         try {
 
-                            if (linked_containers.length > 0) {
+                            if (linked_containers.size > 0) {
                                 foreach(Sdk.Docker.Model.ContainerStatus status in Sdk.Docker.Model.ContainerStatus.all()) {
                                     foreach(Sdk.Docker.Model.Container container in linked_containers.get_by_status(status)) {
                                         this.repository.containers().remove(container, true);
@@ -212,11 +212,11 @@ public class ApplicationController : GLib.Object {
 
     protected void init_container_list() throws Sdk.Docker.RequestError {
 
-        var container_collection = new Sdk.Docker.Model.Containers();
+        var container_collection = new Sdk.Docker.Model.ContainerCollection();
 
         foreach(Sdk.Docker.Model.ContainerStatus status in Sdk.Docker.Model.ContainerStatus.all()) {
             var containers = repository.containers().list(status);
-            container_collection.add(status, containers);
+            container_collection.add_collection(containers);
         }
 
         this.view.containers.init(container_collection);

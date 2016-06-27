@@ -29,7 +29,7 @@ namespace View.Docker {
         /**
          * Init the container view from a given (nullable) list of containers and return it
          */
-        public abstract View.Docker.List.Containers init(Containers? containers, bool show_after_refresh = true);
+        public abstract View.Docker.List.Containers init(ContainerCollection containers, bool show_after_refresh = true);
     }
 
     /**

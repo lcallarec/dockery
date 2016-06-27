@@ -1,8 +1,8 @@
 namespace View.Docker.List {
-    
+
     using global::Sdk.Docker.Model;
-        
-   
+
+
     public class Containers : Flushable, ContainerViewable, Signals.ContainerRequestAction, Gtk.Box {
 
         protected Gtk.Notebook notebook;
@@ -10,30 +10,30 @@ namespace View.Docker.List {
 
         /**
          * Init the container view from a given (nullable) list of containers and return it
-         */ 
-        public Containers init(global::Sdk.Docker.Model.Containers? containers, bool show_after_refresh = true) {
-            
+         */
+        public Containers init(global::Sdk.Docker.Model.ContainerCollection containers, bool show_after_refresh = true) {
+
             this.flush();
-            
+
             if (null == containers) {
                 this.notebook  =  null;
                 this.empty_box = IconMessageBoxBuilder.create_icon_message_box("No container found", "docker-symbolic");
                 this.pack_start(this.empty_box, true, true, 0);
                 return this;
             }
-            
+
             this.notebook  =  new Gtk.Notebook();
             this.empty_box = null;
 
             this.pack_start(this.notebook, true, true, 0);
-            
+
             foreach(ContainerStatus status in ContainerStatus.all()) {
                 var c = containers.get_by_status(status);
                 if (c.is_empty == false) {
                     this.hydrate(status, c);
                 }
             }
-            
+
             if (true == show_after_refresh) {
                 this.show_all();
             }
@@ -48,7 +48,7 @@ namespace View.Docker.List {
 
             int containers_count = 0;
             Gtk.ListBox list_box = new Gtk.ListBox();
-            
+
             foreach(Container container in containers) {
 
                 containers_count++;
@@ -96,7 +96,7 @@ namespace View.Docker.List {
                     menu.container_rename_request.connect(() => {
                         this.container_rename_request(container, label_name);
                     });
-                    
+
                     menu.container_kill_request.connect(() => {
                         this.container_kill_request(container);
                     });
@@ -117,17 +117,17 @@ namespace View.Docker.List {
 
         public void flush() {
             if (null != this.empty_box) {
-                this.remove(this.empty_box);                
+                this.remove(this.empty_box);
             }
 
             if (null != this.notebook) {
                 this.remove(this.notebook);
             }
         }
-        
+
         /**
          * Decorate the row for specific gtk3+ versions
-         */ 
+         */
         protected void decorate_row(Gtk.ListBoxRow row) {
 
         }
