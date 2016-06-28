@@ -7,11 +7,29 @@ public class ApplicationController : GLib.Object {
     protected Gtk.Window window;
     protected MessageDispatcher message_dispatcher;
     protected View.MainApplicationView view;
+    protected string? docker_endpoint;
 
     public ApplicationController(Gtk.Window window, View.MainApplicationView view, MessageDispatcher message_dispatcher) {
         this.window             = window;
         this.view               = view;
         this.message_dispatcher = message_dispatcher;
+
+        var endpoint_discovery = new Sdk.Docker.UnixSocketEndpointDiscovery();
+
+        docker_endpoint = endpoint_discovery.discover();
+        stdout.printf("ENDPOINT : %s\n", docker_endpoint);
+        if (docker_endpoint != null) {
+            repository = create_repository(docker_endpoint);
+
+            try {
+                repository.server().ping();
+                docker_daemon_post_connect();
+            } catch (Sdk.Docker.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+
+            stdout.printf("REPOSITORY_CREATED : %s\n", docker_endpoint);
+        }
     }
 
     public void listen_container_view() {
@@ -168,21 +186,7 @@ public class ApplicationController : GLib.Object {
     public void listen_headerbar() {
 
         view.headerbar.docker_daemon_lookup_request.connect((docker_path) => {
-
-            try {
-
-                this.repository = create_repository(docker_path);
-
-                this.init_image_list();
-                this.init_container_list();
-
-                message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
-
-            } catch (Sdk.Docker.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                this.view.images.init(null);
-                this.view.containers.init(null);
-            }
+            docker_daemon_post_connect();
         });
     }
 
@@ -269,5 +273,21 @@ public class ApplicationController : GLib.Object {
 
         pop.show_all();
         #endif
+    }
+
+    protected void docker_daemon_post_connect() {
+
+        try {
+
+            this.init_image_list();
+            this.init_container_list();
+
+            message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
+
+        } catch (Sdk.Docker.RequestError e) {
+            message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            this.view.images.init(null);
+            this.view.containers.init(null);
+        }
     }
 }
