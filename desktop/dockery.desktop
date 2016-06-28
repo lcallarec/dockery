@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Dockery
-Icon=docker-manager
+Icon=dockery
 StartupNotify=false
 Categories=Development;GTK;
 Terminal=false
