@@ -11,7 +11,7 @@ namespace View.Docker.List {
         /**
          * Init the images view from a given (nullable) list of images
          */
-        public Images init(ImageCollection images, bool show_after_refresh = true) {
+        public Images init(ImageCollection? images, bool show_after_refresh = true) {
 
             this.flush();
 

@@ -18,7 +18,7 @@ namespace View.Docker {
         /**
          * Init the images view from a given (nullable) list of images
          */
-        public abstract View.Docker.List.Images init(ImageCollection images, bool show_after_refresh = true);
+        public abstract View.Docker.List.Images init(ImageCollection? images, bool show_after_refresh = true);
     }
 
     /**
@@ -29,7 +29,7 @@ namespace View.Docker {
         /**
          * Init the container view from a given (nullable) list of containers and return it
          */
-        public abstract View.Docker.List.Containers init(ContainerCollection containers, bool show_after_refresh = true);
+        public abstract View.Docker.List.Containers init(ContainerCollection? containers, bool show_after_refresh = true);
     }
 
     /**
