@@ -7,8 +7,6 @@ namespace View {
         private Gtk.Button discover_connect_button;
         private Gtk.Button disconnect_button;
 
-        private Gtk.Popover connect_button_popover;
-
         /** Gtk entry where user can fill the docker connection info */
         private Gtk.Entry  entry;
 
@@ -94,13 +92,14 @@ namespace View {
         private void create_connect_button() {
 
             #if GTK_GTE_3_16
-            this.connect_button_popover = new Gtk.Popover(action_button);
-            this.connect_button_popover.position = Gtk.PositionType.BOTTOM;
+            Gtk.Popover connect_button_popover = new Gtk.Popover(action_button);
+
+            connect_button_popover.position = Gtk.PositionType.BOTTOM;
 
             var box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 10);
 
             this.action_button.clicked.connect (() => {
-                this.connect_button_popover.show_all();
+                connect_button_popover.show_all();
             });
 
             box.pack_start(entry, false, true, 0);
@@ -108,7 +107,7 @@ namespace View {
             box.pack_start(this.discover_connect_button, false, true, 0);
             box.pack_start(this.disconnect_button, false, true, 0);
 
-            this.connect_button_popover.add(box);
+            connect_button_popover.add(box);
 
             this.pack_end(action_button);
             #endif
