@@ -9,16 +9,18 @@ namespace View {
         public View.Docker.List.Containers   containers;
         public View.Docker.List.Images       images;
         private ListBuilder                  docker_view;
-        
+
         private Gtk.Window                   window;
-        
-        public MainApplicationView(Gtk.Window window, string docker_host) {
-            
+
+        public MainApplicationView(DockerManager window, string docker_host) {
+
             this.window = window;
-            
+
             this.workspace = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
 
-            this.headerbar = new View.HeaderBar(docker_host);
+            this.headerbar = new View.HeaderBar(window.APPLICATION_NAME, window.APPLICATION_SUBNAME, docker_host);
+
+            window.set_titlebar(headerbar);
 
             this.infobar = new Gtk.InfoBar();
             infobar.set_no_show_all(true);
@@ -29,7 +31,7 @@ namespace View {
             });
 
             this.docker_view = new ListBuilder();
-           
+
             Gtk.Stack stack = new Gtk.Stack();
             stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE);
 
@@ -38,14 +40,14 @@ namespace View {
 
             this.containers = this.docker_view.create_containers_view();
             this.containers.init(null);
-                        
+
             Gtk.ScrolledWindow containers_scrolled = new Gtk.ScrolledWindow(null, null);
             containers_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
             containers_scrolled.add(containers);
 
             this.images = this.docker_view.create_images_view();
             this.images.init(null);
-            
+
             Gtk.ScrolledWindow images_scrolled = new Gtk.ScrolledWindow(null, null);
             images_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
             images_scrolled.add(images);

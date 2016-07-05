@@ -169,8 +169,16 @@ public class ApplicationController : GLib.Object {
 
     public void listen_headerbar() {
 
-        view.headerbar.docker_daemon_lookup_request.connect((docker_path) => {
+        view.headerbar.docker_daemon_connect_request.connect((docker_path) => {
             connect(docker_path);
+        });
+
+        view.headerbar.docker_daemon_disconnect_request.connect(() => {
+            disconnect();
+        });
+
+        view.headerbar.docker_daemon_autoconnect_request.connect(() => {
+            connect(discover_connection());
         });
     }
 
@@ -212,21 +220,38 @@ public class ApplicationController : GLib.Object {
 
     protected bool connect(string? docker_endpoint) {
 
+        this.view.headerbar.on_docker_daemon_connect(docker_endpoint, false);
+
         if (docker_endpoint != null) {
+
             repository = create_repository(docker_endpoint);
 
+            repository.connected.connect((repository) => {
+                docker_daemon_post_connect(docker_endpoint);
+            });
+
             try {
-                repository.server().ping();
-                docker_daemon_post_connect();
+                repository.connect();
                 return true;
             } catch (Sdk.Docker.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                 return false;
             }
         } else {
-            message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't find docker service. Is it running ?");
+            message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't find Docker service. Is it running ?");
             return false;
         }
+    }
+
+     protected bool disconnect() {
+
+        this.view.headerbar.on_docker_daemon_connect(null, false);
+
+        repository = null;
+
+        message_dispatcher.dispatch(Gtk.MessageType.INFO, "Disconnected from Docker daemon");
+
+        return true;
     }
 
     protected string? discover_connection() {
@@ -240,14 +265,6 @@ public class ApplicationController : GLib.Object {
     protected Sdk.Docker.Repository create_repository(string docker_path) {
 
         var client = new Sdk.Docker.UnixSocketClient(docker_path);
-
-        client.response_success.connect((response) => {
-            this.view.headerbar.connected_to_docker_daemon(true);
-        });
-
-        client.request_error.connect((response) => {
-            this.view.headerbar.connected_to_docker_daemon(false);
-        });
 
         return new Sdk.Docker.Repository(client);
     }
@@ -286,12 +303,12 @@ public class ApplicationController : GLib.Object {
         #endif
     }
 
-    protected void docker_daemon_post_connect() {
+    protected void docker_daemon_post_connect(string docker_endpoint) {
 
         try {
-
             this.init_image_list();
             this.init_container_list();
+            this.view.headerbar.on_docker_daemon_connect(docker_endpoint, true);
             message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
         } catch (Sdk.Docker.RequestError e) {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
