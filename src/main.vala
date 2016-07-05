@@ -6,17 +6,13 @@
  */
 public class DockerManager : Gtk.Window {
 
-    private string docker_host = "/var/run/docker.sock";
+    public const string APPLICATION_NAME = "Dockery";
 
-    private Sdk.Docker.Repository repository;
+    public const string APPLICATION_SUBNAME = "A graphical Docker client";
 
     private Gtk.InfoBar infobar { get; set;}
 
-    private const string APPLICATION_NAME = "Dockery";
-
     private ApplicationController ac;
-
-    private View.MainApplicationView views;
 
     public static void main (string[] args) {
         Gtk.init(ref args);
@@ -58,17 +54,13 @@ public class DockerManager : Gtk.Window {
         this.set_wmclass(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_NAME);
         this.set_icon_name("docker-icon");
 
-        //Titlebar
-        var titlebar = create_titlebar();
-        this.set_titlebar(titlebar);
-
         //Main box
         Gtk.Box main_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         this.add(main_box);
 
         //// START
         //Main Views
-        View.MainApplicationView views = new View.MainApplicationView(this, docker_host);
+        View.MainApplicationView views = new View.MainApplicationView(this);
 
         //Workspace
         main_box.pack_start(views.headerbar, false, true, 5);
@@ -103,15 +95,6 @@ public class DockerManager : Gtk.Window {
         #if GTK_GTE_3_16
         new Gtk.IconTheme().get_default().add_resource_path("/org/lcallarec/dockery/" + icon_path);
         #endif
-    }
-
-    private Gtk.HeaderBar create_titlebar() {
-
-        Gtk.HeaderBar titlebar = new Gtk.HeaderBar();
-        titlebar.show_close_button = true;
-        titlebar.title = "Dockery";
-
-        return titlebar;
     }
 }
 

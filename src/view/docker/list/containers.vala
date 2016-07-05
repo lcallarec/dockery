@@ -11,7 +11,7 @@ namespace View.Docker.List {
         /**
          * Init the container view from a given (nullable) list of containers and return it
          */
-        public Containers init(global::Sdk.Docker.Model.ContainerCollection containers, bool show_after_refresh = true) {
+        public Containers init(ContainerCollection? containers, bool show_after_refresh = true) {
 
             this.flush();
 

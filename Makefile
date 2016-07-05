@@ -26,7 +26,7 @@ install:
 
 install-desktop-entry:
 	rm -rf /usr/local/share/applications/dockery.desktop
-	cp -f desktop/docker-manager.desktop /usr/local/share/applications/dockery.desktop
+	cp -f desktop/dockery.desktop /usr/local/share/applications/dockery.desktop
 	chmod 0644 /usr/local/share/applications/dockery.desktop
 	cp desktop/icons/dockery.svg /usr/share/icons/hicolor/scalable/apps/dockery.png
 	cp desktop/icons/dockeryx256.png /usr/share/icons/hicolor/256x256/apps/dockery.png
