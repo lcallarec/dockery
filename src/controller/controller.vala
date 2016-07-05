@@ -13,7 +13,7 @@ public class ApplicationController : GLib.Object {
         this.view               = view;
         this.message_dispatcher = message_dispatcher;
 
-        connect(discover_connection());
+        __connect(discover_connection());
     }
 
     public void listen_container_view() {
@@ -52,11 +52,10 @@ public class ApplicationController : GLib.Object {
 
                         try {
                             repository.containers().remove(container);
+                            this.init_container_list();
                         } catch (Sdk.Docker.RequestError e) {
                             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                         }
-
-                        this.init_container_list();
 
                         break;
                     case Gtk.ResponseType.CANCEL:
@@ -170,15 +169,15 @@ public class ApplicationController : GLib.Object {
     public void listen_headerbar() {
 
         view.headerbar.docker_daemon_connect_request.connect((docker_path) => {
-            connect(docker_path);
+            __connect(docker_path);
         });
 
         view.headerbar.docker_daemon_disconnect_request.connect(() => {
-            disconnect();
+            __disconnect();
         });
 
         view.headerbar.docker_daemon_autoconnect_request.connect(() => {
-            connect(discover_connection());
+            __connect(discover_connection());
         });
     }
 
@@ -218,7 +217,7 @@ public class ApplicationController : GLib.Object {
         this.view.containers.init(container_collection);
     }
 
-    protected bool connect(string? docker_endpoint) {
+    protected bool __connect(string? docker_endpoint) {
 
         this.view.headerbar.on_docker_daemon_connect(docker_endpoint, false);
 
@@ -230,20 +229,16 @@ public class ApplicationController : GLib.Object {
                 docker_daemon_post_connect(docker_endpoint);
             });
 
-            try {
-                repository.connect();
-                return true;
-            } catch (Sdk.Docker.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                return false;
-            }
+            repository.connect();
+            return true;
+
         } else {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't find Docker service. Is it running ?");
             return false;
         }
     }
 
-     protected bool disconnect() {
+     protected new bool __disconnect() {
 
         this.view.headerbar.on_docker_daemon_connect(null, false);
 

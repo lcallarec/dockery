@@ -30,7 +30,7 @@ namespace Sdk.Docker {
             return this._containers;
         }
 
-        public void connect() {
+        public new void connect() {
             this._server.ping();
             this.connected(this);
         }

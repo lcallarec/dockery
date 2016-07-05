@@ -12,18 +12,6 @@ namespace View {
         /** Gtk entry where user can fill the docker connection info */
         private Gtk.Entry  entry;
 
-        /** Label related to previous entry*/
-        private Gtk.Label  entry_label;
-
-        /** Docker icon status */
-        private Gtk.Image  docker_status_icon;
-
-        /** Icon name to use when application is connected to docker daemon */
-        private const string connected_icon_name    = "network-wireless-symbolic";
-
-        /** Icon name to use when application is not connected to docker daemon */
-        private const string disconnected_icon_name = "network-wireless-signal-none-symbolic";
-
         /** Signal sent when a docker disconnection request is performed */
         public signal void docker_daemon_disconnect_request();
 
@@ -33,9 +21,7 @@ namespace View {
         /** Signal sent when a docker auto-connection request is performed */
         public signal void docker_daemon_autoconnect_request();
 
-        public HeaderBar(string? title, string? subtitle, string docker_host) {
-
-            this.docker_status_icon = new Gtk.Image.from_icon_name(HeaderBar.disconnected_icon_name, Gtk.IconSize.MENU);
+        public HeaderBar(string? title, string? subtitle) {
 
             this.action_button = new Gtk.Button.with_label("connecting...");
             this.disconnect_button = new Gtk.Button.with_label("please wait...");
@@ -43,8 +29,6 @@ namespace View {
 
             this.discover_connect_button = new Gtk.Button.with_label("auto-connect");
             this.discover_connect_button.set_sensitive(false);
-
-            this.entry_label = new Gtk.Label("Docker unix socket");
 
             this.entry = new Gtk.Entry();
             this.entry.width_chars = 30;
@@ -88,17 +72,16 @@ namespace View {
         public void on_docker_daemon_connect(string? docker_host, bool status) {
 
             if (true == status) {
+
                 this.entry.text = docker_host;
                 this.action_button.label = "connected";
 
                 this.disconnect_button.label = "disconnect";
                 this.disconnect_button.set_sensitive(true);
 
-                this.docker_status_icon.icon_name = HeaderBar.connected_icon_name;
-
                 this.discover_connect_button.set_sensitive(false);
+
             } else {
-                this.docker_status_icon.icon_name = HeaderBar.disconnected_icon_name;
 
                 this.action_button.label = "not connected";
 

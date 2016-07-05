@@ -12,13 +12,13 @@ namespace View {
 
         private Gtk.Window                   window;
 
-        public MainApplicationView(DockerManager window, string docker_host) {
+        public MainApplicationView(DockerManager window) {
 
             this.window = window;
 
             this.workspace = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
 
-            this.headerbar = new View.HeaderBar(window.APPLICATION_NAME, window.APPLICATION_SUBNAME, docker_host);
+            this.headerbar = new View.HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
 
             window.set_titlebar(headerbar);
 

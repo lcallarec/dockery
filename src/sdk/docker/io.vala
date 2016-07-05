@@ -46,7 +46,12 @@ namespace Sdk.Docker {
                 stdout.printf("IO error : %s", e.message);
             }
 
-            stream.close();
+            try {
+                stream.close();
+            } catch (Error e) {
+                stdout.printf("IO error : %s", e.message);
+            }
+
         }
 
         private int? extract_response_status_code(DataInputStream stream) {
@@ -78,9 +83,6 @@ namespace Sdk.Docker {
                     string[] _header = header_line.split(":", 2);
                     headers.set(_header[0], _header[1].strip());
                 }
-
-            } catch (RegexError e) {
-                return null;
             } catch (IOError e) {
                 return null;
             }
@@ -102,8 +104,6 @@ namespace Sdk.Docker {
             filter_builder.append("=");
 
             filter_builder.append(build_json_request_filter(filter_value));
-
-            //filter_builder.append("&");
         }
 
         public string build() {

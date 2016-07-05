@@ -10,15 +10,9 @@ public class DockerManager : Gtk.Window {
 
     public const string APPLICATION_SUBNAME = "A graphical Docker client";
 
-    private string docker_host = "/var/run/docker.sock";
-
-    private Sdk.Docker.Repository repository;
-
     private Gtk.InfoBar infobar { get; set;}
 
     private ApplicationController ac;
-
-    private View.MainApplicationView views;
 
     public static void main (string[] args) {
         Gtk.init(ref args);
@@ -66,7 +60,7 @@ public class DockerManager : Gtk.Window {
 
         //// START
         //Main Views
-        View.MainApplicationView views = new View.MainApplicationView(this, docker_host);
+        View.MainApplicationView views = new View.MainApplicationView(this);
 
         //Workspace
         main_box.pack_start(views.headerbar, false, true, 5);
