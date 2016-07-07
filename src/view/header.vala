@@ -10,6 +10,12 @@ namespace View {
         /** Gtk entry where user can fill the docker connection info */
         private Gtk.Entry  entry;
 
+        /** Placeholder to display messages inside connect panel popover*/
+        private Gtk.InfoBar connect_panel_messagebar;
+
+        /** Label to display messages inside connect_panel_messagebar */
+        private Gtk.Label connect_panel_messagebar_label;
+
         /** Signal sent when a docker disconnection request is performed */
         public signal void docker_daemon_disconnect_request();
 
@@ -58,16 +64,15 @@ namespace View {
             if (null != subtitle) {
                 this.subtitle = subtitle;
             }
-
         }
 
         /**
-         * Notify a connect event
+         * Callback to invoke on connect event
          *
          * true  : connected
          * false : disconnected
          */
-        public void on_docker_daemon_connect(string? docker_host, bool status) {
+        public void on_docker_daemon_connect(string? docker_host, bool status, Notification.Message? message = null) {
 
             if (true == status) {
 
@@ -84,8 +89,16 @@ namespace View {
                 this.action_button.label = "not connected";
 
                 this.disconnect_button.set_sensitive(false);
+                this.disconnect_button.label = "not connected";
 
                 this.discover_connect_button.set_sensitive(true);
+
+                if (null != message) {
+                    connect_panel_messagebar.set_message_type(message.message_type);
+                    connect_panel_messagebar_label.label = message.message;
+                    connect_panel_messagebar_label.show();
+                    connect_panel_messagebar.show();
+                }
             }
         }
 
@@ -96,16 +109,35 @@ namespace View {
 
             connect_button_popover.position = Gtk.PositionType.BOTTOM;
 
-            var box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 10);
+            var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 10);
 
             this.action_button.clicked.connect (() => {
                 connect_button_popover.show_all();
             });
 
-            box.pack_start(entry, false, true, 0);
+            var row1 = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 10);
+            var row2 = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
 
-            box.pack_start(this.discover_connect_button, false, true, 0);
-            box.pack_start(this.disconnect_button, false, true, 0);
+            row1.pack_start(entry, false, true, 0);
+
+            row1.pack_start(this.discover_connect_button, false, true, 0);
+            row1.pack_start(this.disconnect_button, false, true, 0);
+
+            connect_panel_messagebar = new Gtk.InfoBar();
+            connect_panel_messagebar.set_no_show_all(true);
+            connect_panel_messagebar.show_close_button = true;
+
+            this.connect_panel_messagebar_label = new Gtk.Label(null);
+            connect_panel_messagebar.get_content_area().add(connect_panel_messagebar_label);
+
+            connect_panel_messagebar.response.connect((id) => {
+                connect_panel_messagebar.hide();
+            });
+
+            row2.pack_start(this.connect_panel_messagebar, true, true, 5);
+
+            box.pack_start(row1, true, true, 0);
+            box.pack_start(row2, true, true, 0);
 
             connect_button_popover.add(box);
 

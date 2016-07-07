@@ -13,7 +13,13 @@ public class ApplicationController : GLib.Object {
         this.view               = view;
         this.message_dispatcher = message_dispatcher;
 
-        __connect(discover_connection());
+        string? docker_endpoint = discover_connection();
+        if (null != docker_endpoint) {
+            __connect(docker_endpoint);
+        } else {
+            this.view.headerbar.on_docker_daemon_connect(docker_endpoint, false);
+            message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't locate docker daemon");
+        }
     }
 
     public void listen_container_view() {
@@ -169,7 +175,17 @@ public class ApplicationController : GLib.Object {
     public void listen_headerbar() {
 
         view.headerbar.docker_daemon_connect_request.connect((docker_path) => {
-            __connect(docker_path);
+
+            try {
+                __connect(docker_path);
+            } catch (Error e) {
+                this.view.headerbar.on_docker_daemon_connect(
+                    docker_path,
+                    false,
+                    new Notification.Message(Gtk.MessageType.ERROR, "Can't connect  docker daemon at %s".printf(docker_path))
+                );
+            }
+
         });
 
         view.headerbar.docker_daemon_disconnect_request.connect(() => {
@@ -177,7 +193,12 @@ public class ApplicationController : GLib.Object {
         });
 
         view.headerbar.docker_daemon_autoconnect_request.connect(() => {
-            __connect(discover_connection());
+            string? docker_endpoint = discover_connection();
+            if (null != docker_endpoint) {
+                __connect(docker_endpoint);
+            } else {
+                this.view.headerbar.on_docker_daemon_connect(docker_endpoint, false, new Notification.Message(Gtk.MessageType.ERROR, "Can't locate docker daemon"));
+            }
         });
     }
 
@@ -217,28 +238,20 @@ public class ApplicationController : GLib.Object {
         this.view.containers.init(container_collection);
     }
 
-    protected bool __connect(string? docker_endpoint) {
+    protected bool __connect(string docker_endpoint) throws Error {
 
-        this.view.headerbar.on_docker_daemon_connect(docker_endpoint, false);
+        repository = create_repository(docker_endpoint);
 
-        if (docker_endpoint != null) {
+        repository.connected.connect((repository) => {
+            docker_daemon_post_connect(docker_endpoint);
+        });
 
-            repository = create_repository(docker_endpoint);
+        repository.connect();
 
-            repository.connected.connect((repository) => {
-                docker_daemon_post_connect(docker_endpoint);
-            });
-
-            repository.connect();
-            return true;
-
-        } else {
-            message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't find Docker service. Is it running ?");
-            return false;
-        }
+        return true;
     }
 
-     protected new bool __disconnect() {
+     protected bool __disconnect() {
 
         this.view.headerbar.on_docker_daemon_connect(null, false);
 

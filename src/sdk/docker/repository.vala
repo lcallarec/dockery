@@ -4,7 +4,7 @@ namespace Sdk.Docker {
 
         public abstract ImageEndpoint     images();
         public abstract ContainerEndpoint containers();
-        public abstract void connect();
+        public abstract void connect() throws Error;
     }
 
     public class Repository : EndpointAware, GLib.Object {
@@ -30,7 +30,7 @@ namespace Sdk.Docker {
             return this._containers;
         }
 
-        public new void connect() {
+        public new void connect() throws Error {
             this._server.ping();
             this.connected(this);
         }

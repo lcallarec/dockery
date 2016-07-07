@@ -27,7 +27,7 @@ namespace Sdk.Docker {
 
                 this.throw_error_from_status_code(200, response, error_messages);
 
-            } catch (RequestError e) {
+            } catch (Error e) {
                 throw new RequestError.FATAL("Error while pinging the docker service : %s".printf(e.message));
             }
         }
