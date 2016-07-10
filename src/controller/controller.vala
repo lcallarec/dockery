@@ -204,7 +204,7 @@ public class ApplicationController : GLib.Object {
 
     public void listen_docker_hub() {
 
-        view.sidebar.search_image_in_docker_hub.connect((target, term) => {
+        view.headerbar.search_image_in_docker_hub.connect((target, term) => {
 
             try {
                 Sdk.Docker.Model.HubImage[] images =  repository.images().search(term);
