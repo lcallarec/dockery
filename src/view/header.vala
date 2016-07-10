@@ -2,7 +2,7 @@ namespace View {
 
     public class HeaderBar : Gtk.HeaderBar {
 
-        private Gtk.Button action_button;
+        private Gtk.Button action_connect_button;
 
         private Gtk.Button discover_connect_button;
         private Gtk.Button disconnect_button;
@@ -27,7 +27,7 @@ namespace View {
 
         public HeaderBar(string? title, string? subtitle) {
 
-            this.action_button = new Gtk.Button.with_label("connecting...");
+            this.action_connect_button = new Gtk.Button.with_label("connecting...");
             this.disconnect_button = new Gtk.Button.with_label("please wait...");
             this.disconnect_button.set_sensitive(false);
 
@@ -77,7 +77,7 @@ namespace View {
             if (true == status) {
 
                 this.entry.text = docker_host;
-                this.action_button.label = "connected";
+                this.action_connect_button.label = "connected";
 
                 this.disconnect_button.label = "disconnect";
                 this.disconnect_button.set_sensitive(true);
@@ -86,7 +86,7 @@ namespace View {
 
             } else {
 
-                this.action_button.label = "not connected";
+                this.action_connect_button.label = "not connected";
 
                 this.disconnect_button.set_sensitive(false);
                 this.disconnect_button.label = "not connected";
@@ -105,13 +105,13 @@ namespace View {
         private void create_connect_button() {
 
             #if GTK_GTE_3_16
-            Gtk.Popover connect_button_popover = new Gtk.Popover(action_button);
+            Gtk.Popover connect_button_popover = new Gtk.Popover(action_connect_button);
 
             connect_button_popover.position = Gtk.PositionType.BOTTOM;
 
             var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 10);
 
-            this.action_button.clicked.connect (() => {
+            this.action_connect_button.clicked.connect (() => {
                 connect_button_popover.show_all();
             });
 
@@ -141,7 +141,7 @@ namespace View {
 
             connect_button_popover.add(box);
 
-            this.pack_end(action_button);
+            this.pack_end(action_connect_button);
             #endif
         }
 
