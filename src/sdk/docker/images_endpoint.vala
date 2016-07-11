@@ -5,12 +5,11 @@ namespace Sdk.Docker {
      *
      * Available features :
      * - List Images
-     *
-     * Partial available features :
      * - Remove an image
+     * - Search images
+     * - Pull imageq
      *
      * Missing features :
-     * - Search images
      * - Build image from a Dockerfile
      * - Create an image
      * - Inspect an image
@@ -90,6 +89,23 @@ namespace Sdk.Docker {
 
             } catch (RequestError e) {
                 throw new RequestError.FATAL("Error while searching for %s in docker hub".printf(term));
+            }
+        }
+
+        /**
+         * Pull an image from Docker hub
+         * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/create-an-image
+         */
+        public void pull(Model.HubImage image) throws RequestError {
+
+            try {
+
+                var response = this.client.send("POST /images/create?fromImage=%s".printf(image.name));
+
+                this.throw_error_from_status_code(200, response, create_error_messages());
+
+            } catch (RequestError e) {
+                throw new RequestError.FATAL("Error while pull image %s from docker hub".printf(image.name));
             }
         }
 
