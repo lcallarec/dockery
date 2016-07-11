@@ -57,7 +57,7 @@ namespace View {
             var images_row_label = new Gtk.Label("Images");
             images_row_label.halign = Gtk.Align.START;
 
-             images_row.add(images_box);
+            images_row.add(images_box);
 
             var icon = new Gtk.Image();
             icon.set_from_icon_name("media-optical-symbolic", Gtk.IconSize.BUTTON);

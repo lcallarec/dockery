@@ -75,6 +75,10 @@ namespace View {
 
                 dialog.show_all();
 
+                dialog.pull_image_from_docker_hub.connect((image) => {
+                    this.pull_image_from_docker_hub(image);
+                });
+
             });
 
             create_connect_button();

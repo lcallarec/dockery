@@ -57,7 +57,6 @@ namespace View.Docker.List {
 
         }
 
-
         /**
          * Add new rows from images array
          */
@@ -85,7 +84,6 @@ namespace View.Docker.List {
 
             var selection = tv.get_selection();
             selection.set_mode(Gtk.SelectionMode.SINGLE);
-
 
             tv.button_press_event.connect((e) => {
                 if (e.button == 3) {

@@ -28,6 +28,8 @@ namespace View.Docker.Dialog {
             body.pack_start(scrolled_window, false, true, 5);
 
             this.add_body(body);
+
+            this.on_row_click_register();
         }
 
         /** Set images collecyion to the view */
@@ -75,6 +77,47 @@ namespace View.Docker.Dialog {
             }
 
             return treeview;
+        }
+
+        private void on_row_click_register() {
+
+            treeview.button_press_event.connect((e) => {
+
+                if (e.button == 3) {
+                    Gtk.TreePath tp;
+                    treeview.get_path_at_pos((int) e.x, (int) e.y, out tp, null, null, null);
+
+                    var selection = treeview.get_selection();
+                    selection.set_mode(Gtk.SelectionMode.SINGLE);
+                    selection.select_path(tp);
+
+                    Gtk.TreeModel m;
+                    Gtk.TreeIter i;
+                    selection.get_selected(out m, out i);
+
+                    Value oname;
+                    m.get_value(i, 0, out oname);
+
+                    string name = oname as string;
+
+                    HubImage image = new HubImage.from(name, true, true, name, 0);
+
+                    var menu = View.Docker.Menu.SearchHubMenuFactory.create(image);
+
+                    menu.show_all();
+                    menu.popup(null, this, null, e.button, e.time);
+
+                    menu.pull_image_from_docker_hub.connect(() => {
+                        this.pull_image_from_docker_hub(image);
+                    });
+
+                    return false;
+                }
+
+                return false;
+            });
+
+
         }
     }
 }

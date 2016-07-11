@@ -213,6 +213,15 @@ public class ApplicationController : GLib.Object {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
+
+        view.headerbar.pull_image_from_docker_hub.connect((image) => {
+
+            try {
+                repository.images().pull(image);
+            } catch (Sdk.Docker.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+        });
     }
 
     protected void init_image_list() throws Sdk.Docker.RequestError {
