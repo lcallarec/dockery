@@ -32,6 +32,7 @@ namespace Sdk.Docker.Io {
 
             try {
                 stream.close();
+                stdout.printf("Socket closed\n");
             } catch (Error e) {
                 stdout.printf("IO error : %s", e.message);
             }
@@ -105,10 +106,12 @@ namespace Sdk.Docker.Io {
 
             //First line is always empty in chunked transfer
             stream.read_line(null);
-
-            while (stream.get_available() > 0) {
+            int line_number = 0;
+            while (true) {
+                line_number++;
                 line = stream.read_line(null).strip();
-                if (line == "0" || line == "") {
+                stdout.printf("Chunked LINE %d : %s\n", line_number, line);
+                if (line == "0") {
                     break;
                 }
 
