@@ -27,20 +27,18 @@ namespace Sdk.Docker {
 
                 if (stream.get_available() > 2) {
                     if (headers.has("Transfer-Encoding", "chunked")) {
-                        stream.read_line(null);
+                        payload = extract_chunked_response_body(stream);
+                    } else {
+                        payload = extract_known_content_lenght_response_body(stream);
                     }
-
-                    payload = stream.read_line(null).strip();
-
                 }
 
                 stdout.printf("Response status : %d\n", status);
+                stdout.printf("Response payload : %s\n", payload);
 
                 foreach (Gee.Map.Entry<string, string> header in headers.entries) {
                     stdout.printf("Response header : %s : %s\n", header.key, header.value);
                 }
-
-                stdout.printf("Response payload : %s\n", payload);
 
             } catch (IOError e) {
                 stdout.printf("IO error : %s", e.message);
@@ -54,6 +52,9 @@ namespace Sdk.Docker {
 
         }
 
+        /**
+         * Extract the response status code from the response stream
+         */
         private int? extract_response_status_code(DataInputStream stream) {
 
             try {
@@ -73,6 +74,9 @@ namespace Sdk.Docker {
             return null;
         }
 
+        /**
+         * Extract the response headers as a Hash table from the response stream
+         */
         private Gee.HashMap<string, string>? extract_response_headers(DataInputStream stream) {
 
             var headers = new Gee.HashMap<string, string>();
@@ -89,6 +93,44 @@ namespace Sdk.Docker {
 
             return headers;
         }
+
+        /**
+         * Return the payload from response having a defined content-lenght header
+         */
+        private string extract_known_content_lenght_response_body(DataInputStream stream)
+        {
+            string line = "";
+            string _payload = "";
+
+            while (stream.get_available() > 0) {
+                _payload += = stream.read_line(null).strip();
+            }
+
+            return _payload;
+        }
+
+
+        /**
+         * Return the payload from a chunked response
+         */
+        private string extract_chunked_response_body(DataInputStream stream)
+        {
+            string line = "";
+            string _payload = "";
+
+            //First line is always empty in chunked transfer
+            stream.read_line(null);
+
+            while (stream.get_available() > 0) {
+                _payload += stream.read_line(null).strip();
+                if (line == "0" || line == "") {
+                    break;
+                }
+            }
+
+            return _payload;
+        }
+
     }
 
     protected class RequestQueryStringBuilder {
