@@ -27,7 +27,7 @@ namespace Sdk.Docker {
           * Get a list of all images
           * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers
           */
-         public Model.ImageCollection list() throws RequestError {
+         public Model.ImageCollection list() throws Io.RequestError {
 
             try {
 
@@ -35,8 +35,8 @@ namespace Sdk.Docker {
 
                 return parse_images_list_payload(this.client.send(message).payload);
 
-            } catch (RequestError e) {
-                 throw new RequestError.FATAL("Error while fetching images list from docker daemon : %s".printf(e.message));
+            } catch (Io.RequestError e) {
+                 throw new Io.RequestError.FATAL("Error while fetching images list from docker daemon : %s".printf(e.message));
             }
         }
 
@@ -46,7 +46,7 @@ namespace Sdk.Docker {
          *
          * Force option : when set to true, will force the removal
          */
-        public void remove(Sdk.Docker.Model.Image image, bool force = false) throws RequestError {
+        public void remove(Sdk.Docker.Model.Image image, bool force = false) throws Io.RequestError {
 
             try {
 
@@ -64,8 +64,8 @@ namespace Sdk.Docker {
 
                 this.throw_error_from_status_code(200, response, error_messages);
 
-            } catch (RequestError e) {
-                throw new RequestError.FATAL("Error while removing image %s : %s".printf(image.id, e.message));
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while removing image %s : %s".printf(image.id, e.message));
             }
         }
 
@@ -73,7 +73,7 @@ namespace Sdk.Docker {
          * Search an image in Docker hub
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#search-images
          */
-        public Model.HubImage[] search(string term) throws RequestError {
+        public Model.HubImage[] search(string term) throws Io.RequestError {
 
             try {
 
@@ -87,8 +87,8 @@ namespace Sdk.Docker {
 
                 return parse_images_search_list_payload(response.payload);
 
-            } catch (RequestError e) {
-                throw new RequestError.FATAL("Error while searching for %s in docker hub".printf(term));
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while searching for %s in docker hub".printf(term));
             }
         }
 
@@ -96,7 +96,7 @@ namespace Sdk.Docker {
          * Pull an image from Docker hub
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/create-an-image
          */
-        public void pull(Model.HubImage image) throws RequestError {
+        public void pull(Model.HubImage image) throws Io.RequestError {
 
             try {
 
@@ -104,8 +104,8 @@ namespace Sdk.Docker {
 
                 this.throw_error_from_status_code(200, response, create_error_messages());
 
-            } catch (RequestError e) {
-                throw new RequestError.FATAL("Error while pull image %s from docker hub".printf(image.name));
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while pull image %s from docker hub".printf(image.name));
             }
         }
 

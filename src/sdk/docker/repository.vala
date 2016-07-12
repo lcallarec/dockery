@@ -18,7 +18,7 @@ namespace Sdk.Docker {
          */
         public signal void connected(Repository repository);
 
-        public Response response     { get; protected set;}
+        public Io.Response response     { get; protected set;}
 
         private Client  client     { get; private set;}
 

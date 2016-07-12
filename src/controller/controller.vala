@@ -38,7 +38,7 @@ public class ApplicationController : GLib.Object {
                 this.init_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
 
-            } catch (Sdk.Docker.RequestError e) {
+            } catch (Sdk.Docker.Io.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
@@ -59,7 +59,7 @@ public class ApplicationController : GLib.Object {
                         try {
                             repository.containers().remove(container);
                             this.init_container_list();
-                        } catch (Sdk.Docker.RequestError e) {
+                        } catch (Sdk.Docker.Io.RequestError e) {
                             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                         }
 
@@ -85,7 +85,7 @@ public class ApplicationController : GLib.Object {
                 this.init_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
 
-            } catch (Sdk.Docker.RequestError e) {
+            } catch (Sdk.Docker.Io.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                 this.init_container_list();
             }
@@ -99,7 +99,7 @@ public class ApplicationController : GLib.Object {
                 this.init_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
 
-            } catch (Sdk.Docker.RequestError e) {
+            } catch (Sdk.Docker.Io.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
@@ -112,7 +112,7 @@ public class ApplicationController : GLib.Object {
                 this.init_container_list();
                 message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
 
-            } catch (Sdk.Docker.RequestError e) {
+            } catch (Sdk.Docker.Io.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
@@ -147,7 +147,7 @@ public class ApplicationController : GLib.Object {
 
                             this.repository.images().remove(image, true);
 
-                        } catch (Sdk.Docker.RequestError e) {
+                        } catch (Sdk.Docker.Io.RequestError e) {
                             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                         }
 
@@ -209,7 +209,7 @@ public class ApplicationController : GLib.Object {
             try {
                 Sdk.Docker.Model.HubImage[] images =  repository.images().search(term);
                 target.set_images(images);
-            } catch (Sdk.Docker.RequestError e) {
+            } catch (Sdk.Docker.Io.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
@@ -218,24 +218,24 @@ public class ApplicationController : GLib.Object {
 
             try {
                 repository.images().pull(image);
-            } catch (Sdk.Docker.RequestError e) {
+            } catch (Sdk.Docker.Io.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
     }
 
-    protected void init_image_list() throws Sdk.Docker.RequestError {
+    protected void init_image_list() throws Sdk.Docker.Io.RequestError {
         Sdk.Docker.Model.ImageCollection? images = null;
         try {
              images = repository.images().list();
-        } catch (Sdk.Docker.RequestError e) {
+        } catch (Sdk.Docker.Io.RequestError e) {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
         } finally {
             this.view.images.init(images);
         }
     }
 
-    protected void init_container_list() throws Sdk.Docker.RequestError {
+    protected void init_container_list() throws Sdk.Docker.Io.RequestError {
 
         var container_collection = new Sdk.Docker.Model.ContainerCollection();
 
@@ -311,7 +311,7 @@ public class ApplicationController : GLib.Object {
 
                 this.init_container_list();
 
-            } catch (Sdk.Docker.RequestError e) {
+            } catch (Sdk.Docker.Io.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
@@ -327,7 +327,7 @@ public class ApplicationController : GLib.Object {
             this.init_container_list();
             this.view.headerbar.on_docker_daemon_connect(docker_endpoint, true);
             message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
-        } catch (Sdk.Docker.RequestError e) {
+        } catch (Sdk.Docker.Io.RequestError e) {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             this.view.images.init(null);
             this.view.containers.init(null);

@@ -38,7 +38,7 @@ namespace Sdk.Docker {
          * Retrieve a list of containers
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers
          */
-        public Model.ContainerCollection list(Model.ContainerStatus status) throws RequestError {
+        public Model.ContainerCollection list(Model.ContainerStatus status) throws Io.RequestError {
 
             try {
 
@@ -55,8 +55,8 @@ namespace Sdk.Docker {
                 message_builder.append(filter_builder.build());
                 return parse_containers_list_payload(this.client.send(message_builder.str).payload, status);
 
-            } catch (RequestError e) {
-                throw new RequestError.FATAL("Error while fetching container list from docker daemon : %s".printf(e.message));
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while fetching container list from docker daemon : %s".printf(e.message));
             }
         }
 
@@ -64,7 +64,7 @@ namespace Sdk.Docker {
          * Pause a single container
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#pause-a-container
          */
-        public void pause(Sdk.Docker.Model.Container container) throws RequestError {
+        public void pause(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST /containers/%s/pause".printf(container.id));
@@ -74,8 +74,8 @@ namespace Sdk.Docker {
 
                 this.throw_error_from_status_code(204, response, error_messages);
 
-            } catch (RequestError e) {
-                throw new RequestError.FATAL("Error while pausing container %s : %s".printf(container.id, e.message));
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while pausing container %s : %s".printf(container.id, e.message));
             }
         }
 
@@ -83,7 +83,7 @@ namespace Sdk.Docker {
          * Unpause a single container
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#unpause-a-container
          */
-        public void unpause(Sdk.Docker.Model.Container container) throws RequestError {
+        public void unpause(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST /containers/%s/unpause".printf(container.id));
@@ -94,8 +94,8 @@ namespace Sdk.Docker {
 
                 this.throw_error_from_status_code(204, response, error_messages);
 
-            } catch (RequestError e) {
-                throw new RequestError.FATAL("Error while unpausing container %s : %s".printf(container.id, e.message));
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while unpausing container %s : %s".printf(container.id, e.message));
             }
         }
 
@@ -103,7 +103,7 @@ namespace Sdk.Docker {
          * Remove a single container
          * Force option : when set to true, will force the removal of running containers
          */
-        public void remove(Sdk.Docker.Model.Container container, bool force = false) throws RequestError {
+        public void remove(Sdk.Docker.Model.Container container, bool force = false) throws Io.RequestError {
 
             try {
 
@@ -120,8 +120,8 @@ namespace Sdk.Docker {
 
                 this.throw_error_from_status_code(204, response, error_messages);
 
-            } catch (RequestError e) {
-                throw new RequestError.FATAL("Error while killing container %s : %s".printf(container.id, e.message));
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while killing container %s : %s".printf(container.id, e.message));
             }
         }
 
@@ -129,7 +129,7 @@ namespace Sdk.Docker {
          * Start a single container
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#start-a-container
          */
-        public void start(Sdk.Docker.Model.Container container) throws RequestError {
+        public void start(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST /containers/%s/start".printf(container.id));
@@ -140,8 +140,8 @@ namespace Sdk.Docker {
 
                 this.throw_error_from_status_code(204, response, error_messages);
 
-            } catch (RequestError e) {
-                throw new RequestError.FATAL("Error while starting container %s : %s".printf(container.id, e.message));
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while starting container %s : %s".printf(container.id, e.message));
             }
         }
 
@@ -149,7 +149,7 @@ namespace Sdk.Docker {
          * Start a single container
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#stop-a-container
          */
-        public void stop(Sdk.Docker.Model.Container container) throws RequestError {
+        public void stop(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST /containers/%s/stop".printf(container.id));
@@ -160,8 +160,8 @@ namespace Sdk.Docker {
 
                 this.throw_error_from_status_code(204, response, error_messages);
 
-            } catch (RequestError e) {
-                throw new RequestError.FATAL("Error while killing container %s : %s".printf(container.id, e.message));
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while killing container %s : %s".printf(container.id, e.message));
             }
         }
 
@@ -169,7 +169,7 @@ namespace Sdk.Docker {
          * Kill a single container
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#kill-a-container
          */
-        public void kill(Sdk.Docker.Model.Container container) throws RequestError {
+        public void kill(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST /containers/%s/kill".printf(container.id));
@@ -180,8 +180,8 @@ namespace Sdk.Docker {
 
                 this.throw_error_from_status_code(204, response, error_messages);
 
-            } catch (RequestError e) {
-                throw new RequestError.FATAL("Error while stoping container %s : %s".printf(container.id, e.message));
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while stoping container %s : %s".printf(container.id, e.message));
             }
         }
 
@@ -189,7 +189,7 @@ namespace Sdk.Docker {
          * Rename a single container
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#rename-a-container
          */
-        public void rename(Sdk.Docker.Model.Container container) throws RequestError {
+        public void rename(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST /containers/%s/rename?name=%s".printf(container.id, container.name));
@@ -200,8 +200,8 @@ namespace Sdk.Docker {
 
                 this.throw_error_from_status_code(204, response, error_messages);
 
-            } catch (RequestError e) {
-                throw new RequestError.FATAL("Error while renaming container %s : %s".printf(container.id, e.message));
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while renaming container %s : %s".printf(container.id, e.message));
             }
         }
 
@@ -209,7 +209,7 @@ namespace Sdk.Docker {
          * Rename a single container
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers
          */
-        public Model.ContainerCollection find_by_image(Sdk.Docker.Model.Image image) throws RequestError {
+        public Model.ContainerCollection find_by_image(Sdk.Docker.Model.Image image) throws Io.RequestError {
 
             try {
 
@@ -228,8 +228,8 @@ namespace Sdk.Docker {
 
                 return container_collection;
 
-            } catch (RequestError e) {
-                throw new RequestError.FATAL("Error while fetching containers by image %s (%s)".printf(image.id, e.message));
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while fetching containers by image %s (%s)".printf(image.id, e.message));
             }
         }
 
