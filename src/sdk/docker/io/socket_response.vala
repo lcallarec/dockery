@@ -104,15 +104,26 @@ namespace Sdk.Docker.Io {
             string line = "";
             string _payload = "";
 
-            //First line is always empty in chunked transfer
-            stream.read_line(null);
             int line_number = 0;
             while (true) {
-                line_number++;
+
                 line = stream.read_line(null).strip();
-                stdout.printf("Chunked LINE %d : %s\n", line_number, line);
+
+                //In chunked transfert, don't considerer empty lines'
+                if (line == "") {
+                    continue;
+                }
+
+                //EOS
                 if (line == "0") {
                     break;
+                }
+
+                line_number++;
+
+                //This line bear the next line byte size (hex) ; it's not part of the payload
+                if (1 == line_number % 2) {
+                    continue;
                 }
 
                 _payload += line;
@@ -120,6 +131,5 @@ namespace Sdk.Docker.Io {
 
             return _payload;
         }
-
     }
 }
