@@ -44,73 +44,90 @@ namespace View.Docker.List {
         /**
          * Add new rows from containers array list
          */
-        public int hydrate(ContainerStatus current_status, Gee.ArrayList<Container> containers) {
+        public int hydrate(ContainerStatus current_status, ContainerCollection containers) {
 
             int containers_count = 0;
             Gtk.ListBox list_box = new Gtk.ListBox();
 
+            Gtk.TreeIter iter;
+
+            Gtk.ListStore liststore = new Gtk.ListStore(4, typeof (string),  typeof (string), typeof (string), typeof (string));
+            liststore.clear();
+
             foreach(Container container in containers) {
-
                 containers_count++;
-
-                Gtk.ListBoxRow row = new Gtk.ListBoxRow();
-
-                this.decorate_row(row);
-
-                Gtk.Grid row_layout = new Gtk.Grid();
-                row_layout.column_spacing = 5;
-                row_layout.row_spacing = 0;
-
-                row.add(row_layout);
-
-                var label_name          = create_name_label(container);
-                var label_id            = create_id_label(container);
-                var label_creation_date = create_creation_date_label(container);
-                var label_command       = create_command_label(container);
-
-                Gtk.Separator separator = new Gtk.Separator(Gtk.Orientation.HORIZONTAL);
-
-                //attach (        Widget child,        int left, int top, int width = 1, int height = 1)
-                row_layout.attach(label_name,          0, 0, 1, 1);
-                row_layout.attach(label_id,            0, 1, 1, 1);
-                row_layout.attach(label_command,       1, 0, 1, 1);
-                row_layout.attach(label_creation_date, 1, 1, 1, 1);
-
-                Gtk.Button button_start_stop = create_button_stop_start(ContainerStatus.is_active(current_status), container);
-                row_layout.attach(button_start_stop,2, 0, 1, 1);
-
-                View.Docker.Menu.ContainerMenu? menu = View.Docker.Menu.ContainerMenuFactory.create(container);
-                if (null != menu) {
-                    Gtk.MenuButton mb = new Gtk.MenuButton();
-                    menu.show_all();
-                    mb.popup = menu;
-
-                    menu.container_status_change_request.connect((status, container) => {
-                        this.container_status_change_request(status, container);
-                    });
-
-                    menu.container_remove_request.connect(() => {
-                        this.container_remove_request(container);
-                    });
-
-                    menu.container_rename_request.connect(() => {
-                        this.container_rename_request(container, label_name);
-                    });
-
-                    menu.container_kill_request.connect(() => {
-                        this.container_kill_request(container);
-                    });
-
-
-                    row_layout.attach(mb,              3, 0, 1, 1);
-                }
-
-                row_layout.attach(separator,           0, 2, 5, 2);
-
-                list_box.insert(row, containers_count);
+                liststore.append(out iter);
+                liststore.set(iter, 0, container.name, 1, container.id, 2, container.command, 3, container.created_at.to_string());
             }
 
-            notebook.append_page(list_box, new Gtk.Label(ContainerStatusConverter.convert_from_enum(current_status)));
+            var tv = get_treeview(liststore);
+
+            var selection = tv.get_selection();
+            selection.set_mode(Gtk.SelectionMode.SINGLE);
+
+            tv.button_press_event.connect((e) => {
+                if (e.button == 3) {
+                    Gtk.TreePath tp;
+                    tv.get_path_at_pos((int) e.x, (int) e.y, out tp, null, null, null);
+
+                    selection.select_path(tp);
+
+                    Gtk.TreeModel m;
+                    Gtk.TreeIter i;
+                    selection.get_selected(out m, out i);
+
+                    Value oid;
+                    m.get_value(i, 1, out oid);
+
+                    string id = oid as string;
+
+                    if (containers.has_id(id)) {
+
+                        Container container = containers.get_by_id(id);
+
+                        View.Docker.Menu.ContainerMenu? menu = View.Docker.Menu.ContainerMenuFactory.create(container);
+                        if (null != menu) {
+
+                            menu.show_all();
+
+                            menu.popup(null, null, null, e.button, e.time);
+
+                            menu.container_status_change_request.connect((status, container) => {
+                                this.container_status_change_request(status, container);
+                            });
+
+                            menu.container_remove_request.connect(() => {
+                                this.container_remove_request(container);
+                            });
+
+                            menu.container_rename_request.connect(() => {
+                                Gdk.Rectangle rect;
+                                tv.get_cell_area (tp, tv.get_column(0), out rect);
+                                rect.y = rect.y + rect.height;
+                                this.container_rename_request(container, tv, rect);
+                            });
+
+                            menu.container_kill_request.connect(() => {
+                                this.container_kill_request(container);
+                            });
+
+                            menu.container_start_request.connect(() => {
+                                this.container_start_request(container);
+                            });
+
+                            menu.container_stop_request.connect(() => {
+                                this.container_stop_request(container);
+                            });
+                        }
+                    }
+
+                    return true;
+                }
+
+                return false;
+            });
+
+            notebook.append_page(tv, new Gtk.Label(ContainerStatusConverter.convert_from_enum(current_status)));
 
             return containers_count;
         }
@@ -132,72 +149,23 @@ namespace View.Docker.List {
 
         }
 
-        private Gtk.Button create_button_stop_start(bool is_active, Container container) {
+        private Gtk.TreeView get_treeview(Gtk.ListStore liststore) {
 
-            View.StartStopButton button = new View.StartStopButton.from_active_rule(() => {
-                return is_active;
-            });
+            var treeview = new Gtk.TreeView();
+            treeview.set_model(liststore);
 
-            button.notify["active"].connect(() => {
-                if (button.active) {
-                    this.container_start_request(container);
-                } else {
-                    this.container_stop_request(container);
-                }
-            });
+            treeview.vexpand = true;
+            treeview.hexpand = true;
 
-            return button;
-        }
+            treeview.insert_column_with_attributes(-1, "Name",       new Gtk.CellRendererText(), "text", 0);
+            treeview.insert_column_with_attributes(-1, "ID",         new Gtk.CellRendererText(), "text", 1);
+            treeview.insert_column_with_attributes(-1, "Command",    new Gtk.CellRendererText(), "text", 2);
+            treeview.insert_column_with_attributes(-1, "Created at", new Gtk.CellRendererText(), "text", 3);
 
-        /**
-         * Create an id label
-         */
-        private Gtk.Label create_id_label(Container container) {
+            treeview.set_grid_lines(Gtk.TreeViewGridLines.HORIZONTAL);
 
-            var label = new Gtk.Label(container.id);
-            label.halign = Gtk.Align.START;
-            label.set_selectable(true);
+            return treeview;
 
-            return label;
-        }
-
-        /**
-         * Create a creation date label
-         */
-        private Gtk.Label create_creation_date_label(Container container) {
-
-            var label = new Gtk.Label("%s: %s".printf("created at", container.created_at.to_string()));
-            label.attributes = Fonts.get_minor();
-            label.halign = Gtk.Align.START;
-            label.set_selectable(true);
-
-            return label;
-        }
-
-        /**
-         * Create a command label
-         */
-        private Gtk.Label create_command_label(Container container) {
-
-            var label = new Gtk.Label(container.command);
-            label.halign = Gtk.Align.START;
-            label.set_hexpand(true);
-            label.set_selectable(true);
-
-            return label;
-        }
-
-        /**
-         * Create a names label
-         */
-        private Gtk.Label create_name_label(Container container) {
-
-            var label = new Gtk.Label(container.name);
-            label.halign = Gtk.Align.START;
-            label.attributes = Fonts.get_em();
-            label.set_selectable(true);
-
-            return label;
         }
     }
 }
