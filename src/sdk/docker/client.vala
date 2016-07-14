@@ -54,7 +54,7 @@ namespace Sdk.Docker {
                 throw new Io.RequestError.FATAL(err_message);
             }
 
-            var response = new Io.SocketResponse(new DataInputStream(conn.input_stream));
+            var response = Io.SocketResponseFactory.create(new DataInputStream(conn.input_stream));
 
             this.response_success(response);
 
