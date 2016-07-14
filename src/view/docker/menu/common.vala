@@ -18,9 +18,9 @@ namespace View.Docker.Menu {
                 menu_item.set_image(menu_image);
             }
 
-            //if (null != action) {
+            if (null != action) {
                 menu_item.activate.connect(() => action());
-            //}
+            }
 
             this.add(menu_item);
         }
