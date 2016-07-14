@@ -46,7 +46,7 @@ namespace Sdk.Docker {
             var conn = this.create_connection();
 
             try {
-                stdout.printf("Request : %s", query);
+                stdout.printf("\n===================================================\nRequest : %s %s", query.strip(), "\n");
                 conn.output_stream.write(query.data);
             } catch(GLib.IOError e) {
                 this.request_error(query);
