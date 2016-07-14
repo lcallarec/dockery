@@ -1,18 +1,4 @@
-namespace Sdk.Docker {
-
-    public errordomain RequestError {
-        FATAL
-    }
-
-    public abstract class Response : GLib.Object {
-
-        public string? payload { get; protected set;}
-
-        public int status { get; protected set;}
-
-        public Gee.HashMap<string, string> headers { get; protected set;}
-
-    }
+namespace Sdk.Docker.Io {
 
     /**
      * Response from a socket request to a docker remote api
@@ -27,20 +13,18 @@ namespace Sdk.Docker {
 
                 if (stream.get_available() > 2) {
                     if (headers.has("Transfer-Encoding", "chunked")) {
-                        stream.read_line(null);
+                        payload = extract_chunked_response_body(stream);
+                    } else {
+                        payload = extract_known_content_lenght_response_body(stream);
                     }
-
-                    payload = stream.read_line(null).strip();
-
                 }
 
                 stdout.printf("Response status : %d\n", status);
+                stdout.printf("Response payload : %s\n", payload);
 
                 foreach (Gee.Map.Entry<string, string> header in headers.entries) {
                     stdout.printf("Response header : %s : %s\n", header.key, header.value);
                 }
-
-                stdout.printf("Response payload : %s\n", payload);
 
             } catch (IOError e) {
                 stdout.printf("IO error : %s", e.message);
@@ -48,12 +32,16 @@ namespace Sdk.Docker {
 
             try {
                 stream.close();
+                stdout.printf("Socket closed\n");
             } catch (Error e) {
                 stdout.printf("IO error : %s", e.message);
             }
 
         }
 
+        /**
+         * Extract the response status code from the response stream
+         */
         private int? extract_response_status_code(DataInputStream stream) {
 
             try {
@@ -73,6 +61,9 @@ namespace Sdk.Docker {
             return null;
         }
 
+        /**
+         * Extract the response headers as a Hash table from the response stream
+         */
         private Gee.HashMap<string, string>? extract_response_headers(DataInputStream stream) {
 
             var headers = new Gee.HashMap<string, string>();
@@ -89,57 +80,56 @@ namespace Sdk.Docker {
 
             return headers;
         }
-    }
 
-    protected class RequestQueryStringBuilder {
+        /**
+         * Return the payload from response having a defined content-lenght header
+         */
+        private string extract_known_content_lenght_response_body(DataInputStream stream)
+        {
+            string _payload = "";
 
-        Json.Builder builder = new Json.Builder();
-        Json.Generator generator = new Json.Generator();
-
-        StringBuilder filter_builder = new StringBuilder("?");
-
-        public void add_json_filter(string filter_name, Gee.HashMap<string, Gee.ArrayList<string>> filter_value) {
-
-            filter_builder.append(filter_name);
-            filter_builder.append("=");
-
-            filter_builder.append(build_json_request_filter(filter_value));
-        }
-
-        public string build() {
-
-            string _filter = filter_builder.str;
-
-            //Restore
-            builder = new Json.Builder();
-            generator = new Json.Generator();
-            filter_builder = new StringBuilder("?");
-
-            return _filter;
-        }
-
-        private string build_json_request_filter(Gee.HashMap<string, Gee.ArrayList<string>> data) {
-
-            builder.begin_object();
-
-            foreach (var entry in data.entries) {
-
-                builder.set_member_name(entry.key);
-
-                builder.begin_array ();
-                foreach (string subentry in entry.value) {
-                    builder.add_string_value(subentry);
-                }
-                builder.end_array ();
-
+            while (stream.get_available() > 0) {
+                _payload += stream.read_line(null).strip();
             }
 
-            builder.end_object();
+            return _payload;
+        }
 
-            Json.Node root = builder.get_root();
-            generator.set_root(root);
 
-            return generator.to_data(null);
+        /**
+         * Return the payload from a chunked response
+         */
+        private string extract_chunked_response_body(DataInputStream stream)
+        {
+            string line = "";
+            string _payload = "";
+
+            int line_number = 0;
+            while (true) {
+
+                line = stream.read_line(null).strip();
+
+                //In chunked transfert, don't considerer empty lines'
+                if (line == "") {
+                    continue;
+                }
+
+                //EOS
+                if (line == "0") {
+                    break;
+                }
+
+                line_number++;
+
+                //This line bear the next line byte size (hex) ; it's not part of the payload
+                if (1 == line_number % 2) {
+                    continue;
+                }
+
+                _payload += line;
+            }
+
+            return _payload;
         }
     }
 }

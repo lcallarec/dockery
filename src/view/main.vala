@@ -18,7 +18,7 @@ namespace View {
 
             this.workspace = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
 
-            this.headerbar = new View.HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
+            this.headerbar = new View.HeaderBar(window, DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
 
             window.set_titlebar(headerbar);
 
@@ -35,7 +35,7 @@ namespace View {
             Gtk.Stack stack = new Gtk.Stack();
             stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE);
 
-            this.sidebar = new View.SideBar(window, stack);
+            this.sidebar = new View.SideBar(stack);
             workspace.pack_start(sidebar, false, true, 0);
 
             this.containers = this.docker_view.create_containers_view();

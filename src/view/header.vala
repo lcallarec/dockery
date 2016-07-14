@@ -1,8 +1,12 @@
 namespace View {
 
-    public class HeaderBar : Gtk.HeaderBar {
+    public class HeaderBar : Gtk.HeaderBar, Signals.DockerHubImageRequestAction {
 
-        private Gtk.Button action_button;
+        /** Interact with Docker connection **/
+        private Gtk.Button action_connect_button;
+
+        /** Interact with Docker Hub **/
+        private Gtk.Button action_hub_button;
 
         private Gtk.Button discover_connect_button;
         private Gtk.Button disconnect_button;
@@ -25,9 +29,15 @@ namespace View {
         /** Signal sent when a docker auto-connection request is performed */
         public signal void docker_daemon_autoconnect_request();
 
-        public HeaderBar(string? title, string? subtitle) {
+        public HeaderBar(Gtk.Window parent_window, string? title, string? subtitle) {
 
-            this.action_button = new Gtk.Button.with_label("connecting...");
+            this.action_connect_button = new Gtk.Button.with_label("connecting...");
+            this.pack_end(action_connect_button);
+
+            this.action_hub_button = new Gtk.Button.with_label("hub");
+            this.action_hub_button.set_sensitive(false);
+            this.pack_end(action_hub_button);
+
             this.disconnect_button = new Gtk.Button.with_label("please wait...");
             this.disconnect_button.set_sensitive(false);
 
@@ -56,6 +66,21 @@ namespace View {
                 this.docker_daemon_autoconnect_request();
             });
 
+            this.action_hub_button.clicked.connect (() => {
+
+                var dialog = new View.Docker.Dialog.SearchHubDialog(parent_window);
+                dialog.search_image_in_docker_hub.connect((target, term) => {
+                    this.search_image_in_docker_hub(dialog, term);
+                });
+
+                dialog.show_all();
+
+                dialog.pull_image_from_docker_hub.connect((image) => {
+                    this.pull_image_from_docker_hub(image);
+                });
+
+            });
+
             create_connect_button();
 
             this.show_close_button = true;
@@ -77,21 +102,25 @@ namespace View {
             if (true == status) {
 
                 this.entry.text = docker_host;
-                this.action_button.label = "connected";
+                this.action_connect_button.label = "connected";
 
                 this.disconnect_button.label = "disconnect";
                 this.disconnect_button.set_sensitive(true);
 
                 this.discover_connect_button.set_sensitive(false);
+                this.action_hub_button.set_sensitive(true);
 
             } else {
 
-                this.action_button.label = "not connected";
+                this.action_connect_button.label = "not connected";
 
                 this.disconnect_button.set_sensitive(false);
                 this.disconnect_button.label = "not connected";
 
                 this.discover_connect_button.set_sensitive(true);
+
+                this.action_hub_button.set_sensitive(false);
+
 
                 if (null != message) {
                     connect_panel_messagebar.set_message_type(message.message_type);
@@ -105,13 +134,13 @@ namespace View {
         private void create_connect_button() {
 
             #if GTK_GTE_3_16
-            Gtk.Popover connect_button_popover = new Gtk.Popover(action_button);
+            Gtk.Popover connect_button_popover = new Gtk.Popover(action_connect_button);
 
             connect_button_popover.position = Gtk.PositionType.BOTTOM;
 
             var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 10);
 
-            this.action_button.clicked.connect (() => {
+            this.action_connect_button.clicked.connect (() => {
                 connect_button_popover.show_all();
             });
 
@@ -141,9 +170,7 @@ namespace View {
 
             connect_button_popover.add(box);
 
-            this.pack_end(action_button);
             #endif
         }
-
     }
 }

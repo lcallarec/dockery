@@ -16,7 +16,7 @@ namespace Sdk.Docker {
          * Ping the server
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.2/#ping-the-docker-server
          */
-        public void ping() throws RequestError {
+        public void ping() throws Io.RequestError {
 
             try {
                 var response = this.client.send("GET /_ping");
@@ -28,7 +28,7 @@ namespace Sdk.Docker {
                 this.throw_error_from_status_code(200, response, error_messages);
 
             } catch (Error e) {
-                throw new RequestError.FATAL("Error while pinging the docker service : %s".printf(e.message));
+                throw new Io.RequestError.FATAL("Error while pinging the docker service : %s".printf(e.message));
             }
         }
     }
