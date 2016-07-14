@@ -110,6 +110,8 @@ public class MessageDispatcher : GLib.Object {
     public MessageDispatcher(Gtk.InfoBar bar) {
         infobar = bar;
         label   = new Gtk.Label(null);
+        label.wrap = true;
+        label.wrap_mode = Pango.WrapMode.WORD_CHAR;
         infobar.get_content_area().add(label);
     }
 
