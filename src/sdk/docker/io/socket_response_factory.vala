@@ -105,25 +105,22 @@ namespace Sdk.Docker.Io {
             int line_number = 0;
             while (true) {
 
-                line = stream.read_line(null).strip();
-            stdout.printf("LINE : %s\n", line);
-                //In chunked transfer, don't considerer empty lines'
+                //In chunked transfer, don't consider empty lines
                 if (line == "") {
                     continue;
                 }
 
-                //EOS
+                //End of chnunked HTTP 1.1 transfert
                 if (line == "0") {
                     break;
                 }
 
                 line_number++;
 
-                //This line bear the next line byte size (hex) ; it's not part of the payload
+                //This line bear the next line size in bytes (in hex) ; it's not part of the payload
                 if (1 == line_number % 2) {
                     continue;
                 }
-
                 payload += line;
             }
 
