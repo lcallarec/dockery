@@ -117,6 +117,19 @@ public class ApplicationController : GLib.Object {
             }
         });
 
+        view.containers.container_restart_request.connect((container) => {
+
+            try {
+                repository.containers().restart(container);
+                string message = "Container %s successfully restarted".printf(container.id);
+                this.init_container_list();
+                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
+
+            } catch (Sdk.Docker.Io.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+        });
+
         view.containers.container_rename_request.connect((container, relative_to, pointing_to) => {
             this.handle_container_rename(container, relative_to, pointing_to);
         });

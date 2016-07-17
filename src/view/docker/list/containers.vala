@@ -47,7 +47,6 @@ namespace View.Docker.List {
         public int hydrate(ContainerStatus current_status, ContainerCollection containers) {
 
             int containers_count = 0;
-            Gtk.ListBox list_box = new Gtk.ListBox();
 
             Gtk.TreeIter iter;
 
@@ -118,6 +117,11 @@ namespace View.Docker.List {
                             menu.container_stop_request.connect(() => {
                                 this.container_stop_request(container);
                             });
+
+                            menu.container_restart_request.connect(() => {
+                                this.container_restart_request(container);
+                            });
+
                         }
                     }
 

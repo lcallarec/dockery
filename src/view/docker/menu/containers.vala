@@ -33,8 +33,6 @@ namespace View.Docker.Menu {
         protected void append_play_pause_menu_item() {
 
             Gtk.ImageMenuItem menu_item;
-            var menu_image = new Gtk.Image();
-
             if (container.status == ContainerStatus.PAUSED) {
                 menu_item  = new Gtk.ImageMenuItem.with_mnemonic("_Unpause container");
             } else {
@@ -87,6 +85,12 @@ namespace View.Docker.Menu {
             });
         }
 
+        protected void append_restart_menu_item() {
+            this.append_menu_item("Re_start container", null, () => {
+                this.container_restart_request(container);
+            });
+        }
+
     }
 
     internal class RunningContainerMenu : ContainerMenu {
@@ -96,6 +100,7 @@ namespace View.Docker.Menu {
             base(container);
 
             this.append_play_pause_menu_item();
+            this.append_restart_menu_item();
             this.append_stop_menu_item();
             this.append_separator_menu_item();
             this.append_rename_menu_item();
@@ -113,6 +118,7 @@ namespace View.Docker.Menu {
             base(container);
 
             this.append_play_pause_menu_item();
+            this.append_restart_menu_item();
             this.append_separator_menu_item();
             this.append_rename_menu_item();
             this.append_separator_menu_item();
