@@ -105,6 +105,8 @@ namespace Sdk.Docker.Io {
             int line_number = 0;
             while (true) {
 
+                line = stream.read_line(null).strip();
+
                 //In chunked transfer, don't consider empty lines
                 if (line == "") {
                     continue;
@@ -121,6 +123,7 @@ namespace Sdk.Docker.Io {
                 if (1 == line_number % 2) {
                     continue;
                 }
+
                 payload += line;
             }
 
