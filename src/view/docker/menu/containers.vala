@@ -91,6 +91,11 @@ namespace View.Docker.Menu {
             });
         }
 
+        protected void append_bash_in_menu_item() {
+            this.append_menu_item("Bash-in", null, () => {
+                this.container_bash_in_request(container);
+            });
+        }
     }
 
     internal class RunningContainerMenu : ContainerMenu {
@@ -104,6 +109,8 @@ namespace View.Docker.Menu {
             this.append_stop_menu_item();
             this.append_separator_menu_item();
             this.append_rename_menu_item();
+            this.append_separator_menu_item();
+            this.append_bash_in_menu_item();
             this.append_separator_menu_item();
             this.append_kill_menu_item();
             this.append_separator_menu_item();

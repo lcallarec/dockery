@@ -91,6 +91,21 @@ public class ApplicationController : GLib.Object {
             }
         });
 
+        view.containers.container_bash_in_request.connect((container) => {
+
+            try {
+
+                var term = new View.Docker.Terminal.from_bash_in_container(container);
+                term.start();
+                var dialog = new Gtk.Dialog();
+                Gtk.Box content_area = dialog.get_content_area();
+                content_area.pack_start(term, true, true, 0);
+                dialog.show_all();
+            } catch (Error e) {
+
+            }
+        });
+
         view.containers.container_stop_request.connect((container) => {
             try {
 

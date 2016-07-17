@@ -26,6 +26,7 @@ Be sure these librairies are installed :
 * gio-2.0
 * gio-unix-2.0
 * gee-0.8 (`apt-get install libgee-0.8`)
+* vte-2.90 (`apt-get install libvte-2.90-dev`)
 * json-glib-1.0 (`apt-get install libjson-glib-1.0.0 libjson-glib-dev`)
 
 ```
