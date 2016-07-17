@@ -138,13 +138,13 @@ namespace View {
 
             connect_button_popover.position = Gtk.PositionType.BOTTOM;
 
-            var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 10);
+            var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 
             this.action_connect_button.clicked.connect (() => {
                 connect_button_popover.show_all();
             });
 
-            var row1 = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 10);
+            var row1 = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 5);
             var row2 = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
 
             row1.pack_start(entry, false, true, 0);
@@ -163,9 +163,9 @@ namespace View {
                 connect_panel_messagebar.hide();
             });
 
-            row2.pack_start(this.connect_panel_messagebar, true, true, 5);
+            row2.pack_start(this.connect_panel_messagebar, true, true, 0);
 
-            box.pack_start(row1, true, true, 0);
+            box.pack_start(row1, true, true, 10);
             box.pack_start(row2, true, true, 0);
 
             connect_button_popover.add(box);

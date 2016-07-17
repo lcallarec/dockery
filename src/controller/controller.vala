@@ -117,8 +117,21 @@ public class ApplicationController : GLib.Object {
             }
         });
 
-        view.containers.container_rename_request.connect((container, label) => {
-            this.handle_container_rename(container, label);
+        view.containers.container_restart_request.connect((container) => {
+
+            try {
+                repository.containers().restart(container);
+                string message = "Container %s successfully restarted".printf(container.id);
+                this.init_container_list();
+                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
+
+            } catch (Sdk.Docker.Io.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+        });
+
+        view.containers.container_rename_request.connect((container, relative_to, pointing_to) => {
+            this.handle_container_rename(container, relative_to, pointing_to);
         });
     }
 
@@ -286,18 +299,19 @@ public class ApplicationController : GLib.Object {
         return new Sdk.Docker.Repository(client);
     }
 
-    protected void handle_container_rename(Sdk.Docker.Model.Container container, Gtk.Label label) {
+    protected void handle_container_rename(Sdk.Docker.Model.Container container, Gtk.Widget relative_to, Gdk.Rectangle pointing_to) {
 
         #if GTK_GTE_3_16
-        var pop = new Gtk.Popover(label);
+        var pop = new Gtk.Popover(relative_to);
         pop.position = Gtk.PositionType.BOTTOM;
+        pop.pointing_to = pointing_to;
 
         var box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
         box.margin = 5;
         box.pack_start(new Gtk.Label("New name"), false, true, 5);
 
         var entry = new Gtk.Entry();
-        entry.set_text(label.get_text());
+        entry.set_text(container.name);
 
         box.pack_end(entry, false, true, 5);
 

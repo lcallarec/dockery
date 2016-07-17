@@ -11,6 +11,7 @@ namespace Sdk.Docker {
      * - Kill a container
      * - Pause a container
      * - Unpause a container
+     * - Restart a container
      * - Remove a container
      *
      * Missing features :
@@ -96,6 +97,25 @@ namespace Sdk.Docker {
 
             } catch (Io.RequestError e) {
                 throw new Io.RequestError.FATAL("Error while unpausing container %s : %s".printf(container.id, e.message));
+            }
+        }
+
+        /**
+         * Restart a single container
+         * ttps://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/restart-a-containe
+         */
+        public void restart(Sdk.Docker.Model.Container container) throws Io.RequestError {
+
+            try {
+                var response = this.client.send("POST /containers/%s/restart".printf(container.id));
+
+                var error_messages = create_error_messages();
+                error_messages.set(404, "No such container");
+
+                this.throw_error_from_status_code(204, response, error_messages);
+
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while restarting container %s : %s".printf(container.id, e.message));
             }
         }
 
