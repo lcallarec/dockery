@@ -159,6 +159,7 @@ public class ApplicationController : GLib.Object {
                             }
 
                             this.repository.images().remove(image, true);
+                            message_dispatcher.dispatch(Gtk.MessageType.INFO, "Image %s successfully removed".printf(image.name));
 
                         } catch (Sdk.Docker.Io.RequestError e) {
                             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
