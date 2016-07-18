@@ -63,10 +63,9 @@ public class DockerManager : Gtk.Window {
         View.MainApplicationView views = new View.MainApplicationView(this);
 
         //Workspace
-        main_box.pack_start(views.headerbar, false, true, 5);
-        main_box.pack_start(new Gtk.Separator(Gtk.Orientation.HORIZONTAL), false, true, 0);
+        main_box.pack_start(views.headerbar, false, true, 0);
         main_box.pack_start(views.workspace, true, true, 0);
-        main_box.pack_end(views.infobar, false, true, 1);
+        main_box.pack_end(views.infobar, false, true, 0);
 
         //ApplicationController
         this.ac = new ApplicationController(this, views, new MessageDispatcher(views.infobar));
