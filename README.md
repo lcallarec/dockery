@@ -6,12 +6,14 @@
 
 ![Main SC](docs/resources/screenshots/main.png)
 
-* Connect to a local docker deamon via socket (http support coming soon)
+* Connect to a local docker deamon via Unix Socket (http support coming soon)
 * Get container list and execute some basic actions
-  - update status (KILL, PAUSE, STOP, START)
+  - update status (KILL, PAUSE, STOP, START, RESTART)
   - rename
   - destroy
 * Get image list and basic informations
+* Search & download images from Docker Hub
+* Connect ("bash-in") to a running container
 
 Support GTK+3 from 3.10 (fallbacks) to 3.20(latest).
 
