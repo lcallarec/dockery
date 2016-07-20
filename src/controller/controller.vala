@@ -91,6 +91,32 @@ public class ApplicationController : GLib.Object {
             }
         });
 
+        view.containers.container_bash_in_request.connect((container) => {
+
+            try {
+
+                var term_window = new Gtk.Window();
+
+                var titlebar = new Gtk.HeaderBar();
+                titlebar.title = "Bash-in %s".printf(container.name);
+                titlebar.show_close_button = true;
+
+                term_window.set_titlebar(titlebar);
+
+                var term = new View.Docker.Terminal.from_bash_in_container(container);
+                term.parent_container_widget = term_window;
+                term.start();
+
+                term_window.window_position = Gtk.WindowPosition.MOUSE;
+                term_window.transient_for = window;
+                term_window.add(term);
+                term_window.show_all();
+
+            } catch (Error e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+        });
+
         view.containers.container_stop_request.connect((container) => {
             try {
 
@@ -159,6 +185,7 @@ public class ApplicationController : GLib.Object {
                             }
 
                             this.repository.images().remove(image, true);
+                            message_dispatcher.dispatch(Gtk.MessageType.INFO, "Image %s successfully removed".printf(image.name));
 
                         } catch (Sdk.Docker.Io.RequestError e) {
                             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
