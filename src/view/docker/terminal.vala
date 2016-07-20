@@ -18,7 +18,7 @@ namespace View.Docker {
                 if (null != parent_container_widget) {
                     c = parent_container_widget;
                 } else {
-                    c = this.get_parent();
+                    c = (Gtk.Container) this.get_parent();
                 }
                 c.destroy();
                 this.destroy();
