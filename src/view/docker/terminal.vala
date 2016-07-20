@@ -14,7 +14,13 @@ namespace View.Docker {
             command = {"/usr/bin/docker", "exec", "-ti", container.id, "bash"};
 
             this.child_exited.connect((term) => {
-                this.get_parent().destroy();
+                Gtk.Container c;
+                if (null != parent_container_widget) {
+                    c = parent_container_widget;
+                } else {
+                    c = this.get_parent();
+                }
+                c.destroy();
                 this.destroy();
             });
         }
@@ -31,6 +37,10 @@ namespace View.Docker {
                 null,
                 out pid
             );
+        }
+
+        public Gtk.Container? parent_container_widget {
+            get; set; default = null;
         }
     }
 }

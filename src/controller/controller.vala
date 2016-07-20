@@ -95,14 +95,25 @@ public class ApplicationController : GLib.Object {
 
             try {
 
-                var term = new View.Docker.Terminal.from_bash_in_container(container);
-                term.start();
-                var dialog = new Gtk.Dialog();
-                Gtk.Box content_area = dialog.get_content_area();
-                content_area.pack_start(term, true, true, 0);
-                dialog.show_all();
-            } catch (Error e) {
+                var term_window = new Gtk.Window();
 
+                var titlebar = new Gtk.HeaderBar();
+                titlebar.title = "Bash-in %s".printf(container.name);
+                titlebar.show_close_button = true;
+
+                term_window.set_titlebar(titlebar);
+
+                var term = new View.Docker.Terminal.from_bash_in_container(container);
+                term.parent_container_widget = term_window;
+                term.start();
+
+                term_window.window_position = Gtk.WindowPosition.MOUSE;
+                term_window.transient_for = window;
+                term_window.add(term);
+                term_window.show_all();
+
+            } catch (Error e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
         });
 
