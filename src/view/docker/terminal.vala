@@ -1,3 +1,4 @@
+/** @author Laurent Calalrec <l.callarec@gmail.com> **/
 namespace View.Docker {
 
     using global::Sdk.Docker.Model;
@@ -25,7 +26,7 @@ namespace View.Docker {
             });
         }
 
-        public void start() {
+        public Pid start() {
 
             Pid pid;
             fork_command_full(
@@ -33,10 +34,12 @@ namespace View.Docker {
                 Environment.get_variable("HOME"),
                 command,
                 new string[]{Environment.get_variable("HOME"), Environment.get_variable("PATH")},
-                SpawnFlags.LEAVE_DESCRIPTORS_OPEN ,
+                SpawnFlags.LEAVE_DESCRIPTORS_OPEN,
                 null,
                 out pid
             );
+
+            return pid;
         }
 
         public Gtk.Container? parent_container_widget {
