@@ -2,7 +2,14 @@ namespace View.Docker.Menu {
 
     using global::Sdk.Docker.Model;
 
+    /**
+     * Factory to create Container list item menu
+     */
     public class ContainerMenuFactory {
+
+        /**
+         * Create a {@ContainerMenu} from a given {@link Sdk.Docker.Model.Container} (status))
+         */
         public static ContainerMenu? create(Container container) {
 
             switch(container.status) {
@@ -13,7 +20,7 @@ namespace View.Docker.Menu {
                 case ContainerStatus.EXITED:
                     return new ExitedContainerMenu(container);
                 case ContainerStatus.CREATED:
-                    return null;
+                    return new CreatedContainerMenu(container);
                 case ContainerStatus.RESTARTING:
                     return null;
                 default:
@@ -22,7 +29,10 @@ namespace View.Docker.Menu {
         }
     }
 
-    public class ContainerMenu : Signals.ContainerRequestAction, Menu {
+    /**
+     * Base Container list item menu
+     */
+    public abstract class ContainerMenu : Signals.ContainerRequestAction, Menu {
 
         protected Container container;
 
@@ -133,9 +143,14 @@ namespace View.Docker.Menu {
         }
     }
 
-    internal class ExitedContainerMenu : ContainerMenu {
+    /**
+     * NonRunningContainerMenu should only be associated, as base class,
+     * to container that have been running once, or were just created.
+     */
+    internal abstract class NonRunningContainerMenu : ContainerMenu {
 
-        public ExitedContainerMenu(Container container) {
+        public NonRunningContainerMenu(Container container) {
+
             base(container);
 
             this.append_start_menu_item();
@@ -146,4 +161,23 @@ namespace View.Docker.Menu {
         }
     }
 
+    /**
+     * ExitedContainerMenu should only be associated to exited containers
+     */
+    internal class ExitedContainerMenu : NonRunningContainerMenu {
+
+        public ExitedContainerMenu(Container container) {
+            base(container);
+        }
+    }
+
+    /**
+     * CreatedContainerMenu should only be associated to created containers
+     */
+    internal class CreatedContainerMenu : NonRunningContainerMenu {
+
+        public CreatedContainerMenu(Container container) {
+            base(container);
+        }
+    }
 }
