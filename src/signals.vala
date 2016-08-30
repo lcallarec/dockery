@@ -17,6 +17,8 @@ namespace Signals {
     /** Signals emitted on image request actions */
     public interface ImageRequestAction : GLib.Object {
         public signal void image_remove_request(Image image);
+        public signal void image_create_container_request(Image image);
+        public signal void image_create_container_with_request(Image image);
     }
 
     /** Signals emitted on docker hub image request actions */
