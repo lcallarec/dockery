@@ -266,10 +266,10 @@ namespace Sdk.Docker {
          * Create a container from a given Image
          * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/create-a-container]]
          */
-        public void create(Sdk.Docker.Model.Image image) throws Io.RequestError {
+        public void create(Sdk.Docker.Model.ContainerCreate container_create) throws Io.RequestError {
 
             try {
-                var response = this.client.send("POST /containers/create", "{\"Image\":\"%s\"}".printf(image.id));
+                var response = this.client.send("POST /containers/create", container_create.serialize());
 
                 var error_messages = create_error_messages();
                 error_messages.set(400, "Bad parameter");
@@ -280,7 +280,7 @@ namespace Sdk.Docker {
                 this.throw_error_from_status_code(201, response, error_messages);
 
             } catch (Io.RequestError e) {
-                throw new Io.RequestError.FATAL("Error while creating container from image %s".printf(image.id));
+                throw new Io.RequestError.FATAL("Error while creating container from image %s".printf(container_create.image.id));
             }
         }
 

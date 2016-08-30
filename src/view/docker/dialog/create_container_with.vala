@@ -19,7 +19,7 @@ namespace View.Docker.Dialog {
 
         public CreateContainerWith(Sdk.Docker.Model.Image from_image, Gtk.Window parent_window) {
 
-            base(350, 100, "Create container from image %s with...".printf(from_image.id), parent_window);
+            base(550, 100, "Create container from image %s with...".printf(from_image.id), parent_window);
 
             this.add_button("Cancel", Gtk.ResponseType.CLOSE);
             Gtk.Widget yes_button = this.add_button("Create container", Gtk.ResponseType.APPLY);
@@ -28,11 +28,23 @@ namespace View.Docker.Dialog {
             var body = new Gtk.Box(Gtk.Orientation.VERTICAL, 5);
 
             this.configure_layouts();
-            this.configure_widgets();
+            this.configure_widgets(from_image);
 
             this.add_inputs(body);
 
             this.add_body(body);
+        }
+
+        /**
+         * Get a hash that holds view data
+         */
+        public Gee.HashMap<string, string> get_view_data() {
+            Gee.HashMap<string, string> view_data = new Gee.HashMap<string, string>();
+
+            view_data.set("Image", entry_image_id.text);
+            view_data.set("Command", entry_command.text);
+
+            return view_data;
         }
 
         private void add_inputs(Gtk.Box body) {
@@ -52,9 +64,15 @@ namespace View.Docker.Dialog {
             grid_layout.row_spacing = 5;
         }
 
-        private void configure_widgets() {
+        private void configure_widgets(Sdk.Docker.Model.Image from_image) {
             label_image_id.halign = Gtk.Align.END;
             label_image_id.halign = Gtk.Align.END;
+
+            entry_image_id.set_editable(false);
+            entry_image_id.set_sensitive(false);
+            entry_image_id.text = from_image.id;
+
+            entry_command.placeholder_text = "Command to run inside container";
         }
     }
 }

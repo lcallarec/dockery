@@ -1,4 +1,4 @@
-/*
+/**
  * ApplicationController is listening to all signals emitted by the view layer
  */
 public class ApplicationController : GLib.Object {
@@ -210,6 +210,50 @@ public class ApplicationController : GLib.Object {
 
             dialog.show_all();
         });
+
+        view.images.image_create_container_request.connect((image) => {
+
+            try {
+                this.repository.containers().create(new Sdk.Docker.Model.ContainerCreate.from_image(image));
+            } catch (Sdk.Docker.Io.RequestError e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+
+        });
+
+        view.images.image_create_container_with_request.connect((image) => {
+
+            try {
+
+                var dialog = new View.Docker.Dialog.CreateContainerWith(image, window);
+
+                dialog.response.connect((source, response_id) => {
+
+                    switch (response_id) {
+                        case Gtk.ResponseType.APPLY:
+
+                            Gee.HashMap<string, string> data = dialog.get_view_data();
+                            Sdk.Docker.Serializable container_create = new Sdk.Docker.Model.ContainerCreate.from_hash_map(image, data);
+                            stdout.printf(container_create.serialize() + "\n");
+                            dialog.destroy();
+
+                            break;
+
+                        case Gtk.ResponseType.CANCEL:
+                        case Gtk.ResponseType.DELETE_EVENT:
+                        case Gtk.ResponseType.CLOSE:
+                            dialog.destroy();
+                            break;
+                    }
+            });
+
+            dialog.show_all();
+
+            } catch (Error e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+            }
+
+        });
     }
 
     public void listen_headerbar() {
@@ -225,7 +269,6 @@ public class ApplicationController : GLib.Object {
                     new Notification.Message(Gtk.MessageType.ERROR, "Can't connect  docker daemon at %s".printf(docker_path))
                 );
             }
-
         });
 
         view.headerbar.docker_daemon_disconnect_request.connect(() => {
