@@ -233,8 +233,7 @@ public class ApplicationController : GLib.Object {
                         case Gtk.ResponseType.APPLY:
 
                             Gee.HashMap<string, string> data = dialog.get_view_data();
-                            Sdk.Docker.Serializable container_create = new Sdk.Docker.Model.ContainerCreate.from_hash_map(image, data);
-                            stdout.printf(container_create.serialize() + "\n");
+                            this.repository.containers().create(new Sdk.Docker.Model.ContainerCreate.from_hash_map(image, data));
                             dialog.destroy();
 
                             break;
