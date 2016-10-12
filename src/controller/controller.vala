@@ -215,6 +215,7 @@ public class ApplicationController : GLib.Object {
 
             try {
                 this.repository.containers().create(new Sdk.Docker.Model.ContainerCreate.from_image(image));
+                this.init_container_list();
             } catch (Sdk.Docker.Io.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
@@ -235,7 +236,7 @@ public class ApplicationController : GLib.Object {
                             Gee.HashMap<string, string> data = dialog.get_view_data();
                             this.repository.containers().create(new Sdk.Docker.Model.ContainerCreate.from_hash_map(image, data));
                             dialog.destroy();
-
+                            this.init_container_list();
                             break;
 
                         case Gtk.ResponseType.CANCEL:
