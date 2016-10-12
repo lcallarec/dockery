@@ -41,10 +41,20 @@ namespace View.Docker.List {
             return this;
         }
 
+        public void flush() {
+            if (null != this.empty_box) {
+                this.remove(this.empty_box);
+            }
+
+            if (null != this.notebook) {
+                this.remove(this.notebook);
+            }
+        }
+
         /**
          * Add new rows from containers array list
          */
-        public int hydrate(ContainerStatus current_status, ContainerCollection containers) {
+        private int hydrate(ContainerStatus current_status, ContainerCollection containers) {
 
             int containers_count = 0;
 
@@ -140,20 +150,10 @@ namespace View.Docker.List {
             return containers_count;
         }
 
-        public void flush() {
-            if (null != this.empty_box) {
-                this.remove(this.empty_box);
-            }
-
-            if (null != this.notebook) {
-                this.remove(this.notebook);
-            }
-        }
-
         /**
          * Decorate the row for specific gtk3+ versions
          */
-        protected void decorate_row(Gtk.ListBoxRow row) {
+        private void decorate_row(Gtk.ListBoxRow row) {
 
         }
 
