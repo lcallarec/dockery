@@ -13,15 +13,15 @@ namespace Sdk.Docker {
      * - Unpause a container
      * - Restart a container
      * - Remove a container
+     * - Attach to a container
+     * - Create a container
      *
      * Missing features :
-     * - Create a container
      * - Inspect a container
      * - List processes running inside a container
      * - Export a container
      * - Get container stats based on resource usage
      * - Resize a container TTY
-     * - Attach to a container
      * - Attach to a container (WS)
      * - Wait a container
      * - Copy from a container
@@ -37,7 +37,8 @@ namespace Sdk.Docker {
 
         /**
          * Retrieve a list of containers
-         * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers
+         *
+         * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers]]
          */
         public Model.ContainerCollection list(Model.ContainerStatus status) throws Io.RequestError {
 
@@ -63,7 +64,8 @@ namespace Sdk.Docker {
 
         /**
          * Pause a single container
-         * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#pause-a-container
+         *
+         * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#pause-a-container]]
          */
         public void pause(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
@@ -82,7 +84,8 @@ namespace Sdk.Docker {
 
         /**
          * Unpause a single container
-         * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#unpause-a-container
+         *
+         * Se See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#unpause-a-container]]
          */
         public void unpause(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
@@ -102,7 +105,8 @@ namespace Sdk.Docker {
 
         /**
          * Restart a single container
-         * ttps://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/restart-a-containe
+         *
+         * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/restart-a-container]]
          */
         public void restart(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
@@ -147,7 +151,8 @@ namespace Sdk.Docker {
 
         /**
          * Start a single container
-         * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#start-a-container
+         *
+         * See See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#start-a-container]]
          */
         public void start(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
@@ -167,7 +172,8 @@ namespace Sdk.Docker {
 
         /**
          * Start a single container
-         * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#stop-a-container
+         *
+         * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#stop-a-container]]
          */
         public void stop(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
@@ -187,7 +193,8 @@ namespace Sdk.Docker {
 
         /**
          * Kill a single container
-         * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#kill-a-container
+         *
+         * See See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#kill-a-container]]
          */
         public void kill(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
@@ -207,7 +214,8 @@ namespace Sdk.Docker {
 
         /**
          * Rename a single container
-         * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#rename-a-container
+         *
+         * See See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#rename-a-container]]
          */
         public void rename(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
@@ -227,7 +235,8 @@ namespace Sdk.Docker {
 
         /**
          * Rename a single container
-         * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers
+         *
+         * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers]]
          */
         public Model.ContainerCollection find_by_image(Sdk.Docker.Model.Image image) throws Io.RequestError {
 
@@ -250,6 +259,28 @@ namespace Sdk.Docker {
 
             } catch (Io.RequestError e) {
                 throw new Io.RequestError.FATAL("Error while fetching containers by image %s (%s)".printf(image.id, e.message));
+            }
+        }
+
+        /**
+         * Create a container from a given Image
+         * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/create-a-container]]
+         */
+        public void create(Sdk.Docker.Model.ContainerCreate container_create) throws Io.RequestError {
+
+            try {
+                var response = this.client.send("POST /containers/create", container_create.serialize());
+
+                var error_messages = create_error_messages();
+                error_messages.set(400, "Bad parameter");
+                error_messages.set(404, "No such container");
+                error_messages.set(406, "Impossible to attach (container not running)");
+                error_messages.set(409, "Conflict");
+
+                this.throw_error_from_status_code(201, response, error_messages);
+
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while creating container from image %s".printf(container_create.image.id));
             }
         }
 

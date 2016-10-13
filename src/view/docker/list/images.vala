@@ -113,6 +113,14 @@ namespace View.Docker.List {
                         menu.image_remove_request.connect(() => {
                             this.image_remove_request(image);
                         });
+
+                        menu.image_create_container_request.connect(() => {
+                            this.image_create_container_request(image);
+                        });
+
+                        menu.image_create_container_with_request.connect(() => {
+                            this.image_create_container_with_request(image);
+                        });
                     }
 
                     return true;

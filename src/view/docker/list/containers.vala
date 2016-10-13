@@ -1,12 +1,19 @@
 namespace View.Docker.List {
 
     using global::Sdk.Docker.Model;
+    using Dockery.View;
 
 
     public class Containers : Flushable, ContainerViewable, Signals.ContainerRequestAction, Gtk.Box {
 
-        protected Gtk.Notebook notebook;
-        protected Gtk.Box empty_box;
+        private Gtk.Notebook notebook;
+        private Gtk.Box empty_box;
+
+        private UserActions user_actions = UserActions.get_instance();
+
+        public Containers() {
+            user_actions.if_hasnt_feature_set(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE, "0");
+        }
 
         /**
          * Init the container view from a given (nullable) list of containers and return it
@@ -27,24 +34,48 @@ namespace View.Docker.List {
 
             this.pack_start(this.notebook, true, true, 0);
 
+            int page_count = 0;
             foreach(ContainerStatus status in ContainerStatus.all()) {
                 var c = containers.get_by_status(status);
                 if (c.is_empty == false) {
+                    page_count++;
                     this.hydrate(status, c);
                 }
             }
 
+            notebook.switch_page.connect((page, page_num) => {
+                user_actions.set_feature(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE, page_num.to_string());
+            });
+
             if (true == show_after_refresh) {
                 this.show_all();
+
+                int current_page = user_actions.get_feature(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE).to_int();
+                if (current_page + 1 > page_count) {
+                    //-1 = last page
+                    current_page = -1;
+                }
+                //This code should remain after show_all() invokation, because set_current_page will have no effets if the page is not shown yet
+                notebook.set_current_page(current_page);
             }
 
             return this;
         }
 
+        public void flush() {
+            if (null != this.empty_box) {
+                this.remove(this.empty_box);
+            }
+
+            if (null != this.notebook) {
+                this.remove(this.notebook);
+            }
+        }
+
         /**
          * Add new rows from containers array list
          */
-        public int hydrate(ContainerStatus current_status, ContainerCollection containers) {
+        private int hydrate(ContainerStatus current_status, ContainerCollection containers) {
 
             int containers_count = 0;
 
@@ -140,20 +171,10 @@ namespace View.Docker.List {
             return containers_count;
         }
 
-        public void flush() {
-            if (null != this.empty_box) {
-                this.remove(this.empty_box);
-            }
-
-            if (null != this.notebook) {
-                this.remove(this.notebook);
-            }
-        }
-
         /**
          * Decorate the row for specific gtk3+ versions
          */
-        protected void decorate_row(Gtk.ListBoxRow row) {
+        private void decorate_row(Gtk.ListBoxRow row) {
 
         }
 
