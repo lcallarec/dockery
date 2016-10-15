@@ -15,11 +15,11 @@
 * Search & download images from Docker Hub
 * Connect ("bash-in") to a running container
 
-Support GTK+3 from 3.10 (fallbacks) to 3.20(latest).
+Support GTK+3 from 3.10 (fallback) to 3.20 (latest version at the time of writing).
 
 ## Compile and install instructions
 
-Be sure these librairies are installed :
+Be sure these libraries are installed :
 
 * build-essential (`apt-get install build-essential`)
 * Gtk3+ header files (`apt-get install libgtk-3-dev`)
