@@ -17,13 +17,26 @@ namespace Sdk.Docker.Io {
                     stdout.printf("Response header : %s : %s\n", header.key, header.value);
                 }
 
-                if (stream.get_available() > 2) {
+                string line;
+                string payload = "";
+
+                while (stream.get_available() > 2) {
+
                     if (response.headers.has("Transfer-Encoding", "chunked")) {
-                        extract_chunked_response_body(stream, response);
-                    } else {
-                        extract_known_content_lenght_response_body(stream, response);
+                        //Reads the next chunk size. As I'm a bit lazy,I don't use them.
+                        stream.read_line(null);
                     }
+
+                    line = stream.read_line(null).strip();
+                    //End of chunks
+                    if (line == "0") {
+                        break;
+                    }
+
+                    payload += line;
                 }
+
+                response.payload = payload;
 
                 stream.close();
                 stdout.printf("Socket closed\n");
@@ -75,60 +88,6 @@ namespace Sdk.Docker.Io {
             }
 
             response.headers = headers;
-        }
-
-        /**
-         * Sync - Return the payload from response having a defined content-lenght header
-         */
-        private static void extract_known_content_lenght_response_body(DataInputStream stream, Response response)
-        {
-            string line = "";
-            string payload = "";
-
-            while (stream.get_available() > 0) {
-                line = stream.read_line(null);
-                payload += line.strip();
-            }
-
-            stdout.printf("Response payload : %s\n", payload);
-            response.payload = payload;
-        }
-
-        /**
-         * Sync - Return the payload from a chunked response
-         */
-        private static void extract_chunked_response_body(DataInputStream stream, Response response)
-        {
-            string line = "";
-            string payload = "";
-
-            int line_number = 0;
-            while (true) {
-
-                line = stream.read_line(null).strip();
-
-                //In chunked transfer, don't consider empty lines
-                if (line == "") {
-                    continue;
-                }
-
-                //End of chnunked HTTP 1.1 transfert
-                if (line == "0") {
-                    break;
-                }
-
-                line_number++;
-
-                //This line bear the next line size in bytes (in hex) ; it's not part of the payload
-                if (1 == line_number % 2) {
-                    continue;
-                }
-
-                payload += line;
-            }
-
-            stdout.printf("Response payload : %s\n", payload);
-            response.payload = payload;
         }
     }
 }
