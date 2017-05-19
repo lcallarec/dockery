@@ -14,8 +14,8 @@ compile:
 	glib-compile-resources gresource.xml --target=resources.c --generate-source
 	valac -g --save-temps \
         -X -w -X -lm -v \
-        --pkg gtk+-3.0 --pkg libsoup-2.4 --pkg gio-2.0 \
-        --pkg gio-unix-2.0 --pkg gee-0.8 --pkg json-glib-1.0 --pkg vte-2.90 \
+        --pkg gtk+-3.0 --pkg gio-2.0 \
+        --pkg gio-unix-2.0 --pkg gee-0.8 --pkg json-glib-1.0 --pkg vte-2.91 \
         build/source/*.vala resources.c --gresources gresource.xml \
         -o dockery
 

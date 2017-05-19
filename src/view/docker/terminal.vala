@@ -29,14 +29,15 @@ namespace View.Docker {
         public Pid start() {
 
             Pid pid;
-            fork_command_full(
+            spawn_sync(
                 Vte.PtyFlags.DEFAULT,
                 Environment.get_variable("HOME"),
                 command,
                 new string[]{Environment.get_variable("HOME"), Environment.get_variable("PATH")},
                 SpawnFlags.LEAVE_DESCRIPTORS_OPEN,
                 null,
-                out pid
+                out pid,
+                null
             );
 
             return pid;
