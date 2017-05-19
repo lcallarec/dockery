@@ -21,7 +21,7 @@ namespace View.Docker.List {
                 var empty_box = IconMessageBoxBuilder.create_icon_message_box("No image found", "docker-symbolic");
                 this.pack_start(empty_box, true, true, 0);
             }
-   
+
             if (show_after_refresh == true) {
 				this.show_all();
             }

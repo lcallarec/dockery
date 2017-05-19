@@ -413,8 +413,8 @@ public class ApplicationController : GLib.Object {
             message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
         } catch (Sdk.Docker.Io.RequestError e) {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            this.view.images.init(null);
-            this.view.containers.init(null);
+            this.view.images.init(new Sdk.Docker.Model.ImageCollection());
+            this.view.containers.init(new Sdk.Docker.Model.ContainerCollection() );
         }
     }
 }

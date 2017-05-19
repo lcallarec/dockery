@@ -7,8 +7,8 @@ namespace View.Docker.List {
     public class Containers : Flushable, ContainerViewable, Signals.ContainerRequestAction, Gtk.Box {
 
         private Gtk.Notebook notebook;
-        private Gtk.Box empty_box = IconMessageBoxBuilder.create_icon_message_box("No container found", "docker-symbolic");
-
+        private Gtk.Box empty_box;
+        
         private UserActions user_actions = UserActions.get_instance();
 
         public Containers() {
@@ -21,11 +21,13 @@ namespace View.Docker.List {
         public Containers init(ContainerCollection containers, bool show_after_refresh = true) {
 
             this.flush();
-            if (containers.size == 0) {
-				
-                this.notebook  =  null;
 
-                this.pack_start(this.empty_box, true, true);
+            if (containers.is_empty) {
+
+                this.notebook = null;
+				this.empty_box = IconMessageBoxBuilder.create_icon_message_box("No container found", "docker-symbolic")	;			
+                
+                this.pack_start(this.empty_box, true, true, 0);
 
                 if (show_after_refresh == true) {
                     this.show_all();
@@ -63,7 +65,7 @@ namespace View.Docker.List {
 					notebook.set_current_page(current_page);
 				}
 			}
-            
+
             return this;
         }
 

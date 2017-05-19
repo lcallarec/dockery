@@ -39,14 +39,14 @@ namespace View {
             workspace.pack_start(sidebar, false, true, 0);
 
             this.containers = this.docker_view.create_containers_view();
-            this.containers.init(null);
+            this.containers.init(new Sdk.Docker.Model.ContainerCollection());
 
-            Gtk.ScrolledWindow containers_scrolled = new Gtk.ScrolledWindow(null, null);
+            Gtk.ScrolledWindow containers_scrolled = new Gtk.ScrolledWindow(null, null);      
             containers_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
             containers_scrolled.add(containers);
 
             this.images = this.docker_view.create_images_view();
-            this.images.init(null);
+            this.images.init(new Sdk.Docker.Model.ImageCollection());
 
             Gtk.ScrolledWindow images_scrolled = new Gtk.ScrolledWindow(null, null);
             images_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
