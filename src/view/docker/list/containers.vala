@@ -7,7 +7,7 @@ namespace View.Docker.List {
     public class Containers : Flushable, ContainerViewable, Signals.ContainerRequestAction, Gtk.Box {
 
         private Gtk.Notebook notebook;
-        private Gtk.Box empty_box;
+        private Gtk.Box empty_box = IconMessageBoxBuilder.create_icon_message_box("No container found", "docker-symbolic");
 
         private UserActions user_actions = UserActions.get_instance();
 
@@ -16,49 +16,54 @@ namespace View.Docker.List {
         }
 
         /**
-         * Init the container view from a given (nullable) list of containers and return it
+         * Init the container view from a given collection of containers and return it
          */
-        public Containers init(ContainerCollection? containers, bool show_after_refresh = true) {
+        public Containers init(ContainerCollection containers, bool show_after_refresh = true) {
 
             this.flush();
-
-            if (null == containers) {
+            if (containers.size == 0) {
+				
                 this.notebook  =  null;
-                this.empty_box = IconMessageBoxBuilder.create_icon_message_box("No container found", "docker-symbolic");
-                this.pack_start(this.empty_box, true, true, 0);
-                return this;
-            }
 
-            this.notebook  =  new Gtk.Notebook();
-            this.empty_box = null;
+                this.pack_start(this.empty_box, true, true);
 
-            this.pack_start(this.notebook, true, true, 0);
-
-            int page_count = 0;
-            foreach(ContainerStatus status in ContainerStatus.all()) {
-                var c = containers.get_by_status(status);
-                if (c.is_empty == false) {
-                    page_count++;
-                    this.hydrate(status, c);
+                if (show_after_refresh == true) {
+                    this.show_all();
                 }
-            }
 
-            notebook.switch_page.connect((page, page_num) => {
-                user_actions.set_feature(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE, page_num.to_string());
-            });
+            } else {
+			
+				this.empty_box = null;
+				this.notebook  = new Gtk.Notebook();
 
-            if (true == show_after_refresh) {
-                this.show_all();
+				this.pack_start(this.notebook, true, true, 0);
 
-                int current_page = user_actions.get_feature(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE).to_int();
-                if (current_page + 1 > page_count) {
-                    //-1 = last page
-                    current_page = -1;
-                }
-                //This code should remain after show_all() invokation, because set_current_page will have no effets if the page is not shown yet
-                notebook.set_current_page(current_page);
-            }
+				int page_count = 0;
+				foreach(ContainerStatus status in ContainerStatus.all()) {
+					var c = containers.get_by_status(status);
+					if (c.is_empty == false) {
+						page_count++;
+						this.hydrate(status, c);
+					}
+				}
 
+				notebook.switch_page.connect((page, page_num) => {
+					user_actions.set_feature(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE, page_num.to_string());
+				});
+
+				if (true == show_after_refresh) {
+					this.show_all();
+
+					int current_page = user_actions.get_feature(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE).to_int();
+					if (current_page + 1 > page_count) {
+						//-1 = last page
+						current_page = -1;
+					}
+					//This code should remain after show_all() invokation, because set_current_page will have no effets if the page is not shown yet
+					notebook.set_current_page(current_page);
+				}
+			}
+            
             return this;
         }
 

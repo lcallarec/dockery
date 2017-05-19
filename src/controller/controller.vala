@@ -308,7 +308,7 @@ public class ApplicationController : GLib.Object {
     }
 
     protected void init_image_list() throws Sdk.Docker.Io.RequestError {
-        Sdk.Docker.Model.ImageCollection? images = null;
+        Sdk.Docker.Model.ImageCollection images = new Sdk.Docker.Model.ImageCollection();
         try {
              images = repository.images().list();
         } catch (Sdk.Docker.Io.RequestError e) {

@@ -16,9 +16,9 @@ namespace View.Docker {
     public interface ImageViewable : Gtk.Widget {
 
         /**
-         * Init the images view from a given (nullable) list of images
+         * Init the images view from a given collection of images
          */
-        public abstract View.Docker.List.Images init(ImageCollection? images, bool show_after_refresh = true);
+        public abstract View.Docker.List.Images init(ImageCollection images, bool show_after_refresh = true);
     }
 
     /**
@@ -27,9 +27,9 @@ namespace View.Docker {
     public interface ContainerViewable : Gtk.Widget {
 
         /**
-         * Init the container view from a given (nullable) list of containers and return it
+         * Init the container view from a given collection of containers and return it
          */
-        public abstract View.Docker.List.Containers init(ContainerCollection? containers, bool show_after_refresh = true);
+        public abstract View.Docker.List.Containers init(ContainerCollection containers, bool show_after_refresh = true);
     }
 
     /**

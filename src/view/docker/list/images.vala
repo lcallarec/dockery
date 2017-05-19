@@ -9,33 +9,24 @@ namespace View.Docker.List {
         protected Gtk.ListStore liststore = new Gtk.ListStore(4, typeof (string),  typeof (string), typeof (string), typeof (string));
 
         /**
-         * Init the images view from a given (nullable) list of images
+         * Init the images view from a given collection of images
          */
-        public Images init(ImageCollection? images, bool show_after_refresh = true) {
+        public Images init(ImageCollection images, bool show_after_refresh = true) {
 
             this.flush();
 
-            if (null != images && images.size > 0) {
-
+            if (images.size > 0) {
                 this.hydrate(images);
-
-                if (show_after_refresh == true) {
-                    this.show_all();
-                }
-
-                return this;
-
             } else {
-
                 var empty_box = IconMessageBoxBuilder.create_icon_message_box("No image found", "docker-symbolic");
                 this.pack_start(empty_box, true, true, 0);
-
-                if (show_after_refresh == true) {
-                    this.show_all();
-                }
-
-                return this;
             }
+   
+            if (show_after_refresh == true) {
+				this.show_all();
+            }
+            
+            return this;
         }
 
         private Gtk.TreeView get_treeview(Gtk.ListStore liststore) {
