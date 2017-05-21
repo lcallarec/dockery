@@ -109,6 +109,23 @@ namespace Sdk.Docker {
             }
         }
 
+		/**
+         * Pull an image from Docker hub
+         * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/create-an-image
+         */
+        public Io.FutureResponse future_pull(Model.HubImage image) throws Io.RequestError {
+
+            try {
+			
+					return this.client.future_send("POST /images/create?fromImage=%s".printf(image.name));
+	
+
+
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while pull image %s from docker hub".printf(image.name));
+            }
+        }
+
         /**
          * Parse images list response payload
          */

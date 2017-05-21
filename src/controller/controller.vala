@@ -300,7 +300,12 @@ public class ApplicationController : GLib.Object {
         view.headerbar.pull_image_from_docker_hub.connect((image) => {
 
             try {
-                repository.images().pull(image);
+                var future_response = repository.images().future_pull(image);
+                
+                future_response.on_payload_line_received.connect((line) => {
+					stdout.printf("ITSSSSS WORKING : %s\n", line);
+				});
+                
             } catch (Sdk.Docker.Io.RequestError e) {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             }
@@ -403,6 +408,7 @@ public class ApplicationController : GLib.Object {
         pop.show_all();
         #endif
     }
+
 
     protected void docker_daemon_post_connect(string docker_endpoint) {
 
