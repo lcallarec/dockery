@@ -116,11 +116,7 @@ namespace Sdk.Docker {
         public Io.FutureResponse future_pull(Model.HubImage image) throws Io.RequestError {
 
             try {
-			
-					return this.client.future_send("POST /images/create?fromImage=%s".printf(image.name));
-	
-
-
+				return this.client.future_send("POST /images/create?fromImage=%s".printf(image.name));
             } catch (Io.RequestError e) {
                 throw new Io.RequestError.FATAL("Error while pull image %s from docker hub".printf(image.name));
             }

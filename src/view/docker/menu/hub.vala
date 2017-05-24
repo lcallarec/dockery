@@ -19,7 +19,7 @@ namespace View.Docker.Menu {
 
         protected void append_pull_menu_item() {
             this.append_menu_item("_Pull %s from Docker Hub".printf(image.name), null, () => {
-                this.pull_image_from_docker_hub(image);
+                this.pull_image_from_docker_hub(null, image);
             });
         }
     }

@@ -60,9 +60,7 @@ namespace Sdk.Docker {
             var conn = this.create_connection();
 
             try {
-                stdout.printf("\n===================================================\nRequest : %s %s", query.strip(), "\n");
                 conn.output_stream.write(query.data);
-                stdout.printf("\n===================================================\nEnd Request\n");
             } catch(GLib.IOError e) {
                 this.request_error(query);
                 string err_message = "IO error : %s".printf(e.message);
@@ -76,7 +74,7 @@ namespace Sdk.Docker {
             return response;
         }
 
- /**
+		/**
          * Send a message to docker daemon and return the response
          */
         public override Io.FutureResponse future_send(string endpoint, string? body = null) throws Io.RequestError {
@@ -91,7 +89,6 @@ namespace Sdk.Docker {
                 request_builder.append("Content-Type: application/json\r\n");
                 request_builder.append("\r\n");
                 request_builder.append(body);
-
             }
 
             //end of HTTP request
@@ -101,25 +98,22 @@ namespace Sdk.Docker {
 			
 			Io.FutureResponse future_response = new Io.FutureResponse();
 			
-			new GLib.Thread<int>("ee", () => {
+			GLib.Thread<int> thread = new GLib.Thread<int>("future_send", () => {
 				var conn = this.create_connection();
 
 				try {
-					stdout.printf("\n===================================================\nRequest : %s %s", query.strip(), "\n");
 					conn.output_stream.write(query.data);
-					stdout.printf("\n===================================================\nEnd Request\n");
 				} catch(GLib.IOError e) {
 					this.request_error(query);
 					string err_message = "IO error : %s".printf(e.message);
 					throw new Io.RequestError.FATAL(err_message);
 				}
-
+				
 				Io.SocketResponseFactory.future_create(new DataInputStream(conn.input_stream), future_response);
 				return 0;
 			});
 
             return future_response;
-
         }
 
         /**
