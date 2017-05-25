@@ -2,12 +2,20 @@ SHELL := /bin/bash
 
 gtk_version := $(shell pkg-config --modversion gtk+-3.0 | cut -d'.' -f1,2)
 
+ifdef ($(TRAVIS))
+	libvte_version=$(shell dpkg-query -l|grep 'libvte-2.9[0-9]-dev' | sed 's/^.*libvte-([0-9].[0-9][0-9])-dev.*/$1/g')
+else
+    libvte_version=$(shell dpkg-query -l|grep 'libvte-2.9[0-9]-dev' | sed 's/^.*libvte-\([0-9].[0-9][0-9]\)-dev.*$$/\1/g')
+endif
+
+
+
 EXEC=compile
 
 all: $(EXEC)
 
 preprocess:
-	mkdir -p build/source && build/pre-process.py src build/source $(gtk_version)
+	mkdir -p build/source && build/pre-process.py src build/source $(gtk_version) $(libvte_version)
 
 compile:
 	$(MAKE) preprocess
@@ -15,7 +23,7 @@ compile:
 	valac -g --save-temps \
         -X -w -X -lm -v \
         --pkg gtk+-3.0 --pkg gio-2.0 \
-        --pkg gio-unix-2.0 --pkg gee-0.8 --pkg json-glib-1.0 --pkg vte-2.91 \
+        --pkg gio-unix-2.0 --pkg gee-0.8 --pkg json-glib-1.0 --pkg vte-$(libvte_version) \
         build/source/*.vala resources.c --gresources gresource.xml \
         -o dockery
 
@@ -37,7 +45,6 @@ clean:
 	rm -f dockery
 	rm -rf build/source
 	find . -type f -name '*.c' -delete
-
 
 debug:
 	$(MAKE) clean

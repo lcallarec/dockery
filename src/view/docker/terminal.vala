@@ -29,17 +29,26 @@ namespace View.Docker {
         public Pid start() {
 
             Pid pid;
+            
+            #if LIBVTE_2.91
+            fork_command_full(
+            #endif
+            
+            #if LIBVTE_2.90
             spawn_sync(
+            #endif
                 Vte.PtyFlags.DEFAULT,
                 Environment.get_variable("HOME"),
                 command,
                 new string[]{Environment.get_variable("HOME"), Environment.get_variable("PATH")},
                 SpawnFlags.LEAVE_DESCRIPTORS_OPEN,
                 null,
-                out pid,
-                null
-            );
-
+                out pid
+            #if LIBVTE_2.90
+            ,null
+            #endif
+			);
+			
             return pid;
         }
 

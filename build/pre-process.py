@@ -6,13 +6,13 @@ import sys
 
 
 class PreProcessor:
-	
+
 	def __init__(self, from_path, to_path):
 		self.from_path = from_path
 		self.to_path   = to_path
-	
+
 	def copy(self):
-	
+
 		for root, filename in self.__iterate_files(self.from_path):
 			if filename.endswith('.vala'):
 				basename = (root + os.path.sep + filename).replace(os.path.sep, '_')
@@ -67,11 +67,11 @@ class PreProcessor:
 				file.close()
 
 			processed_content = ""
-				
+
 	def __iterate_files(self, path):
 		for root, directories, filenames in os.walk(path):
 			for filename in filenames:
-				yield root, filename			
+				yield root, filename
 
 
 class GtkVersions:
@@ -118,6 +118,10 @@ class GtkVersions:
 if __name__ == '__main__':
 	pre_processor = PreProcessor(sys.argv[1], sys.argv[2])
 	pre_processor.copy()
+
+    #LibVTE pre-processor
+	pre_processor.pre_process_for("LIBVTE_" + sys.argv[4])
+	pre_processor.clean_pre_process("LIBVTE_")
 
     #GTK pre-processor
 	gtk_versions = GtkVersions()
