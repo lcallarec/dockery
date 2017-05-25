@@ -25,10 +25,10 @@ namespace Signals {
     public interface DockerHubImageRequestAction : GLib.Object {
 
         /** This signal should be emitted when an image is searched in docker hub */
-        public signal void search_image_in_docker_hub(DockerHubImageRequestAction target, string term);
+        public signal void search_image_in_docker_hub(View.Docker.Dialog.SearchHubDialog target, string term);
 
         /** This signal should be emitted as a request to pull an image from docker hub */
-        public signal void pull_image_from_docker_hub(HubImage image);
+        public signal void pull_image_from_docker_hub(View.Docker.Dialog.SearchHubDialog? target, HubImage image);
 
         public virtual void set_images(Sdk.Docker.Model.HubImage[] images) {}
     }

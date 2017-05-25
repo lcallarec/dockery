@@ -22,6 +22,7 @@ public class ApplicationController : GLib.Object {
         }
     }
 
+
     public void listen_container_view() {
 
         view.containers.container_status_change_request.connect((requested_status, container) => {
@@ -297,13 +298,30 @@ public class ApplicationController : GLib.Object {
             }
         });
 
-        view.headerbar.pull_image_from_docker_hub.connect((image) => {
+        view.headerbar.pull_image_from_docker_hub.connect((target, image) => {
 
-            try {
-                repository.images().pull(image);
-            } catch (Sdk.Docker.Io.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
+			var decorator = new View.Docker.Decorator.CreateImageDecorator(target.message_box_label);
+			var future_response = repository.images().future_pull(image);
+
+			future_response.on_payload_line_received.connect((line) => {
+
+				if (null != line) {
+					try {
+						decorator.update(line);
+					} catch (Error e) {
+						message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+					}
+				}
+			});
+			
+			future_response.on_finished.connect(() => {
+				try {
+					decorator.update(null);
+				} catch (Error e) {
+					message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+				}
+			});
+
         });
     }
 
@@ -403,6 +421,7 @@ public class ApplicationController : GLib.Object {
         pop.show_all();
         #endif
     }
+
 
     protected void docker_daemon_post_connect(string docker_endpoint) {
 
