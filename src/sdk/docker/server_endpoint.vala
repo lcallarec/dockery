@@ -19,7 +19,7 @@ namespace Sdk.Docker {
         public void ping() throws Io.RequestError {
 
             try {
-                var response = this.client.send("GET /_ping");
+                var response = this.client.send("GET", "/_ping");
 
                 var error_messages = create_error_messages();
                 error_messages.set(200, "Pong");

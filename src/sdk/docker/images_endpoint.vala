@@ -31,9 +31,7 @@ namespace Sdk.Docker {
 
             try {
 
-                string message = "GET /images/json";
-
-                return parse_images_list_payload(this.client.send(message).payload);
+                return parse_images_list_payload(this.client.send("GET", "/images/json").payload);
 
             } catch (Io.RequestError e) {
                  throw new Io.RequestError.FATAL("Error while fetching images list from docker daemon : %s".printf(e.message));
@@ -50,13 +48,13 @@ namespace Sdk.Docker {
 
             try {
 
-                StringBuilder message = new StringBuilder("DELETE /images/%s".printf(image.id));
+                StringBuilder message = new StringBuilder("/images/%s".printf(image.id));
 
                 if (force == true) {
                     message.append("?force=true");
                 }
 
-                var response = this.client.send(message.str);
+                var response = this.client.send("DELETE", message.str);
 
                 var error_messages = create_error_messages();
                 error_messages.set(400, "No such image");
@@ -77,7 +75,7 @@ namespace Sdk.Docker {
 
             try {
 
-                var response = this.client.send("GET /images/search?term=%s".printf(term));
+                var response = this.client.send("GET", "/images/search?term=%s".printf(term));
 
                 var error_messages = create_error_messages();
                 error_messages.set(400, "No such image");
@@ -100,7 +98,7 @@ namespace Sdk.Docker {
 
             try {
 
-                var response = this.client.send("POST /images/create?fromImage=%s".printf(image.name));
+                var response = this.client.send("POST", "/images/create?fromImage=%s".printf(image.name));
 
                 this.throw_error_from_status_code(200, response, create_error_messages());
 
@@ -116,7 +114,7 @@ namespace Sdk.Docker {
         public Io.FutureResponse future_pull(Model.HubImage image) throws Io.RequestError {
 
             try {
-				return this.client.future_send("POST /images/create?fromImage=%s".printf(image.name));
+				return this.client.future_send("POST","/images/create?fromImage=%s".printf(image.name));
             } catch (Io.RequestError e) {
                 throw new Io.RequestError.FATAL("Error while pull image %s from docker hub".printf(image.name));
             }
