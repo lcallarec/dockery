@@ -53,9 +53,9 @@ namespace Sdk.Docker {
 
                 filter_builder.add_json_filter("filters", filters);
 
-                var message_builder = new StringBuilder("GET /containers/json");
+                var message_builder = new StringBuilder("/containers/json");
                 message_builder.append(filter_builder.build());
-                return parse_containers_list_payload(this.client.send(message_builder.str).payload, status);
+                return parse_containers_list_payload(this.client.send("GET", message_builder.str).payload, status);
 
             } catch (Io.RequestError e) {
                 throw new Io.RequestError.FATAL("Error while fetching container list from docker daemon : %s".printf(e.message));
@@ -70,7 +70,7 @@ namespace Sdk.Docker {
         public void pause(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
             try {
-                var response = this.client.send("POST /containers/%s/pause".printf(container.id));
+                var response = this.client.send("POST", "/containers/%s/pause".printf(container.id));
 
                 var error_messages = create_error_messages();
                 error_messages.set(404, "No such container");
@@ -90,7 +90,7 @@ namespace Sdk.Docker {
         public void unpause(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
             try {
-                var response = this.client.send("POST /containers/%s/unpause".printf(container.id));
+                var response = this.client.send("POST", "/containers/%s/unpause".printf(container.id));
 
                 var error_messages = create_error_messages();
                 error_messages.set(304, "Container already started");
@@ -111,7 +111,7 @@ namespace Sdk.Docker {
         public void restart(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
             try {
-                var response = this.client.send("POST /containers/%s/restart".printf(container.id));
+                var response = this.client.send("POST", "/containers/%s/restart".printf(container.id));
 
                 var error_messages = create_error_messages();
                 error_messages.set(404, "No such container");
@@ -131,13 +131,13 @@ namespace Sdk.Docker {
 
             try {
 
-                StringBuilder message = new StringBuilder("DELETE /containers/%s".printf(container.id));
+                StringBuilder message = new StringBuilder("/containers/%s".printf(container.id));
 
                 if (force == true) {
                     message.append("?force=true");
                 }
 
-                var response = this.client.send(message.str);
+                var response = this.client.send("DELETE", message.str);
 
                 var error_messages = create_error_messages();
                 error_messages.set(404, "No such container");
@@ -157,7 +157,7 @@ namespace Sdk.Docker {
         public void start(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
             try {
-                var response = this.client.send("POST /containers/%s/start".printf(container.id));
+                var response = this.client.send("POST", "/containers/%s/start".printf(container.id));
 
                 var error_messages = create_error_messages();
                 error_messages.set(304, "Container already started");
@@ -178,7 +178,7 @@ namespace Sdk.Docker {
         public void stop(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
             try {
-                var response = this.client.send("POST /containers/%s/stop".printf(container.id));
+                var response = this.client.send("POST", "/containers/%s/stop".printf(container.id));
 
                 var error_messages = create_error_messages();
                 error_messages.set(304, "Container already stopped");
@@ -199,7 +199,7 @@ namespace Sdk.Docker {
         public void kill(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
             try {
-                var response = this.client.send("POST /containers/%s/kill".printf(container.id));
+                var response = this.client.send("POST", "/containers/%s/kill".printf(container.id));
 
                 var error_messages = create_error_messages();
                 error_messages.set(304, "Container already stopped");
@@ -220,7 +220,7 @@ namespace Sdk.Docker {
         public void rename(Sdk.Docker.Model.Container container) throws Io.RequestError {
 
             try {
-                var response = this.client.send("POST /containers/%s/rename?name=%s".printf(container.id, container.name));
+                var response = this.client.send("POST", "/containers/%s/rename?name=%s".printf(container.id, container.name));
 
                 var error_messages = create_error_messages();
                 error_messages.set(404, "No such container");
@@ -269,7 +269,7 @@ namespace Sdk.Docker {
         public void create(Sdk.Docker.Model.ContainerCreate container_create) throws Io.RequestError {
 
             try {
-                var response = this.client.send("POST /containers/create", container_create.serialize());
+                var response = this.client.send("POST", "/containers/create", container_create.serialize());
 
                 var error_messages = create_error_messages();
                 error_messages.set(400, "Bad parameter");
