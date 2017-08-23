@@ -386,15 +386,15 @@ public class ApplicationController : GLib.Object {
     }
 
 
-    protected Sdk.Docker.Repository? create_repository(string docker_path) {
+    protected Sdk.Docker.Repository? create_repository(string uri) {
 
-        Sdk.Docker.Client? client = Sdk.Docker.ClientFactory.create_from_url(docker_path);
+        Sdk.Docker.Client? client = Sdk.Docker.ClientFactory.create_from_uri(uri);
 		
 		if (client != null) {
 			return new Sdk.Docker.Repository(client);
 		}
 		
-		message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) "Failed to connect to %s".printf(docker_path));
+		message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) "Failed to connect to %s".printf(uri));
 		
 		return null;
         

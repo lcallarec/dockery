@@ -2,12 +2,12 @@ namespace Sdk.Docker {
 
     public class ClientFactory : GLib.Object {
 
-        public static Client? create_from_url(string url) {
+        public static Client? create_from_uri(string uri) {
 			
 			var registered_clients = get_registered_clients();
 			
 			for (int i = 0; i < registered_clients.length; i++) {
-				RestClient client = (RestClient) Object.new(registered_clients[i], "url", url);
+				RestClient client = (RestClient) Object.new(registered_clients[i], "uri", uri);
 				if (client.supportUri()) {
 					return client;
 				}
