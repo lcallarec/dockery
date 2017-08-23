@@ -1,4 +1,4 @@
-//Proudly talken from github's tiliado/diorite project @ https://github.com/tiliado/diorite/blob/07af3ce59da4d40b268feee01be5b8ffedd76cd1/src/glib/Convert.vala
+//Taken from github's tiliado/diorite project @ https://github.com/tiliado/diorite/blob/07af3ce59da4d40b268feee01be5b8ffedd76cd1/src/glib/Convert.vala
 /*
  * Copyright 2015 Jiří Janoušek <janousek.jiri@gmail.com>
  *

@@ -3,7 +3,7 @@
  */
 public class ApplicationController : GLib.Object {
 
-    protected Sdk.Docker.Repository repository;
+    protected Sdk.Docker.Repository? repository;
     protected Gtk.Window window;
     protected MessageDispatcher message_dispatcher;
     protected View.MainApplicationView view;
@@ -351,14 +351,20 @@ public class ApplicationController : GLib.Object {
     protected bool __connect(string docker_endpoint) throws Error {
 
         repository = create_repository(docker_endpoint);
+		
+		if (repository != null) {
+			
+			repository.connected.connect((repository) => {
+				docker_daemon_post_connect(docker_endpoint);
+			});
 
-        repository.connected.connect((repository) => {
-            docker_daemon_post_connect(docker_endpoint);
-        });
+			repository.connect();
 
-        repository.connect();
-
-        return true;
+			return true;
+		}
+		
+		return false;
+		
     }
 
      protected bool __disconnect() {
@@ -380,11 +386,18 @@ public class ApplicationController : GLib.Object {
     }
 
 
-    protected Sdk.Docker.Repository create_repository(string docker_path) {
+    protected Sdk.Docker.Repository? create_repository(string docker_path) {
 
-        var client = new Sdk.Docker.UnixSocketClient(docker_path);
-
-        return new Sdk.Docker.Repository(client);
+        Sdk.Docker.Client? client = Sdk.Docker.ClientFactory.create_from_url(docker_path);
+		
+		if (client != null) {
+			return new Sdk.Docker.Repository(client);
+		}
+		
+		message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) "Failed to connect to %s".printf(docker_path));
+		
+		return null;
+        
     }
 
     protected void handle_container_rename(Sdk.Docker.Model.Container container, Gtk.Widget relative_to, Gdk.Rectangle pointing_to) {
