@@ -5,7 +5,7 @@ dist: trusty
 before_install:
   - sudo add-apt-repository ppa:vala-team/ppa -y
   - sudo apt-get update -y
-  - sudo apt-get install -y build-essential gnome-common libglib2.0-dev libgtk-3-dev libgee-0.8 libjson-glib-1.0.0 libjson-glib-dev libvala-0.22-dev valac-0.22 libvte-2.90-dev
+  - sudo apt-get install -y build-essential gnome-common libglib2.0-dev libgtk-3-dev libgee-0.8 libjson-glib-1.0.0 libjson-glib-dev libvala-0.22-dev valac-0.22 libvte-2.90-dev libsoup2.4-dev
  
 script:
   - TRAVIS=true make

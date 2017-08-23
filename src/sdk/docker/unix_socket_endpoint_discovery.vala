@@ -9,7 +9,7 @@ namespace Sdk.Docker {
             foreach (string unix_socket in UnixSocketEndpointDiscovery.UNIX_SOCKETS) {
                 var file = File.new_for_path(unix_socket);
                 if (file.query_exists()) {
-                    return unix_socket;
+                    return "unix://" + unix_socket;
                 }
             }
 

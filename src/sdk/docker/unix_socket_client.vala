@@ -6,9 +6,13 @@ namespace Sdk.Docker {
 
         private SocketClient client = new SocketClient();
 
-        public UnixSocketClient(string socket_path) {
-            this.path = socket_path;
+        public UnixSocketClient(string socket_uri) {
+            this.uri = socket_uri;
         }
+
+		public override bool supportUri() {
+			return uri.has_prefix("unix://");
+		}
 
         /**
          * Send a message to docker daemon and return the response
@@ -97,10 +101,15 @@ namespace Sdk.Docker {
          */
         private SocketConnection? create_connection() throws Io.RequestError {
             try {
-                return this.client.connect(new UnixSocketAddress(this.path));
+				
+				var url = Dockery.Convert.Uri.get_url_from_uri(this.uri);
+                return this.client.connect(
+					new UnixSocketAddress(url)
+				);
+                
             } catch (GLib.Error e) {
                 this.request_error(e.message);
-                string err_message = "%s :\n(%s)".printf(this.path, e.message);
+                string err_message = "%s :\n(%s)".printf(this.uri, e.message);
                 throw new Io.RequestError.FATAL(err_message);
             }
         }

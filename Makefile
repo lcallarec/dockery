@@ -23,7 +23,7 @@ compile:
 	valac -g --save-temps --thread \
         -X -w -X -lm -v \
         --target-glib 2.32 \
-        --pkg gtk+-3.0 --pkg gio-2.0 \
+        --pkg gtk+-3.0 --pkg gio-2.0 --pkg libsoup-2.4 \
         --pkg gio-unix-2.0 --pkg gee-0.8 --pkg json-glib-1.0 --pkg vte-$(libvte_version) \
         build/source/*.vala resources.c --gresources gresource.xml \
         -o dockery
