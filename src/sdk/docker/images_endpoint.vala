@@ -75,7 +75,9 @@ namespace Sdk.Docker {
 
             try {
 
-                var response = this.client.send("GET", "/images/search?term=%s".printf(term));
+                string escaped_term = Uri.escape_string(term);
+
+                var response = this.client.send("GET", "/images/search?term=%s".printf(escaped_term));
 
                 var error_messages = create_error_messages();
                 error_messages.set(400, "No such image");
@@ -86,7 +88,7 @@ namespace Sdk.Docker {
                 return parse_images_search_list_payload(response.payload);
 
             } catch (Io.RequestError e) {
-                throw new Io.RequestError.FATAL("Error while searching for %s in docker hub (%s)".printf(term, e.message));
+                throw new Io.RequestError.FATAL("Error while searching for \"%s\" in docker hub (%s)".printf(term, e.message));
             }
         }
 
