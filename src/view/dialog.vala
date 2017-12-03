@@ -9,7 +9,7 @@ namespace View {
             this.border_width = 0;
         }
         
-        public Dialog(int width, int height, string title, Gtk.Window parent, bool is_modal = true, int use_header_bar = 1) {
+        public Dialog(int width, int height, string title, Gtk.Window? parent = null, bool is_modal = true, int use_header_bar = 1) {
             
             #if GTK_GTE_3_18
             Object(use_header_bar: use_header_bar);
@@ -17,7 +17,10 @@ namespace View {
             
             this.set_default_size(width, height);
             this.title  = title;
-            this.set_transient_for(parent);
+            if (parent != null) {
+                this.set_transient_for(parent);
+            }
+
             this.set_modal(is_modal);
         }
 

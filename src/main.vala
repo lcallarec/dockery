@@ -12,6 +12,8 @@ public class DockerManager : Gtk.Window {
 
     private Gtk.InfoBar infobar { get; set;}
 
+    public View.HeaderBar headerbar;
+
     private ApplicationController ac;
 
     public static void main (string[] args) {
@@ -59,13 +61,11 @@ public class DockerManager : Gtk.Window {
         this.add(main_box);
 
         //// START
-        //Main Views
-        View.MainApplicationView views = new View.MainApplicationView(this);
+        this.headerbar = new View.HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
+        this.set_titlebar(headerbar);
 
-        //Workspace
-        main_box.pack_start(views.headerbar, false, true, 0);
-        main_box.pack_start(views.workspace, true, true, 0);
-        main_box.pack_end(views.infobar, false, true, 0);
+        //Main Views
+        View.MainApplicationView views = new View.MainApplicationView(main_box);
 
         //ApplicationController
         this.ac = new ApplicationController(this, views, new MessageDispatcher(views.infobar));

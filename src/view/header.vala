@@ -29,7 +29,7 @@ namespace View {
         /** Signal sent when a docker auto-connection request is performed */
         public signal void docker_daemon_autoconnect_request();
 
-        public HeaderBar(Gtk.Window parent_window, string? title, string? subtitle) {
+        public HeaderBar(string? title, string? subtitle) {
 
             this.action_connect_button = new Gtk.Button.with_label("connecting...");
             this.pack_end(action_connect_button);
@@ -67,8 +67,7 @@ namespace View {
             });
 
             this.action_hub_button.clicked.connect (() => {
-
-                var dialog = new View.Docker.Dialog.SearchHubDialog(parent_window);
+                var dialog = new View.Docker.Dialog.SearchHubDialog();
                 dialog.search_image_in_docker_hub.connect((target, term) => {
                     this.search_image_in_docker_hub(dialog, term);
                 });
@@ -78,7 +77,6 @@ namespace View {
                 dialog.pull_image_from_docker_hub.connect((target, image) => {
                     this.pull_image_from_docker_hub(dialog, image);
                 });
-
             });
 
             create_connect_button();

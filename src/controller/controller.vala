@@ -4,11 +4,11 @@
 public class ApplicationController : GLib.Object {
 
     protected Sdk.Docker.Repository? repository;
-    protected Gtk.Window window;
+    protected DockerManager window;
     protected MessageDispatcher message_dispatcher;
     protected View.MainApplicationView view;
 
-    public ApplicationController(Gtk.Window window, View.MainApplicationView view, MessageDispatcher message_dispatcher) {
+    public ApplicationController(DockerManager window, View.MainApplicationView view, MessageDispatcher message_dispatcher) {
         this.window             = window;
         this.view               = view;
         this.message_dispatcher = message_dispatcher;
@@ -17,7 +17,7 @@ public class ApplicationController : GLib.Object {
         if (null != docker_endpoint) {
             __connect(docker_endpoint);
         } else {
-            this.view.headerbar.on_docker_daemon_connect(docker_endpoint, false);
+            this.window.headerbar.on_docker_daemon_connect(docker_endpoint, false);
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't locate docker daemon");
         }
     }
@@ -263,12 +263,12 @@ public class ApplicationController : GLib.Object {
 
     public void listen_headerbar() {
 
-        view.headerbar.docker_daemon_connect_request.connect((docker_path) => {
+        this.window.headerbar.docker_daemon_connect_request.connect((docker_path) => {
 
             try {
                 __connect(docker_path);
             } catch (Error e) {
-                this.view.headerbar.on_docker_daemon_connect(
+                this.window.headerbar.on_docker_daemon_connect(
                     docker_path,
                     false,
                     new Notification.Message(Gtk.MessageType.ERROR, "Can't connect  docker daemon at %s".printf(docker_path))
@@ -276,23 +276,23 @@ public class ApplicationController : GLib.Object {
             }
         });
 
-        view.headerbar.docker_daemon_disconnect_request.connect(() => {
+        this.window.headerbar.docker_daemon_disconnect_request.connect(() => {
             __disconnect();
         });
 
-        view.headerbar.docker_daemon_autoconnect_request.connect(() => {
+        this.window.headerbar.docker_daemon_autoconnect_request.connect(() => {
             string? docker_endpoint = discover_connection();
             if (null != docker_endpoint) {
                 __connect(docker_endpoint);
             } else {
-                this.view.headerbar.on_docker_daemon_connect(docker_endpoint, false, new Notification.Message(Gtk.MessageType.ERROR, "Can't locate docker daemon"));
+                this.window.headerbar.on_docker_daemon_connect(docker_endpoint, false, new Notification.Message(Gtk.MessageType.ERROR, "Can't locate docker daemon"));
             }
         });
     }
 
     public void listen_docker_hub() {
 
-        view.headerbar.search_image_in_docker_hub.connect((target, term) => {
+        this.window.headerbar.search_image_in_docker_hub.connect((target, term) => {
 
             try {
                 Sdk.Docker.Model.HubImage[] images =  repository.images().search(term);
@@ -302,7 +302,7 @@ public class ApplicationController : GLib.Object {
             }
         });
 
-        view.headerbar.pull_image_from_docker_hub.connect((target, image) => {
+        this.window.headerbar.pull_image_from_docker_hub.connect((target, image) => {
 
             var decorator = new View.Docker.Decorator.CreateImageDecorator(target.message_box_label);
             var future_response = repository.images().future_pull(image);
@@ -373,7 +373,7 @@ public class ApplicationController : GLib.Object {
 
      protected bool __disconnect() {
 
-        this.view.headerbar.on_docker_daemon_connect(null, false);
+        this.window.headerbar.on_docker_daemon_connect(null, false);
 
         repository = null;
 
@@ -445,7 +445,7 @@ public class ApplicationController : GLib.Object {
         try {
             this.init_image_list();
             this.init_container_list();
-            this.view.headerbar.on_docker_daemon_connect(docker_endpoint, true);
+            this.window.headerbar.on_docker_daemon_connect(docker_endpoint, true);
             message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
         } catch (Sdk.Docker.Io.RequestError e) {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
