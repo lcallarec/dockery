@@ -86,7 +86,7 @@ namespace Sdk.Docker {
                 return parse_images_search_list_payload(response.payload);
 
             } catch (Io.RequestError e) {
-                throw new Io.RequestError.FATAL("Error while searching for %s in docker hub".printf(term));
+                throw new Io.RequestError.FATAL("Error while searching for %s in docker hub (%s)".printf(term, e.message));
             }
         }
 
