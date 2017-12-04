@@ -60,12 +60,12 @@ public class DockerManager : Gtk.Window {
         Gtk.Box main_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         this.add(main_box);
 
-        //// START
-        this.headerbar = new View.HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
-        this.set_titlebar(headerbar);
-
         //Main Views
         View.MainApplicationView views = new View.MainApplicationView(main_box);
+
+        //// START
+        this.headerbar = new View.HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME, views.perspective_switcher);
+        this.set_titlebar(headerbar);
 
         //ApplicationController
         this.ac = new ApplicationController(this, views, new MessageDispatcher(views.infobar));

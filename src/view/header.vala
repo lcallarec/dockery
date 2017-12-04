@@ -29,7 +29,7 @@ namespace View {
         /** Signal sent when a docker auto-connection request is performed */
         public signal void docker_daemon_autoconnect_request();
 
-        public HeaderBar(string? title, string? subtitle) {
+        public HeaderBar(string? title, string? subtitle, Gtk.StackSwitcher stack_switcher) {
 
             this.action_connect_button = new Gtk.Button.with_label("connecting...");
             this.pack_end(action_connect_button);
@@ -47,6 +47,8 @@ namespace View {
             this.entry = new Gtk.Entry();
             this.entry.width_chars = 30;
             this.entry.set_icon_from_icon_name(Gtk.EntryIconPosition.SECONDARY, "edit-find-symbolic");
+
+            this.pack_end(stack_switcher);
 
             entry.icon_press.connect ((pos, event) => {
                 if (pos == Gtk.EntryIconPosition.SECONDARY) {
