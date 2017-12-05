@@ -1,0 +1,13 @@
+<schemalist>
+  <schema id="org.lcallarec.dockery" path="/org/lcallarec/dockery/" gettext-domain="dockery">
+
+    <key name="docker-stacks" type="as">
+	<default>['1::Local Docker stack::unix:///var/run/docker.sock']</default>
+	<summary>Docker stacks definitions</summary>
+	<description>
+		Docker stacks definitions : id::human readable name::docker daemon endpoint
+	</description>
+    </key>
+
+  </schema>
+</schemalist>
