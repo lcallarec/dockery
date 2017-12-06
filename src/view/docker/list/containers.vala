@@ -56,7 +56,7 @@ namespace View.Docker.List {
                 if (true == show_after_refresh) {
                     this.show_all();
 
-                    int current_page = user_actions.get_feature(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE).to_int();
+                    int current_page = int.parse(user_actions.get_feature(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE));
                     if (current_page + 1 > page_count) {
                         //-1 = last page
                         current_page = -1;
