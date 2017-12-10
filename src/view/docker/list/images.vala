@@ -97,8 +97,7 @@ namespace View.Docker.List {
                     Gtk.TreeModel model;
                     
                     GLib.List<Gtk.TreePath> rows = selection.get_selected_rows(out model);
-                    
-                    string row_value;
+;
                     if (rows.length() == 1) {
                         
                         Image? image = get_image_from_row(model, rows.nth_data(0));
