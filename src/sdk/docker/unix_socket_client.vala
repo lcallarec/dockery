@@ -78,7 +78,7 @@ namespace Sdk.Docker {
             
             Io.FutureResponse future_response = new Io.FutureResponse();
             
-            GLib.Thread<int> thread = new GLib.Thread<int>("future_send", () => {
+            new GLib.Thread<int>("future_send", () => {
                 var conn = this.create_connection();
 
                 try {

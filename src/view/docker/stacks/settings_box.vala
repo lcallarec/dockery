@@ -2,8 +2,6 @@ namespace View.Docker.Stacks {
 
     class SettingsBox : Gtk.Box, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
 
-        private string[] connect_labels = {"connect", "disconnect"};
-
         private Gtk.Button connect_button = new Gtk.Button();
         private Gtk.Image connect_button_image = new Gtk.Image();
         private bool is_connected = false;

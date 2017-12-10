@@ -26,8 +26,6 @@ namespace View.Docker.Dialog {
 
         public string? get_important_message() {
             
-            string important_message;
-            
             if (containers.size == 0 && images.size == 1) {
                 return "The selected image isn't being used by any container. It can be removed safely.";
             } else if (containers.size == 0 && images.size > 1) {

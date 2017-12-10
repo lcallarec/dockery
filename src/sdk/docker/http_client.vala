@@ -26,14 +26,12 @@ namespace Sdk.Docker {
             try {
                 session.send_message(message);
             } catch(Error e) {
-                //this.request_error(query);
                 string err_message = "IO error : %s".printf(e.message);
                 throw new Io.RequestError.FATAL(err_message);
             }
 
             var response = Io.HttpResponseFactory.create(message);
 
-            //this.response_success(response);
             return response;
         }
 
@@ -48,9 +46,9 @@ namespace Sdk.Docker {
                 request_body.append_take(body.data);
             }
 
-           Io.FutureResponse future_response = new Io.FutureResponse();
+            Io.FutureResponse future_response = new Io.FutureResponse();
             
-            GLib.Thread<int> thread = new GLib.Thread<int>("future_send", () => {
+            new GLib.Thread<int>("future_send", () => {
 
                 try {
                     session.send_message(message);
@@ -66,6 +64,5 @@ namespace Sdk.Docker {
 
             return future_response;
         }
-
     }
 }
