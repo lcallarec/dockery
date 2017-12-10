@@ -64,15 +64,13 @@ public class DockerManager : Gtk.Window {
         View.MainApplicationView views = new View.MainApplicationView(main_box);
 
         //// START
-        this.headerbar = new View.HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME, views.perspective_switcher);
+        this.headerbar = new View.HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
         this.set_titlebar(headerbar);
+        this.headerbar.pack_start(views.perspective_switcher);
 
         //ApplicationController
         this.ac = new ApplicationController(this, views, new MessageDispatcher(views.infobar));
-        ac.listen_headerbar();
-        ac.listen_docker_hub();
-        ac.listen_container_view();
-        ac.listen_image_view();
+        ac.boot();
     }
 
     protected Gtk.CssProvider create_css_provider(string css_path) {

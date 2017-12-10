@@ -9,3 +9,9 @@ GtkInfoBar GtkButton.button.close {
     outline: none;
     box-shadow: none;
 }
+
+GtkEntry {
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+

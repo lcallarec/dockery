@@ -1,7 +1,7 @@
 /**
  * ApplicationController is listening to all signals emitted by the view layer
  */
-public class ApplicationController : GLib.Object {
+public class ApplicationController : GLib.Object, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
 
     protected Sdk.Docker.Repository? repository;
     protected DockerManager window;
@@ -12,16 +12,21 @@ public class ApplicationController : GLib.Object {
         this.window             = window;
         this.view               = view;
         this.message_dispatcher = message_dispatcher;
+    }
+
+    public void boot() {
+        this.listen_headerbar();
+        this.listen_docker_hub();
+        this.listen_container_view();
+        this.listen_image_view();
 
         string? docker_endpoint = discover_connection();
         if (null != docker_endpoint) {
             __connect(docker_endpoint);
         } else {
-            this.window.headerbar.on_docker_daemon_connect(docker_endpoint, false);
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't locate docker daemon");
         }
     }
-
 
     public void listen_container_view() {
 
@@ -263,70 +268,76 @@ public class ApplicationController : GLib.Object {
 
     public void listen_headerbar() {
 
-        this.window.headerbar.docker_daemon_connect_request.connect((docker_path) => {
-
+        this.view.on_docker_service_connect_request.connect((docker_entrypoint) => {
             try {
-                __connect(docker_path);
+                __connect(docker_entrypoint);
             } catch (Error e) {
-                this.window.headerbar.on_docker_daemon_connect(
-                    docker_path,
-                    false,
-                    new Notification.Message(Gtk.MessageType.ERROR, "Can't connect  docker daemon at %s".printf(docker_path))
-                );
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't connect  docker daemon at %s".printf(docker_entrypoint));
             }
         });
 
-        this.window.headerbar.docker_daemon_disconnect_request.connect(() => {
+        this.view.on_docker_service_disconnect_request.connect(() => {
             __disconnect();
         });
 
-        this.window.headerbar.docker_daemon_autoconnect_request.connect(() => {
+        this.on_docker_service_connect_success.connect((docker_entrypoint) => {
+            this.view.on_docker_service_connect_success(docker_entrypoint);
+        });
+
+        this.on_docker_service_connect_failure.connect((docker_entrypoint) => {
+            this.view.on_docker_service_connect_failure(docker_entrypoint);
+        });
+
+        this.view.on_docker_service_discover_request.connect(() => {
             string? docker_endpoint = discover_connection();
             if (null != docker_endpoint) {
                 __connect(docker_endpoint);
             } else {
-                this.window.headerbar.on_docker_daemon_connect(docker_endpoint, false, new Notification.Message(Gtk.MessageType.ERROR, "Can't locate docker daemon"));
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't locate docker daemon");
             }
         });
     }
 
     public void listen_docker_hub() {
 
-        this.window.headerbar.search_image_in_docker_hub.connect((target, term) => {
-
-            try {
-                Sdk.Docker.Model.HubImage[] images =  repository.images().search(term);
-                target.set_images(images);
-            } catch (Sdk.Docker.Io.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
-        });
-
-        this.window.headerbar.pull_image_from_docker_hub.connect((target, image) => {
-
-            var decorator = new View.Docker.Decorator.CreateImageDecorator(target.message_box_label);
-            var future_response = repository.images().future_pull(image);
-
-            future_response.on_payload_line_received.connect((line) => {
-
-                if (null != line) {
-                    try {
-                        decorator.update(line);
-                    } catch (Error e) {
-                        message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                    }
-                }
-            });
-
-            future_response.on_finished.connect(() => {
+        this.view.on_docker_public_registry_open_request.connect(() => {
+            var dialog = new View.Docker.Dialog.SearchHubDialog();
+            dialog.search_image_in_docker_hub.connect((target, term) => {
                 try {
-                    decorator.update(null);
-                } catch (Error e) {
+                    Sdk.Docker.Model.HubImage[] images =  repository.images().search(term);
+                    target.set_images(images);
+                } catch (Sdk.Docker.Io.RequestError e) {
                     message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
                 }
             });
 
+            dialog.show_all();
+
+            dialog.pull_image_from_docker_hub.connect((target, image) => {
+                 var decorator = new View.Docker.Decorator.CreateImageDecorator(target.message_box_label);
+                var future_response = repository.images().future_pull(image);
+
+                future_response.on_payload_line_received.connect((line) => {
+
+                    if (null != line) {
+                        try {
+                            decorator.update(line);
+                        } catch (Error e) {
+                            message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+                        }
+                    }
+                });
+
+                future_response.on_finished.connect(() => {
+                    try {
+                        decorator.update(null);
+                    } catch (Error e) {
+                        message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+                    }
+                });
+            });
         });
+
     }
 
     protected void init_image_list() throws Sdk.Docker.Io.RequestError {
@@ -355,7 +366,6 @@ public class ApplicationController : GLib.Object {
     protected bool __connect(string docker_endpoint) throws Error {
 
         repository = create_repository(docker_endpoint);
-        
         if (repository != null) {
             
             repository.connected.connect((repository) => {
@@ -366,18 +376,21 @@ public class ApplicationController : GLib.Object {
 
             return true;
         }
-        
+
         return false;
         
     }
 
      protected bool __disconnect() {
 
-        this.window.headerbar.on_docker_daemon_connect(null, false);
+        this.view.on_docker_service_disconnected();
 
         repository = null;
 
         message_dispatcher.dispatch(Gtk.MessageType.INFO, "Disconnected from Docker daemon");
+
+        this.view.images.init(new Sdk.Docker.Model.ImageCollection());
+        this.view.containers.init(new Sdk.Docker.Model.ContainerCollection());
 
         return true;
     }
@@ -440,17 +453,18 @@ public class ApplicationController : GLib.Object {
     }
 
 
-    protected void docker_daemon_post_connect(string docker_endpoint) {
+    protected void docker_daemon_post_connect(string docker_entrypoint) {
 
         try {
+            this.on_docker_service_connect_success(docker_entrypoint);
             this.init_image_list();
             this.init_container_list();
-            this.window.headerbar.on_docker_daemon_connect(docker_endpoint, true);
             message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
         } catch (Sdk.Docker.Io.RequestError e) {
+            this.on_docker_service_connect_failure(docker_entrypoint);
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
             this.view.images.init(new Sdk.Docker.Model.ImageCollection());
-            this.view.containers.init(new Sdk.Docker.Model.ContainerCollection() );
+            this.view.containers.init(new Sdk.Docker.Model.ContainerCollection());
         }
     }
 }

@@ -59,7 +59,7 @@ namespace View {
     public class StartStopButton : IconToggleButton {
         
         construct {
-            active_icon_name    = "media-playback-start-symbolic";
+            active_icon_name    = "media-playback-stop-symbolic";
             inactive_icon_name  = "media-playback-start-symbolic";
         }
         

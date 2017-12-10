@@ -24,6 +24,8 @@ namespace Signals {
     /** Signals emitted on docker hub image request actions */
     public interface DockerHubImageRequestAction : GLib.Object {
 
+        public signal void on_docker_public_registry_open_request();
+
         /** This signal should be emitted when an image is searched in docker hub */
         public signal void search_image_in_docker_hub(View.Docker.Dialog.SearchHubDialog target, string term);
 
@@ -31,5 +33,17 @@ namespace Signals {
         public signal void pull_image_from_docker_hub(View.Docker.Dialog.SearchHubDialog? target, HubImage image);
 
         public virtual void set_images(Sdk.Docker.Model.HubImage[] images) {}
+    }
+
+    public interface DockerServiceAware : GLib.Object {
+
+        public signal void on_docker_service_connect_request(string docker_entrypoint);
+        public signal void on_docker_service_discover_request();
+        public signal void on_docker_service_discover_success();
+        public signal void on_docker_service_discover_failure();
+        public signal void on_docker_service_disconnect_request();
+        public signal void on_docker_service_disconnected();
+        public signal void on_docker_service_connect_success(string docker_entrypoint);
+        public signal void on_docker_service_connect_failure(string docker_entrypoint);
     }
 }
