@@ -98,29 +98,22 @@ public class ApplicationController : GLib.Object, Signals.DockerServiceAware, Si
         });
 
         view.containers.container_bash_in_request.connect((container) => {
+            var term_window = new Gtk.Window();
 
-            try {
+            var titlebar = new Gtk.HeaderBar();
+            titlebar.title = "Bash-in %s".printf(container.name);
+            titlebar.show_close_button = true;
 
-                var term_window = new Gtk.Window();
+            term_window.set_titlebar(titlebar);
 
-                var titlebar = new Gtk.HeaderBar();
-                titlebar.title = "Bash-in %s".printf(container.name);
-                titlebar.show_close_button = true;
+            var term = new View.Docker.Terminal.from_bash_in_container(container);
+            term.parent_container_widget = term_window;
+            term.start();
 
-                term_window.set_titlebar(titlebar);
-
-                var term = new View.Docker.Terminal.from_bash_in_container(container);
-                term.parent_container_widget = term_window;
-                term.start();
-
-                term_window.window_position = Gtk.WindowPosition.MOUSE;
-                term_window.transient_for = window;
-                term_window.add(term);
-                term_window.show_all();
-
-            } catch (Error e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
+            term_window.window_position = Gtk.WindowPosition.MOUSE;
+            term_window.transient_for = window;
+            term_window.add(term);
+            term_window.show_all();
         });
 
         view.containers.container_stop_request.connect((container) => {
@@ -234,35 +227,27 @@ public class ApplicationController : GLib.Object, Signals.DockerServiceAware, Si
 
         view.images.image_create_container_with_request.connect((image) => {
 
-            try {
+            var dialog = new View.Docker.Dialog.CreateContainerWith(image, window);
 
-                var dialog = new View.Docker.Dialog.CreateContainerWith(image, window);
+            dialog.response.connect((source, response_id) => {
 
-                dialog.response.connect((source, response_id) => {
+                switch (response_id) {
+                    case Gtk.ResponseType.APPLY:
 
-                    switch (response_id) {
-                        case Gtk.ResponseType.APPLY:
+                        Gee.HashMap<string, string> data = dialog.get_view_data();
+                        this.repository.containers().create(new Sdk.Docker.Model.ContainerCreate.from_hash_map(image, data));
+                        dialog.destroy();
+                        this.init_container_list();
+                        break;
 
-                            Gee.HashMap<string, string> data = dialog.get_view_data();
-                            this.repository.containers().create(new Sdk.Docker.Model.ContainerCreate.from_hash_map(image, data));
-                            dialog.destroy();
-                            this.init_container_list();
-                            break;
-
-                        case Gtk.ResponseType.CANCEL:
-                        case Gtk.ResponseType.DELETE_EVENT:
-                        case Gtk.ResponseType.CLOSE:
-                            dialog.destroy();
-                            break;
-                    }
+                    case Gtk.ResponseType.DELETE_EVENT:
+                    case Gtk.ResponseType.CLOSE:
+                        dialog.destroy();
+                        break;
+                }
             });
 
             dialog.show_all();
-
-            } catch (Error e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
-
         });
     }
 
@@ -320,24 +305,15 @@ public class ApplicationController : GLib.Object, Signals.DockerServiceAware, Si
                 future_response.on_payload_line_received.connect((line) => {
 
                     if (null != line) {
-                        try {
-                            decorator.update(line);
-                        } catch (Error e) {
-                            message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                        }
+                        decorator.update(line);
                     }
                 });
 
                 future_response.on_finished.connect(() => {
-                    try {
-                        decorator.update(null);
-                    } catch (Error e) {
-                        message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                    }
+                    decorator.update(null);
                 });
             });
         });
-
     }
 
     protected void init_image_list() throws Sdk.Docker.Io.RequestError {

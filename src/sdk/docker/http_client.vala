@@ -25,7 +25,7 @@ namespace Sdk.Docker {
             
             try {
                 session.send_message(message);
-            } catch(GLib.IOError e) {
+            } catch(Error e) {
                 //this.request_error(query);
                 string err_message = "IO error : %s".printf(e.message);
                 throw new Io.RequestError.FATAL(err_message);
@@ -54,7 +54,7 @@ namespace Sdk.Docker {
 
                 try {
                     session.send_message(message);
-                } catch(GLib.IOError e) {
+                } catch(Error e) {
                     //this.request_error(query);
                     string err_message = "IO error : %s".printf(e.message);
                     throw new Io.RequestError.FATAL(err_message);
