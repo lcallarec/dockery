@@ -178,13 +178,6 @@ namespace View.Docker.List {
             return containers_count;
         }
 
-        /**
-         * Decorate the row for specific gtk3+ versions
-         */
-        private void decorate_row(Gtk.ListBoxRow row) {
-
-        }
-
         private Gtk.TreeView get_treeview(Gtk.ListStore liststore) {
 
             var treeview = new Gtk.TreeView();
