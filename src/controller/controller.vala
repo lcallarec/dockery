@@ -22,7 +22,11 @@ public class ApplicationController : GLib.Object, Signals.DockerServiceAware, Si
 
         string? docker_endpoint = discover_connection();
         if (null != docker_endpoint) {
-            __connect(docker_endpoint);
+            try {
+                __connect(docker_endpoint);
+            } catch(GLib.Error e) {
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, e.message);
+            }
         } else {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't locate docker daemon");
         }
