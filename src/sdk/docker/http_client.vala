@@ -15,20 +15,15 @@ namespace Sdk.Docker {
         /**
          * Send a message to docker daemon and return the response
          */
-        public override Io.Response send(string method, string endpoint, string? body = null) throws Io.RequestError {
+        public override Io.Response send(string method, string endpoint, string? body = null) {
 
             var message = new Soup.Message(method, this.uri + endpoint);
             if (body != null) {
                 var request_body = new Soup.MessageBody();
                 request_body.append_take(body.data);
             }
-            
-            try {
-                session.send_message(message);
-            } catch(Error e) {
-                string err_message = "IO error : %s".printf(e.message);
-                throw new Io.RequestError.FATAL(err_message);
-            }
+
+            session.send_message(message);
 
             var response = Io.HttpResponseFactory.create(message);
 
@@ -38,26 +33,21 @@ namespace Sdk.Docker {
         /**
          * Send a message to docker daemon and return the future response
          */
-        public override Io.FutureResponse future_send(string method, string endpoint, string? body = null) throws Io.RequestError {
+        public override Io.FutureResponse future_send(string method, string endpoint, string? body = null) {
             var message = new Soup.Message(method, this.uri + endpoint);
-            
+
             if (body != null) {
                 var request_body = new Soup.MessageBody();
                 request_body.append_take(body.data);
             }
 
             Io.FutureResponse future_response = new Io.FutureResponse();
-            
+
             new GLib.Thread<int>("future_send", () => {
 
-                try {
-                    session.send_message(message);
-                } catch(Error e) {
-                    //this.request_error(query);
-                    string err_message = "IO error : %s".printf(e.message);
-                    throw new Io.RequestError.FATAL(err_message);
-                }
-                
+                //TODO: use send method
+                session.send_message(message);
+
                 Io.HttpResponseFactory.future_create(message, future_response);
                 return 0;
             });

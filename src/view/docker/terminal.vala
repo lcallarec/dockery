@@ -26,7 +26,7 @@ namespace View.Docker {
             });
         }
 
-        public Pid start() {
+        public Pid start() throws GLib.Error {
 
             Pid pid;
             

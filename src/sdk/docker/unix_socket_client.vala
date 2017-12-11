@@ -37,9 +37,8 @@ namespace Sdk.Docker {
 
             string query = request_builder.str;
 
-            var conn = this.create_connection();
-
             try {
+                var conn = this.create_connection();
                 conn.output_stream.write(query.data);
 
                 var response = Io.SocketResponseFactory.create(new DataInputStream(conn.input_stream));
@@ -52,13 +51,17 @@ namespace Sdk.Docker {
                 this.request_error(query);
                 string err_message = "IO error : %s".printf(e.message);
                 throw new Io.RequestError.FATAL(err_message);
+            } catch(Error e) {
+                this.request_error(query);
+                string err_message = "Error : %s".printf(e.message);
+                throw new Io.RequestError.FATAL(err_message);
             }
         }
 
         /**
          * Send a message to docker daemon and return the response
          */
-        public override Io.FutureResponse future_send(string method, string endpoint, string? body = null) throws Io.RequestError {
+        public override Io.FutureResponse future_send(string method, string endpoint, string? body = null) {
 
             StringBuilder request_builder = new StringBuilder("%s %s".printf(method, endpoint));
             
@@ -76,22 +79,22 @@ namespace Sdk.Docker {
             request_builder.append("\r\n");
 
             string query = request_builder.str;
-            
-            Io.FutureResponse future_response = new Io.FutureResponse();
 
+            Io.FutureResponse future_response = new Io.FutureResponse();
+            
             new GLib.Thread<int>("future_send", () => {
-                var conn = this.create_connection();
 
                 try {
+                    var conn = this.create_connection();
                     conn.output_stream.write(query.data);
-                } catch(GLib.IOError e) {
+
+                    Io.SocketResponseFactory.future_create(new DataInputStream(conn.input_stream), future_response);
+
+                    return 0;
+                } catch(Error e) {
                     this.request_error(query);
-                    string err_message = "IO error : %s".printf(e.message);
-                    throw new Io.RequestError.FATAL(err_message);
+                    return 1;
                 }
-                
-                Io.SocketResponseFactory.future_create(new DataInputStream(conn.input_stream), future_response);
-                return 0;
             });
 
             return future_response;

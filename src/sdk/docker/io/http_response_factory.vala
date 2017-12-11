@@ -17,20 +17,14 @@ namespace Sdk.Docker.Io {
             });
 
             response.headers = headers;
-            
-            try {
-                
-                response.payload = (string) message.response_body.data;
-                               
-            } catch (Error e) {
-                throw e;
-            }
+
+            response.payload = (string) message.response_body.data;
 
             return response;
         }
 
         /**
-         * SocketResponse that 
+         * SocketResponse that
          */ 
         public static FutureResponse future_create(Soup.Message message, FutureResponse response) {
             
@@ -43,17 +37,10 @@ namespace Sdk.Docker.Io {
 
             response.headers = headers;
             
-            try {
-                
-                response.payload = (string) message.response_body.data;
-                               
-            } catch (Error e) {
-                throw e;
-            }
+            response.payload = (string) message.response_body.data;
 
             return response;
                 
         }
-        
     }
 }
