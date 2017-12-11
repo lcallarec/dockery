@@ -47,7 +47,7 @@ namespace View.Docker {
             var label = new Gtk.Label(message);
             label.attributes = Fonts.get_panel_empty_major();
 
-            var box = new Gtk.VBox(false, 0);
+            var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 
             box.valign = Gtk.Align.CENTER;
             box.pack_start(image, true, false, 0);
@@ -63,7 +63,7 @@ namespace View.Docker {
             image.pixel_size = 164;
             image.opacity = 0.2;
 
-            var box = new Gtk.HBox(false, 0);
+            var box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
 
             box.valign = Gtk.Align.CENTER;
             box.pack_start(image, true, false, 0);
