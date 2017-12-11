@@ -5,42 +5,37 @@ namespace Sdk.Docker.Io {
      */
     public class SocketResponseFactory : GLib.Object {
 
-        public static Response create(DataInputStream stream) {
+        public static Response create(DataInputStream stream) throws IOError {
+
             Response response = new Response();
 
-            try {
-                
-                extract_response_metadata(stream, response);
-                
-                string line;
-                string payload = "";
+            extract_response_metadata(stream, response);
 
-                while (stream.get_available() > 2) {
-                    stdout.printf("Enter stream loop\n");
-                    if (response.headers.has("Transfer-Encoding", "chunked")) {
-                        stream.read_line(null);
-                    }
+            string line;
+            string payload = "";
 
-                    line = stream.read_line(null).strip();
-
-                    //End of chunks
-                    if (line == "0") {
-                        break;
-                    }
-
-                    payload += line;
+            while (stream.get_available() > 2) {
+                stdout.printf("Enter stream loop\n");
+                if (response.headers.has("Transfer-Encoding", "chunked")) {
+                    stream.read_line(null);
                 }
 
-                response.payload = payload;
+                line = stream.read_line(null).strip();
 
-                response.on_finished();
+                //End of chunks
+                if (line == "0") {
+                    break;
+                }
 
-                stream.close();
-                stdout.printf("Socket closed\n");
-
-            } catch (IOError e) {
-                throw e;
+                payload += line;
             }
+
+            response.payload = payload;
+
+            response.on_finished();
+
+            stream.close();
+            stdout.printf("Socket closed\n");
 
             return response;
         }
@@ -48,49 +43,43 @@ namespace Sdk.Docker.Io {
         /**
          * SocketResponse that 
          */ 
-        public static FutureResponse future_create(DataInputStream stream, FutureResponse response) {
-            
-            try {
-                
-                FutureResponse _response = (FutureResponse) extract_response_metadata(stream, (Response) response);
-                response = _response;
-                
-                string line;
-                while (true) {
-                
-                    if (response.headers.has("Transfer-Encoding", "chunked")) {
-                        //Reads the next chunk size. As I'm a bit lazy,I don't use them.
-                        if (stream.read_line(null) == "0") {
-                            break;
-                        }
-                    }
-                    
-                    line = stream.read_line(null);
-                    if (null != line) {
-                        line = line.strip();
-                    }
+        public static FutureResponse future_create(DataInputStream stream, FutureResponse response) throws IOError {
 
-                    if (response.headers.has("Transfer-Encoding", "chunked")) {
-                        stream.read_line(null);
-                    }    
-                    
-                    response.payload += line;
-                    
-                    GLib.Idle.add(() => {
-                        response.on_payload_line_received(line);
-                        return true;
-                    });
+            FutureResponse _response = (FutureResponse) extract_response_metadata(stream, (Response) response);
+            response = _response;
+            
+            string line;
+            while (true) {
+
+                if (response.headers.has("Transfer-Encoding", "chunked")) {
+                    //Reads the next chunk size. As I'm a bit lazy,I don't use them.
+                    if (stream.read_line(null) == "0") {
+                        break;
+                    }
                 }
-                
-                response.on_finished();
-                
-                stream.close();
-                stdout.printf("Socket closed\n");
 
-            } catch (IOError e) {
-                throw e;
+                line = stream.read_line(null);
+                if (null != line) {
+                    line = line.strip();
+                }
+
+                if (response.headers.has("Transfer-Encoding", "chunked")) {
+                    stream.read_line(null);
+                }
+
+                response.payload += line;
+
+                GLib.Idle.add(() => {
+                    response.on_payload_line_received(line);
+                    return true;
+                });
             }
-            
+
+            response.on_finished();
+
+            stream.close();
+            stdout.printf("Socket closed\n");
+
             return response;
         }
 
@@ -100,7 +89,7 @@ namespace Sdk.Docker.Io {
          */ 
         protected static Response extract_response_metadata(DataInputStream stream, Response response) {
 
-            extract_response_status_code(stream, response);                
+            extract_response_status_code(stream, response);
             response.on_status_received(response.status);
             stdout.printf("Response status : %d\n", response.status);
 

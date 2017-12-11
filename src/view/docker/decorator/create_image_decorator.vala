@@ -10,28 +10,23 @@ namespace View.Docker.Decorator {
             this.label = label;
         }
         
-        public void update(string? line) {
+        public void update(string? line) throws Error {
             
             string text;
-            try {
-                
-                if (null != line) {
-                    text = parse_json(line);
-                } else {
-                    text = "Image created.";
-                }
-                
-                label.set_label(text);
-            
-            } catch (Error e) {
-                stderr.printf ("I guess something is not working... with %s\n", line);
+
+            if (null != line) {
+                text = parse_json(line);
+            } else {
+                text = "Image created.";
             }
-            
+
+            label.set_label(text);
+
             parser = null;
-            
+
             return;
         }
-        
+
         private string build_body(string status, string id, int64 current, int64 total) {
             string body = "";
             if (status != "") {
@@ -49,12 +44,12 @@ namespace View.Docker.Decorator {
             return body;
         }
         
-        private string parse_json(string line) {
-            stdout.printf("==============parsing : %s\n", line);
+        private string parse_json(string line) throws GLib.Error {
+
             Json.Parser parser = new Json.Parser();
             
             parser.load_from_data(line);
-            
+
             var node = parser.get_root();
 
             int64 current = 0;

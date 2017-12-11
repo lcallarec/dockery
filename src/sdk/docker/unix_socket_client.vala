@@ -41,17 +41,18 @@ namespace Sdk.Docker {
 
             try {
                 conn.output_stream.write(query.data);
+
+                var response = Io.SocketResponseFactory.create(new DataInputStream(conn.input_stream));
+
+                this.response_success(response);
+
+                return response;
+
             } catch(GLib.IOError e) {
                 this.request_error(query);
                 string err_message = "IO error : %s".printf(e.message);
                 throw new Io.RequestError.FATAL(err_message);
             }
-
-            var response = Io.SocketResponseFactory.create(new DataInputStream(conn.input_stream));
-
-            this.response_success(response);
-
-            return response;
         }
 
         /**
@@ -77,7 +78,7 @@ namespace Sdk.Docker {
             string query = request_builder.str;
             
             Io.FutureResponse future_response = new Io.FutureResponse();
-            
+
             new GLib.Thread<int>("future_send", () => {
                 var conn = this.create_connection();
 
