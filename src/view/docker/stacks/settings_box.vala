@@ -14,6 +14,12 @@ namespace View.Docker.Stacks {
             this.connect_button.image = connect_button_image;
             this.connect_button_image.set_from_icon_name("media-playback-start-symbolic", Gtk.IconSize.BUTTON);
 
+            //Uglish hack to avoid GTK initi focus
+            this.docker_entrypoint_entry.can_focus = false;
+            this.docker_entrypoint_entry.enter_notify_event .connect(() => {
+                this.docker_entrypoint_entry.set_can_focus(true);
+            });
+
             this.connect_signals();
         }
 
