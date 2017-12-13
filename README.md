@@ -26,7 +26,7 @@ Support GTK+3 from 3.10 (fallback) to 3.20 (latest version at the time of writin
 Be sure these dependencies are installed :
 
 ```bash
-$ sudo apt-get install build-essential libgtk-3-dev valac libgee-0.8-dev libjson-glib-dev
+$ sudo apt-get install build-essential libgtk-3-dev valac libgee-0.8-dev libjson-glib-dev libsoup2.4-dev
 ```
 
 Depending of your system, install libvte version 2.90 or 2.91, **Dockery** can be compiled against both of them :
