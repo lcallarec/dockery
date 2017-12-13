@@ -77,7 +77,7 @@ class PreProcessor:
 class GtkVersions:
 
     _min_gtk_version = "3.00"
-    _max_gtk_version = "3.18"
+    _max_gtk_version = "3.80"
 
     def yield_versions(self):
 
