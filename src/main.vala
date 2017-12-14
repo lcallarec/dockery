@@ -10,10 +10,6 @@ public class DockerManager : Gtk.Window {
 
     public const string APPLICATION_SUBNAME = "A graphical Docker client";
 
-    private Gtk.InfoBar infobar { get; set;}
-
-    public View.HeaderBar headerbar;
-
     private ApplicationController ac;
 
     public static void main (string[] args) {
@@ -60,16 +56,14 @@ public class DockerManager : Gtk.Window {
         Gtk.Box main_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         this.add(main_box);
 
-        //Main Views
-        View.MainApplicationView views = new View.MainApplicationView(main_box);
+        //View container
+        View.MainContainer view = new View.MainContainer(main_box);
 
         //// START
-        this.headerbar = new View.HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
-        this.set_titlebar(headerbar);
-        this.headerbar.pack_start(views.perspective_switcher);
+        this.set_titlebar(view.headerbar);
 
         //ApplicationController
-        this.ac = new ApplicationController(this, views, new MessageDispatcher(views.infobar));
+        this.ac = new ApplicationController(this, view, new MessageDispatcher(view.infobar));
         ac.boot();
     }
 
