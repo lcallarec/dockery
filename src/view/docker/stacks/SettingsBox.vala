@@ -34,7 +34,6 @@ namespace View.Docker.Stacks {
 
             this.docker_entrypoint_entry.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "edit-find-symbolic");
             this.docker_entrypoint_entry.width_chars = 30;
-            this.docker_entrypoint_entry.text = "r";
 
             this.hub_open_button.set_sensitive(false);
 

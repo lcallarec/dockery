@@ -52,18 +52,15 @@ public class DockerManager : Gtk.Window {
         this.set_wmclass(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_NAME);
         this.set_icon_name("docker-icon");
 
-        //Main box
-        Gtk.Box main_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
-        this.add(main_box);
-
         //View container
-        View.MainContainer view = new View.MainContainer(main_box);
+        View.MainContainer main_container = new View.MainContainer();
+        this.add(main_container);
 
         //// START
-        this.set_titlebar(view.headerbar);
+        this.set_titlebar(main_container.headerbar);
 
         //ApplicationController
-        this.ac = new ApplicationController(this, view, new MessageDispatcher(view.infobar));
+        this.ac = new ApplicationController(this, main_container, new MessageDispatcher(main_container.infobar));
         ac.boot();
     }
 
