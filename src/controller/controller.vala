@@ -5,12 +5,12 @@ public class ApplicationController : GLib.Object, Signals.DockerServiceAware, Si
 
     protected Sdk.Docker.Repository? repository;
     protected DockerManager window;
-    protected MessageDispatcher message_dispatcher;
+    protected Dockery.View.MessageDispatcher message_dispatcher;
     protected Dockery.View.MainContainer view;
 
-    public ApplicationController(DockerManager window, Dockery.View.MainContainer view, MessageDispatcher message_dispatcher) {
+    public ApplicationController(DockerManager window, Dockery.View.MessageDispatcher message_dispatcher) {
         this.window             = window;
-        this.view               = view;
+        this.view               = window.main_container;
         this.message_dispatcher = message_dispatcher;
     }
 

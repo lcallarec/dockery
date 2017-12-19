@@ -10,6 +10,8 @@ public class DockerManager : Gtk.Window {
 
     public const string APPLICATION_SUBNAME = "A graphical Docker client";
 
+    public Dockery.View.MainContainer main_container = new Dockery.View.MainContainer();
+
     private ApplicationController ac;
 
     public static void main (string[] args) {
@@ -53,14 +55,13 @@ public class DockerManager : Gtk.Window {
         this.set_icon_name("docker-icon");
 
         //View container
-        Dockery.View.MainContainer main_container = new Dockery.View.MainContainer();
         this.add(main_container);
 
         //// START
         this.set_titlebar(main_container.headerbar);
 
         //ApplicationController
-        this.ac = new ApplicationController(this, main_container, new MessageDispatcher(main_container.infobar));
+        this.ac = new ApplicationController(this, new Dockery.View.MessageDispatcher(main_container.infobar));
         ac.boot();
     }
 
@@ -83,30 +84,5 @@ public class DockerManager : Gtk.Window {
         #if GTK_GTE_3_16
         new Gtk.IconTheme().get_default().add_resource_path("/org/lcallarec/dockery/" + icon_path);
         #endif
-    }
-}
-
-/**
- * Dispatch messages
- */
-public class MessageDispatcher : GLib.Object {
-
-    private Gtk.InfoBar infobar;
-
-    private Gtk.Label label;
-
-    public MessageDispatcher(Gtk.InfoBar bar) {
-        infobar = bar;
-        label   = new Gtk.Label(null);
-        label.wrap = true;
-        label.wrap_mode = Pango.WrapMode.WORD_CHAR;
-        infobar.get_content_area().add(label);
-    }
-
-    public void dispatch(Gtk.MessageType type, string message) {
-        infobar.set_message_type(type);
-        label.label = message;
-        infobar.show();
-        label.show();
     }
 }
