@@ -45,7 +45,7 @@ namespace View.Docker {
             image.opacity = 0.2;
 
             var label = new Gtk.Label(message);
-            label.attributes = Fonts.get_panel_empty_major();
+            label.attributes = Dockery.View.Fonts.get_panel_empty_major();
 
             var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 

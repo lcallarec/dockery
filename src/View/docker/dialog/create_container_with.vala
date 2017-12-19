@@ -5,7 +5,7 @@ namespace View.Docker.Dialog {
     /**
      * This Dialog is used to ask information about the container to create
      */
-    public class CreateContainerWith : View.Dialog {
+    public class CreateContainerWith : Dockery.View.Dialog {
 
 
         private Gtk.Grid grid_layout = new Gtk.Grid();

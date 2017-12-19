@@ -53,7 +53,7 @@ public class DockerManager : Gtk.Window {
         this.set_icon_name("docker-icon");
 
         //View container
-        View.MainContainer main_container = new View.MainContainer();
+        Dockery.View.MainContainer main_container = new Dockery.View.MainContainer();
         this.add(main_container);
 
         //// START

@@ -5,7 +5,7 @@ namespace View.Docker.Dialog {
     /**
      * This Dialog is displayed when one or more images are being removed.
      */
-    public class RemoveImagesDialog : View.Dialog {
+    public class RemoveImagesDialog : Dockery.View.Dialog {
 
         private Gtk.ListStore liststore = new Gtk.ListStore(2, typeof (string),  typeof (string));
         private Gtk.TreeView tv         = null;

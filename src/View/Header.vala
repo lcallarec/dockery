@@ -1,4 +1,4 @@
-namespace View {
+namespace Dockery.View {
 
     public class HeaderBar : Gtk.HeaderBar {
 

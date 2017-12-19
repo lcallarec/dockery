@@ -1,6 +1,4 @@
-namespace View {
-
-    using View.Docker.Dialog;
+namespace Dockery.View {
 
     public class SideBar : Gtk.ListBox {
 
@@ -68,6 +66,5 @@ namespace View {
 
             add(images_row);
         }
-
     }
 }

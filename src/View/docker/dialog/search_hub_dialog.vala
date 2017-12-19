@@ -5,7 +5,7 @@ namespace View.Docker.Dialog {
     /**
      * This Dialog is displayed when an image is being removed.
      */
-    public class SearchHubDialog : View.Dialog, Signals.DockerHubImageRequestAction {
+    public class SearchHubDialog : Dockery.View.Dialog, Signals.DockerHubImageRequestAction {
 
         private Gtk.ListStore liststore = new Gtk.ListStore(5, typeof (string),  typeof (string), typeof (string), typeof (string), typeof (string));
         private Gtk.TreeView treeview   = null;

@@ -39,7 +39,5 @@ namespace Dockery.View {
                 set_feature(target, value);
             }
         }
-
     }
-
 }

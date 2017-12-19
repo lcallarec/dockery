@@ -1,4 +1,4 @@
-namespace View {
+namespace Dockery.View {
     
     internal class Fonts {
 

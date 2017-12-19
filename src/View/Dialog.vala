@@ -1,4 +1,4 @@
-namespace View {
+namespace Dockery.View {
 
     public delegate void DialogResponse(Gtk.Dialog source, int response_id);
     public delegate void MessageDialogResponse(int response_id);

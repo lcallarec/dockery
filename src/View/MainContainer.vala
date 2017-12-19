@@ -1,20 +1,20 @@
-namespace View {
+namespace Dockery.View {
+    
+    using global::View;
+    
+    public class MainContainer : Gtk.Box, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
 
-   public class MainContainer : Gtk.Box, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
-
-        public Gtk.HeaderBar                 headerbar;
-        public Gtk.InfoBar                   infobar = new Gtk.InfoBar();
-        public Gtk.Box                       local_docker_perspective = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
-        public SideBar                       sidebar;
-        public View.Docker.List.Containers   containers;
-        public View.Docker.List.Images       images;
-        public Gtk.StackSwitcher             perspective_switcher = new Gtk.StackSwitcher();
+        public Gtk.HeaderBar headerbar =  new HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
+        public Gtk.InfoBar infobar = new Gtk.InfoBar();
+        public Gtk.Box local_docker_perspective = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+        public SideBar sidebar;
+        public Docker.List.Containers containers;
+        public Docker.List.Images images;
+        public Gtk.StackSwitcher perspective_switcher = new Gtk.StackSwitcher();
 
         public MainContainer() {
 			
 			Object(orientation: Gtk.Orientation.VERTICAL, spacing: 0);
-   
-            this.headerbar = new View.HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
 
             //Perspectives
             var perspectives = new Gtk.Stack();
@@ -36,7 +36,7 @@ namespace View {
             this.images.init(new Sdk.Docker.Model.ImageCollection());
 
             Gtk.Stack stack = new Gtk.Stack();
-            this.sidebar = new View.SideBar(stack);
+            this.sidebar = new SideBar(stack);
 
             //Perspectives
             this.setup_local_docker_perspective(stack);
@@ -51,8 +51,8 @@ namespace View {
 
         private void setup_local_docker_perspective(Gtk.Stack stack) {
 
-            var settings_box = new View.Docker.Stacks.SettingsBox();
-            var perspective = new View.Docker.Stacks.Stack(settings_box);
+            var settings_box = new Docker.Stacks.SettingsBox();
+            var perspective = new Docker.Stacks.Stack(settings_box);
 
             //Start connect signals
             settings_box.on_docker_service_connect_request.connect((docker_entrypoint) => {
