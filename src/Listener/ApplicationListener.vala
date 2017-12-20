@@ -1,25 +1,22 @@
 /**
- * ApplicationController is listening to all signals emitted by the view layer
+ * ApplicationListener is listening to all signals emitted by the view layer
  */
-public class ApplicationController : GLib.Object, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
+public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
 
     protected Sdk.Docker.Repository? repository;
     protected DockerManager window;
     protected Dockery.View.MessageDispatcher message_dispatcher;
     protected Dockery.View.MainContainer view;
 
-    public ApplicationController(DockerManager window, Dockery.View.MessageDispatcher message_dispatcher) {
+    private Dockery.Listener.ContainerListListener container_list_listener;
+
+    public ApplicationListener(DockerManager window, Dockery.View.MessageDispatcher message_dispatcher) {
         this.window             = window;
         this.view               = window.main_container;
         this.message_dispatcher = message_dispatcher;
     }
 
     public void boot() {
-        this.listen_headerbar();
-        this.listen_docker_hub();
-        this.listen_container_view();
-        this.listen_image_view();
-
         string? docker_endpoint = discover_connection();
         if (null != docker_endpoint) {
             try {
@@ -30,144 +27,20 @@ public class ApplicationController : GLib.Object, Signals.DockerServiceAware, Si
         } else {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't locate docker daemon");
         }
+        
+        this.listen_headerbar();
+        this.listen_docker_hub();
+        this.listen_container_view();
+        this.listen_image_view();
     }
-
-    public void listen_container_view() {
-
-        view.containers.container_status_change_request.connect((requested_status, container) => {
-
-            try {
-                string message = "";
-                if (requested_status == Sdk.Docker.Model.ContainerStatus.PAUSED) {
-                    repository.containers().pause(container);
-                    message = "Container %s successfully unpaused".printf(container.id);
-                } else if (requested_status == Sdk.Docker.Model.ContainerStatus.RUNNING) {
-                    repository.containers().unpause(container);
-                    message = "Container %s successfully paused".printf(container.id);
-                }
-                this.init_container_list();
-                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
-
-            } catch (Sdk.Docker.Io.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
-        });
-
-        view.containers.container_remove_request.connect((container) => {
-
-            Gtk.MessageDialog msg = new Gtk.MessageDialog(
-                window, Gtk.DialogFlags.MODAL,
-                Gtk.MessageType.WARNING,
-                Gtk.ButtonsType.OK_CANCEL,
-                "Really remove the container %s (%s)?".printf(container.name, container.id)
-            );
-
-            msg.response.connect((response_id) => {
-                switch (response_id) {
-                    case Gtk.ResponseType.OK:
-
-                        try {
-                            repository.containers().remove(container);
-                            this.init_container_list();
-                        } catch (Sdk.Docker.Io.RequestError e) {
-                            message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                        }
-
-                        break;
-                    case Gtk.ResponseType.CANCEL:
-                        break;
-                    case Gtk.ResponseType.DELETE_EVENT:
-                        break;
-                }
-
-                msg.destroy();
-
-            });
-
-            msg.show();
-        });
-
-        view.containers.container_start_request.connect((container) => {
-
-            try {
-                repository.containers().start(container);
-                string message = "Container %s successfully started".printf(container.id);
-                this.init_container_list();
-                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
-
-            } catch (Sdk.Docker.Io.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                this.init_container_list();
-            }
-        });
-
-        view.containers.container_bash_in_request.connect((container) => {
-            var term_window = new Gtk.Window();
-
-            var titlebar = new Gtk.HeaderBar();
-            titlebar.title = "Bash-in %s".printf(container.name);
-            titlebar.show_close_button = true;
-
-            term_window.set_titlebar(titlebar);
-
-            var term = new View.Docker.Terminal.from_bash_in_container(container);
-            term.parent_container_widget = term_window;
-
-            try {
-                term.start();
-            } catch (Error e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
-
-            term_window.window_position = Gtk.WindowPosition.MOUSE;
-            term_window.transient_for = window;
-            term_window.add(term);
-            term_window.show_all();
-        });
-
-        view.containers.container_stop_request.connect((container) => {
-            try {
-                repository.containers().stop(container);
-                string message = "Container %s successfully stopped".printf(container.id);
-                this.init_container_list();
-                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
-
-            } catch (Sdk.Docker.Io.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
-        });
-
-        view.containers.container_kill_request.connect((container) => {
-
-            try {
-                repository.containers().kill(container);
-                string message = "Container %s successfully killed".printf(container.id);
-                this.init_container_list();
-                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
-
-            } catch (Sdk.Docker.Io.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
-        });
-
-        view.containers.container_restart_request.connect((container) => {
-
-            try {
-                repository.containers().restart(container);
-                string message = "Container %s successfully restarted".printf(container.id);
-                this.init_container_list();
-                message_dispatcher.dispatch(Gtk.MessageType.INFO, message);
-
-            } catch (Sdk.Docker.Io.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
-        });
-
-        view.containers.container_rename_request.connect((container, relative_to, pointing_to) => {
-            this.handle_container_rename(container, relative_to, pointing_to);
-        });
+    
+    private void listen_container_view() {
+        container_list_listener = new Dockery.Listener.ContainerListListener(repository, view.containers);
+        container_list_listener.container_states_changed.connect(() => this.init_container_list());
+        container_list_listener.feedback.connect((type, message) =>  message_dispatcher.dispatch(type, message));
+        container_list_listener.listen();
     }
-
+       
     public void listen_image_view() {
 
          view.images.images_remove_request.connect((images) => {
@@ -432,41 +305,6 @@ public class ApplicationController : GLib.Object, Signals.DockerServiceAware, Si
         
         return null;
         
-    }
-
-    protected void handle_container_rename(Sdk.Docker.Model.Container container, Gtk.Widget relative_to, Gdk.Rectangle pointing_to) {
-
-        #if GTK_GTE_3_16
-        var pop = new Gtk.Popover(relative_to);
-        pop.position = Gtk.PositionType.BOTTOM;
-        pop.pointing_to = pointing_to;
-
-        var box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
-        box.margin = 5;
-        box.pack_start(new Gtk.Label("New name"), false, true, 5);
-
-        var entry = new Gtk.Entry();
-        entry.set_text(container.name);
-
-        box.pack_end(entry, false, true, 5);
-
-        pop.add(box);
-
-        entry.activate.connect (() => {
-            try {
-                container.name = entry.text;
-
-                repository.containers().rename(container);
-
-                this.init_container_list();
-
-            } catch (Sdk.Docker.Io.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
-        });
-
-        pop.show_all();
-        #endif
     }
 
     protected void docker_daemon_post_connect(string docker_entrypoint) {

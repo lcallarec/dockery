@@ -12,7 +12,7 @@ public class DockerManager : Gtk.Window {
 
     public Dockery.View.MainContainer main_container = new Dockery.View.MainContainer();
 
-    private ApplicationController ac;
+    private ApplicationListener ac;
 
     public static void main (string[] args) {
         Gtk.init(ref args);
@@ -60,8 +60,8 @@ public class DockerManager : Gtk.Window {
         //// START
         this.set_titlebar(main_container.headerbar);
 
-        //ApplicationController
-        this.ac = new ApplicationController(this, new Dockery.View.MessageDispatcher(main_container.infobar));
+        //ApplicationListener
+        this.ac = new ApplicationListener(this, new Dockery.View.MessageDispatcher(main_container.infobar));
         ac.boot();
     }
 
