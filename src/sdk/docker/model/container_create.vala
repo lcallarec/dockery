@@ -15,7 +15,7 @@ namespace Sdk.Docker.Model {
 
         public ContainerCreate.from_hash_map(Image image, Gee.HashMap<string, string> hash_map) {
             this.image = image;
-            if (hash_map.has_key("Command")) command = hash_map.get("Command").split(" ");
+            if (hash_map.has_key("Cmd")) command = hash_map.get("Cmd").split(" ");
         }
 
         public string serialize() {
@@ -29,7 +29,7 @@ namespace Sdk.Docker.Model {
             builder.add_string_value(this.image.id);
 
             if (command.length > 0) {
-                builder.set_member_name("Command");
+                builder.set_member_name("Cmd");
                 builder.begin_array();
                 foreach (string cmd_part in command) {
                     builder.add_string_value(cmd_part);

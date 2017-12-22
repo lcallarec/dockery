@@ -42,7 +42,7 @@ namespace View.Docker.Dialog {
             Gee.HashMap<string, string> view_data = new Gee.HashMap<string, string>();
 
             view_data.set("Image", entry_image_id.text);
-            view_data.set("Command", entry_command.text);
+            view_data.set("Cmd", entry_command.text);
 
             return view_data;
         }
