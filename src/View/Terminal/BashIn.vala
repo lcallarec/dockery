@@ -1,19 +1,15 @@
 /** @author Laurent Calalrec <l.callarec@gmail.com> **/
-namespace View.Docker {
+namespace Dockery.View.Terminal {
 
     using global::Sdk.Docker.Model;
 
-    public class Terminal : Vte.Terminal {
+    public class BashIn : Vte.Terminal {
 
-        protected string[] command;
+        protected Container container;
 
-        public Terminal(string[] command) {
-            this.command = command;
-        }
-
-        public Terminal.from_bash_in_container(Container container) {
-            command = {"/usr/bin/docker", "exec", "-ti", container.id, "bash"};
-
+        public BashIn(Container container) {
+            this.container = container;
+            
             this.child_exited.connect((term) => {
                 Gtk.Container c;
                 if (null != parent_container_widget) {
@@ -27,6 +23,8 @@ namespace View.Docker {
         }
 
         public Pid start() throws GLib.Error {
+
+            string[] command = {"/usr/bin/docker", "exec", "-ti", container.id, "bash"};
 
             Pid pid;
             

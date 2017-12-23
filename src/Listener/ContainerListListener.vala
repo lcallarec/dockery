@@ -117,7 +117,7 @@ namespace Dockery.Listener {
 
                 term_window.set_titlebar(titlebar);
 
-                var term = new Docker.Terminal.from_bash_in_container(container);
+                var term = new Dockery.View.Terminal.BashIn(container);
                 term.parent_container_widget = term_window;
 
                 try {
