@@ -18,6 +18,7 @@ preprocess:
 	mkdir -p build/source && build/pre-process.py src build/source $(gtk_version) $(libvte_version)
 
 compile: preprocess compile-resources
+	dpkg-query -l|grep 'json-glib'
 	valac -g --save-temps --thread \
         -X -w -X -lm -v \
         --target-glib 2.32 \
