@@ -35,7 +35,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
     }
     
     private void listen_container_view() {
-        container_list_listener = new Dockery.Listener.ContainerListListener(repository, view.containers);
+        container_list_listener = new Dockery.Listener.ContainerListListener(window, repository, view.containers);
         container_list_listener.container_states_changed.connect(() => this.init_container_list());
         container_list_listener.feedback.connect((type, message) =>  message_dispatcher.dispatch(type, message));
         container_list_listener.listen();

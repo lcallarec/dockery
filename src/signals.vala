@@ -12,6 +12,7 @@ namespace Signals {
         public signal void container_kill_request(Container container);
         public signal void container_restart_request(Container container);
         public signal void container_bash_in_request(Container container);
+        public signal void container_inspect_request(Container container);
     }
 
     /** Signals emitted on image request actions */

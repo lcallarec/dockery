@@ -7,10 +7,12 @@ namespace Dockery.Listener {
         public signal void container_states_changed();
         public signal void feedback(Gtk.MessageType type, string message);
         
+        private Gtk.Window parent_window;
         private Docker.List.Containers container_list;
-        private Sdk.Docker.Repository repository;
+        private global::Sdk.Docker.Repository repository;
 
-        public ContainerListListener(Sdk.Docker.Repository repository, Docker.List.Containers container_list) {
+        public ContainerListListener(Gtk.Window parent_window, global::Sdk.Docker.Repository repository, Docker.List.Containers container_list) {
+            this.parent_window = parent_window;
             this.repository = repository;
             this.container_list = container_list;
         }
@@ -24,6 +26,7 @@ namespace Dockery.Listener {
             this.container_kill_request();
             this.container_restart_request();
             this.container_rename_request();
+            this.container_inspect_request();
         }
         
         private void container_status_change_request() {
@@ -32,10 +35,10 @@ namespace Dockery.Listener {
 
                 try {
                     string message = "";
-                    if (requested_status == Sdk.Docker.Model.ContainerStatus.PAUSED) {
+                    if (requested_status == global::Sdk.Docker.Model.ContainerStatus.PAUSED) {
                         repository.containers().pause(container);
                         message = "Container %s successfully unpaused".printf(container.id);
-                    } else if (requested_status == Sdk.Docker.Model.ContainerStatus.RUNNING) {
+                    } else if (requested_status == global::Sdk.Docker.Model.ContainerStatus.RUNNING) {
                         repository.containers().unpause(container);
                         message = "Container %s successfully paused".printf(container.id);
                     }
@@ -43,7 +46,7 @@ namespace Dockery.Listener {
                     container_states_changed();
                     feedback(Gtk.MessageType.INFO, message);
 
-                } catch (Sdk.Docker.Io.RequestError e) {
+                } catch (global::Sdk.Docker.Io.RequestError e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                 }
             });
@@ -54,7 +57,7 @@ namespace Dockery.Listener {
             this.container_list.container_remove_request.connect((container) => {
 
                 Gtk.MessageDialog msg = new Gtk.MessageDialog(
-                    null, Gtk.DialogFlags.MODAL,
+                    parent_window, Gtk.DialogFlags.MODAL,
                     Gtk.MessageType.WARNING,
                     Gtk.ButtonsType.OK_CANCEL,
                     "Really remove the container %s (%s)?".printf(container.name, container.id)
@@ -67,7 +70,7 @@ namespace Dockery.Listener {
                             try {
                                 repository.containers().remove(container);
                                 container_states_changed();
-                            } catch (Sdk.Docker.Io.RequestError e) {
+                            } catch (global::Sdk.Docker.Io.RequestError e) {
                                 feedback(Gtk.MessageType.ERROR, (string) e.message);
                             }
 
@@ -95,7 +98,7 @@ namespace Dockery.Listener {
                     string message = "Container %s successfully started".printf(container.id);
                     feedback(Gtk.MessageType.INFO, message);
 
-                } catch (Sdk.Docker.Io.RequestError e) {
+                } catch (global::Sdk.Docker.Io.RequestError e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                 } finally {
                     container_states_changed();
@@ -124,7 +127,7 @@ namespace Dockery.Listener {
                 }
 
                 term_window.window_position = Gtk.WindowPosition.MOUSE;
-                //term_window.transient_for = window;
+                term_window.transient_for = parent_window;
                 term_window.add(term);
                 term_window.show_all();
             });
@@ -139,7 +142,7 @@ namespace Dockery.Listener {
                     container_states_changed();
                     feedback(Gtk.MessageType.INFO, message);
 
-                } catch (Sdk.Docker.Io.RequestError e) {
+                } catch (global::Sdk.Docker.Io.RequestError e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                 }
             });
@@ -154,7 +157,7 @@ namespace Dockery.Listener {
                     container_states_changed();
                     feedback(Gtk.MessageType.INFO, message);
 
-                } catch (Sdk.Docker.Io.RequestError e) {
+                } catch (global::Sdk.Docker.Io.RequestError e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                 }
             });
@@ -168,11 +171,34 @@ namespace Dockery.Listener {
                     container_states_changed();
                     feedback(Gtk.MessageType.INFO, message);
 
-                } catch (Sdk.Docker.Io.RequestError e) {
+                } catch (global::Sdk.Docker.Io.RequestError e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                 }
             });
         }        
+        
+        private void container_inspect_request() {
+            this.container_list.container_inspect_request.connect((container) => {
+                try {
+
+                    var inspection_data = repository.containers().inspect(container);
+                    Json.Parser parser = new Json.Parser();
+                    parser.load_from_data(inspection_data);
+                    Json.Node node = parser.get_root();
+                    
+                    var pretty_inspection_data = Json.to_string(node, true);
+
+                    string message = "Low-level information successfully fetched for container %s".printf(container.id);
+                    feedback(Gtk.MessageType.INFO, message);
+
+                    var dialog = new Dockery.View.Docker.Dialog.InspectContainer(parent_window, container, pretty_inspection_data);
+                    dialog.show_all();
+
+                } catch (Error e) {
+                    feedback(Gtk.MessageType.ERROR, (string) e.message);
+                }
+            });
+        }       
         
         private void container_rename_request() {
             this.container_list.container_rename_request.connect((container, relative_to, pointing_to) => {
@@ -199,7 +225,7 @@ namespace Dockery.Listener {
                         repository.containers().rename(container);
                         container_states_changed();
 
-                    } catch (Sdk.Docker.Io.RequestError e) {
+                    } catch (global::Sdk.Docker.Io.RequestError e) {
                         feedback(Gtk.MessageType.ERROR, (string) e.message);
                     }
                 });

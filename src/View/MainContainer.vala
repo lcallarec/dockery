@@ -1,15 +1,13 @@
 namespace Dockery.View {
     
-    using global::View;
-    
     public class MainContainer : Gtk.Box, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
 
         public Gtk.HeaderBar headerbar =  new HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
         public Gtk.InfoBar infobar = new Gtk.InfoBar();
         public Gtk.Box local_docker_perspective = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         public SideBar sidebar;
-        public Docker.List.Containers containers;
-        public Docker.List.Images images;
+        public global::View.Docker.List.Containers containers;
+        public global::View.Docker.List.Images images;
         public Gtk.StackSwitcher perspective_switcher = new Gtk.StackSwitcher();
 
         public MainContainer() {
@@ -30,10 +28,10 @@ namespace Dockery.View {
             var docker_view = new ListBuilder();
 
             this.containers = docker_view.create_containers_view();
-            this.containers.init(new Sdk.Docker.Model.ContainerCollection());
+            this.containers.init(new global::Sdk.Docker.Model.ContainerCollection());
 
             this.images = docker_view.create_images_view();
-            this.images.init(new Sdk.Docker.Model.ImageCollection());
+            this.images.init(new global::Sdk.Docker.Model.ImageCollection());
 
             Gtk.Stack stack = new Gtk.Stack();
             this.sidebar = new SideBar(stack);
@@ -51,8 +49,8 @@ namespace Dockery.View {
 
         private void setup_local_docker_perspective(Gtk.Stack stack) {
 
-            var settings_box = new Docker.Stacks.SettingsBox();
-            var perspective = new Docker.Stacks.Stack(settings_box);
+            var settings_box = new Dockery.View.Stacks.SettingsBox();
+            var perspective = new Dockery.View.Stacks.Stack(settings_box);
 
             //Start connect signals
             settings_box.on_docker_service_connect_request.connect((docker_entrypoint) => {
@@ -132,12 +130,12 @@ namespace Dockery.View {
 
    public class ListBuilder : GLib.Object {
 
-        public Docker.List.Images create_images_view() {
-            return new Docker.List.Images();
+        public global::View.Docker.List.Images create_images_view() {
+            return new global::View.Docker.List.Images();
         }
 
-        public Docker.List.Containers create_containers_view() {
-            return new Docker.List.Containers();
+        public global::View.Docker.List.Containers create_containers_view() {
+            return new global::View.Docker.List.Containers();
         }
    }
 

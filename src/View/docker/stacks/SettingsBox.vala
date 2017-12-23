@@ -1,4 +1,4 @@
-namespace View.Docker.Stacks {
+namespace Dockery.View.Stacks {
 
     class SettingsBox : Gtk.Box, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
 

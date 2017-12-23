@@ -164,6 +164,10 @@ namespace View.Docker.List {
                                 this.container_bash_in_request(container);
                             });
 
+                            menu.container_inspect_request.connect(() => {
+                                this.container_inspect_request(container);
+                            });
+
                         }
                     }
 

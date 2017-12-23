@@ -15,9 +15,9 @@ namespace Sdk.Docker {
      * - Remove a container
      * - Attach to a container
      * - Create a container
+     * - Inspect a container
      *
      * Missing features :
-     * - Inspect a container
      * - List processes running inside a container
      * - Export a container
      * - Get container stats based on resource usage
@@ -295,7 +295,6 @@ namespace Sdk.Docker {
                 var error_messages = create_error_messages();
                 error_messages.set(400, "Bad parameter");
                 error_messages.set(404, "No such container");
-                error_messages.set(406, "Impossible to attach (container not running)");
                 error_messages.set(409, "Conflict");
 
                 this.throw_error_from_status_code(201, response, error_messages);
@@ -304,6 +303,28 @@ namespace Sdk.Docker {
                 throw new Io.RequestError.FATAL("Error while creating container from image %s".printf(container_create.image.id));
             }
         }
+
+        /**
+         * Inspect a container
+         * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/inspect-a-container]]
+         */
+        public string inspect(Sdk.Docker.Model.Container container) throws Io.RequestError {
+
+            try {
+                var response = this.client.send("GET", "/containers/%s/json".printf(container.id));
+
+                var error_messages = create_error_messages();
+                error_messages.set(404, "No such container");
+
+                this.throw_error_from_status_code(200, response, error_messages);
+
+                return response.payload;
+
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while inspecting container %s".printf(container.id));
+            }
+        }
+
 
         /**
          * Parse containers payload

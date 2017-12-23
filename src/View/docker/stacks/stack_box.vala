@@ -1,4 +1,4 @@
-namespace View.Docker.Stacks {
+namespace Dockery.View.Stacks {
 
     class Stack : Gtk.Box {
 
@@ -10,7 +10,5 @@ namespace View.Docker.Stacks {
             this.pack_start(new Gtk.Label("Local Docker stack settings"), false, false, 5);
             this.pack_end(settings_box, false, false);
         }
-
     }
-
 }

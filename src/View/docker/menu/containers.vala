@@ -106,6 +106,12 @@ namespace View.Docker.Menu {
                 this.container_bash_in_request(container);
             });
         }
+        
+        protected void append_inspect_menu_item() {
+            this.append_menu_item("Inspect", null, () => {
+                this.container_inspect_request(container);
+            });
+        }
     }
 
     internal class RunningContainerMenu : ContainerMenu {
@@ -125,7 +131,8 @@ namespace View.Docker.Menu {
             this.append_kill_menu_item();
             this.append_separator_menu_item();
             this.append_remove_menu_item();
-
+            this.append_separator_menu_item();
+            this.append_inspect_menu_item();            
         }
     }
 
@@ -140,6 +147,8 @@ namespace View.Docker.Menu {
             this.append_rename_menu_item();
             this.append_separator_menu_item();
             this.append_remove_menu_item();
+            this.append_separator_menu_item();
+            this.append_inspect_menu_item();
         }
     }
 
@@ -158,6 +167,8 @@ namespace View.Docker.Menu {
             this.append_rename_menu_item();
             this.append_separator_menu_item();
             this.append_remove_menu_item();
+            this.append_separator_menu_item();
+            this.append_inspect_menu_item();
         }
     }
 
