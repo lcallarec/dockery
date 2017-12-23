@@ -189,7 +189,7 @@ namespace Dockery.Listener {
                     var pretty_inspection_data = inspection_data;
                     #endif
 
-                    #if JSONGLIB_1.0
+                    #if JSONGLIB_0.1
                     Json.Node node = parser.get_root();
                     var pretty_inspection_data = Json.to_string(node, true);
                     #endif
