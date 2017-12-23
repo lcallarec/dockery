@@ -119,6 +119,10 @@ if __name__ == '__main__':
 	pre_processor = PreProcessor(sys.argv[1], sys.argv[2])
 	pre_processor.copy()
 
+    #Json-Glib pre-processor
+	pre_processor.pre_process_for("JSONGLIB_" + sys.argv[5])
+	pre_processor.clean_pre_process("JSONGLIB_")
+
     #LibVTE pre-processor
 	pre_processor.pre_process_for("LIBVTE_" + sys.argv[4])
 	pre_processor.clean_pre_process("LIBVTE_")

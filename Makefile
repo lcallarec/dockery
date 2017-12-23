@@ -4,8 +4,10 @@ gtk_version := $(shell pkg-config --modversion gtk+-3.0 | cut -d'.' -f1,2)
 
 ifdef ($(TRAVIS))
 	libvte_version=$(shell dpkg-query -l|grep 'libvte-2.9[0-9]-dev' | sed 's/^.*libvte-([0-9].[0-9][0-9])-dev.*/$1/g')
+    json_glib_version=$(shell dpkg-query -l| grep 'libjson-glib-1.0-common' | awk '{print $3}' | sed 's/^\([0-9]\.[0-9]\).*/$1/g')
 else
     libvte_version=$(shell dpkg-query -l|grep 'libvte-2.9[0-9]-dev' | sed 's/^.*libvte-\([0-9].[0-9][0-9]\)-dev.*$$/\1/g')
+    json_glib_version=$(shell dpkg-query -l| grep 'libjson-glib-1.0-common' | awk '{print $$3}' | sed 's/^\([0-9]\.[0-9]\).*$$/\1/g')
 endif
 
 EXEC=compile
@@ -15,10 +17,9 @@ EXEC=compile
 all: $(EXEC)
 
 preprocess:
-	mkdir -p build/source && build/pre-process.py src build/source $(gtk_version) $(libvte_version)
+	mkdir -p build/source && build/pre-process.py src build/source $(gtk_version) $(libvte_version) $(json_glib_version)
 
 compile: preprocess compile-resources
-	dpkg-query -l|grep 'json-glib'
 	valac -g --save-temps --thread \
         -X -w -X -lm -v \
         --target-glib 2.32 \

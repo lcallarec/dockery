@@ -184,9 +184,15 @@ namespace Dockery.Listener {
                     var inspection_data = repository.containers().inspect(container);
                     Json.Parser parser = new Json.Parser();
                     parser.load_from_data(inspection_data);
-                    Json.Node node = parser.get_root();
                     
+                    #if JSONGLIB_1.2
+                    var pretty_inspection_data = inspection_data;
+                    #endif
+
+                    #if JSONGLIB_1.0
+                    Json.Node node = parser.get_root();
                     var pretty_inspection_data = Json.to_string(node, true);
+                    #endif
 
                     string message = "Low-level information successfully fetched for container %s".printf(container.id);
                     feedback(Gtk.MessageType.INFO, message);
