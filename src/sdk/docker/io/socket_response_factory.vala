@@ -69,10 +69,8 @@ namespace Sdk.Docker.Io {
 
                 response.payload += line;
 
-                GLib.Idle.add(() => {
-                    response.on_payload_line_received(line);
-                    return true;
-                });
+                GLib.Thread.usleep(10000);
+                response.on_payload_line_received(line);
             }
 
             response.on_finished();
