@@ -30,6 +30,10 @@ namespace Sdk.Docker {
             return this._containers;
         }
 
+        public ServerEndpoint daemon() {
+            return this._server;
+        }
+
         public new void connect() throws Error {
             this._server.ping();
             this.connected(this);
