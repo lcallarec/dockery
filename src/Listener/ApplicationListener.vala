@@ -7,9 +7,9 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
     private DockerManager window;
     private Dockery.View.MessageDispatcher message_dispatcher;
     private Dockery.View.MainContainer view;
-
     private Dockery.Listener.ContainerListListener container_list_listener;
     private Dockery.Listener.DaemonEventListener daemon_event_listener;
+    private Dockery.Listener.StackHubListener stack_hub_listener;
 
     public ApplicationListener(DockerManager window, Dockery.View.MessageDispatcher message_dispatcher) {
         this.window             = window;
@@ -32,7 +32,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         
         this.listen_daemon_events();
         this.listen_headerbar();
-        this.listen_docker_hub();
+        this.listen_stack_hub();
         this.listen_container_view();
         this.listen_image_view();
     }
@@ -49,7 +49,13 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         container_list_listener.listen();
     }
 
-    public void listen_image_view() {
+    private void listen_stack_hub() {
+        stack_hub_listener = new Dockery.Listener.StackHubListener(window, repository, view);
+        stack_hub_listener.feedback.connect((type, message) =>  message_dispatcher.dispatch(type, message));
+        stack_hub_listener.listen();
+    }
+
+    private void listen_image_view() {
 
          view.images.images_remove_request.connect((images) => {
 
@@ -151,7 +157,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         });
     }
 
-    public void listen_headerbar() {
+    private void listen_headerbar() {
 
         this.view.on_docker_service_connect_request.connect((docker_entrypoint) => {
             try {
@@ -184,53 +190,6 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
             } else {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't locate docker daemon");
             }
-        });
-    }
-
-    public void listen_docker_hub() {
-
-        this.view.on_docker_public_registry_open_request.connect(() => {
-            var dialog = new View.Docker.Dialog.SearchHubDialog();
-            dialog.search_image_in_docker_hub.connect((target, term) => {
-                try {
-                    Sdk.Docker.Model.HubImage[] images =  repository.images().search(term);
-                    target.set_images(images);
-                } catch (Sdk.Docker.Io.RequestError e) {
-                    message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                }
-            });
-
-            dialog.show_all();
-
-            dialog.pull_image_from_docker_hub.connect((target, image) => {
-
-                var decorator = new View.Docker.Decorator.CreateImageDecorator(target.message_box_label);
-
-                try {
-
-                    var future_response = repository.images().future_pull(image);
-                    future_response.on_payload_line_received.connect((line) => {
-                        if (null != line) {
-                            try {
-                                decorator.update(line);
-                            } catch (Error e) {
-                                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                            }
-                        }
-                    });
-
-                    future_response.on_finished.connect(() => {
-                        try {
-                            decorator.update(null);
-                        } catch (Error e) {
-                            message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                        }
-                    });
-
-                } catch (Error e) {
-                    message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                }
-            });
         });
     }
 
