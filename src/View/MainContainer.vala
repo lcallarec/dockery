@@ -51,11 +51,10 @@ namespace Dockery.View {
             this.pack_start(perspectives, true, true, 0);
 
             //Event panel
-            //this.pack_end(this.live_stream_component, false, true, 0);
+            this.pack_start(this.live_stream_component, false, true, 0);
 
             //Infobar
             this.pack_end(infobar, false, true, 0);
-
         }
 
         private void setup_local_docker_perspective(Gtk.Stack stack) {
@@ -119,7 +118,7 @@ namespace Dockery.View {
             images_scrolled.add(images);
 
             stack.add_named(containers_scrolled, "containers");
-            stack.add_named(images_scrolled,     "images");
+            stack.add_named(images_scrolled, "images");
 
             container.pack_start(new Gtk.Separator(Gtk.Orientation.VERTICAL), false, true, 0);
             container.pack_start(stack, true, true, 0);
@@ -138,5 +137,4 @@ namespace Dockery.View {
             return new global::View.Docker.List.Containers();
         }
    }
-
 }
