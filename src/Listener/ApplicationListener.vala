@@ -17,7 +17,8 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         this.message_dispatcher = message_dispatcher;
     }
 
-    public void boot() {
+    public void listen() {
+        
         string? docker_endpoint = discover_connection();
         if (null != docker_endpoint) {
             try {
@@ -315,7 +316,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
     }
 
     protected void docker_daemon_post_connect(string docker_entrypoint) {
-        this.on_docker_service_connect_success(docker_entrypoint);
+        this.view.on_docker_service_connect_success(docker_entrypoint);
         this.init_image_list();
         this.init_container_list();
         message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");

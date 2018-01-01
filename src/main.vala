@@ -12,7 +12,7 @@ public class DockerManager : Gtk.Window {
 
     public Dockery.View.MainContainer main_container = new Dockery.View.MainContainer();
 
-    private ApplicationListener ac;
+    private ApplicationListener application_listener;
 
     public static void main (string[] args) {
         Gtk.init(ref args);
@@ -61,8 +61,8 @@ public class DockerManager : Gtk.Window {
         this.set_titlebar(main_container.headerbar);
 
         //ApplicationListener
-        this.ac = new ApplicationListener(this, new Dockery.View.MessageDispatcher(main_container.infobar));
-        ac.boot();
+        this.application_listener = new ApplicationListener(this, new Dockery.View.MessageDispatcher(main_container.infobar));
+        application_listener.listen();
     }
 
     protected Gtk.CssProvider create_css_provider(string css_path) {
