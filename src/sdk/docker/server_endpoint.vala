@@ -5,6 +5,7 @@ namespace Sdk.Docker {
      *
      * Available features :
      * - Ping
+     * - Events
      */
     public class ServerEndpoint : Endpoint {
 
@@ -29,6 +30,19 @@ namespace Sdk.Docker {
 
             } catch (Error e) {
                 throw new Io.RequestError.FATAL("Error while pinging the docker service : %s".printf(e.message));
+            }
+        }
+        
+        /**
+         * Get docker events stream
+         * https://docs.docker.com/engine/api/v1.31/#operation/SystemEvents
+         */
+        public Io.FutureResponse events() throws Io.RequestError {
+
+            try {
+                return this.client.future_send("GET", "/events");
+            } catch (Error e) {
+                throw new Io.RequestError.FATAL("Error while streaming Docker events");
             }
         }
     }

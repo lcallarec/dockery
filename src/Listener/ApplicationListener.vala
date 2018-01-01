@@ -3,12 +3,13 @@
  */
 public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
 
-    protected Sdk.Docker.Repository? repository;
-    protected DockerManager window;
-    protected Dockery.View.MessageDispatcher message_dispatcher;
-    protected Dockery.View.MainContainer view;
+    private Sdk.Docker.Repository? repository;
+    private DockerManager window;
+    private Dockery.View.MessageDispatcher message_dispatcher;
+    private Dockery.View.MainContainer view;
 
     private Dockery.Listener.ContainerListListener container_list_listener;
+    private Dockery.Listener.DaemonEventListener daemon_event_listener;
 
     public ApplicationListener(DockerManager window, Dockery.View.MessageDispatcher message_dispatcher) {
         this.window             = window;
@@ -28,19 +29,25 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't locate docker daemon");
         }
         
+        this.listen_daemon_events();
         this.listen_headerbar();
         this.listen_docker_hub();
         this.listen_container_view();
         this.listen_image_view();
     }
-    
+
+    private void listen_daemon_events() {
+        daemon_event_listener = new Dockery.Listener.DaemonEventListener(repository, this.view.live_stream_component);
+        daemon_event_listener.listen();
+    }
+
     private void listen_container_view() {
         container_list_listener = new Dockery.Listener.ContainerListListener(window, repository, view.containers);
         container_list_listener.container_states_changed.connect(() => this.init_container_list());
         container_list_listener.feedback.connect((type, message) =>  message_dispatcher.dispatch(type, message));
         container_list_listener.listen();
     }
-       
+
     public void listen_image_view() {
 
          view.images.images_remove_request.connect((images) => {

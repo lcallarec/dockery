@@ -9,10 +9,19 @@ namespace Dockery.View {
         public global::View.Docker.List.Containers containers;
         public global::View.Docker.List.Images images;
         public Gtk.StackSwitcher perspective_switcher = new Gtk.StackSwitcher();
-
+        public Dockery.View.EventStream.LiveStreamComponent live_stream_component = new Dockery.View.EventStream.LiveStreamComponent();
+        
+        construct {
+            this.infobar.set_no_show_all(true);
+            this.infobar.show_close_button = true;
+            this.infobar.response.connect((id) => {
+                infobar.hide();
+            });
+        }
+        
         public MainContainer() {
-			
-			Object(orientation: Gtk.Orientation.VERTICAL, spacing: 0);
+
+            Object(orientation: Gtk.Orientation.VERTICAL, spacing: 0);
 
             //Perspectives
             var perspectives = new Gtk.Stack();
@@ -41,8 +50,10 @@ namespace Dockery.View {
             perspectives.add_titled(local_docker_perspective, "local-docker", "Local Docker stack");
             this.pack_start(perspectives, true, true, 0);
 
+            //Event panel
+            //this.pack_end(this.live_stream_component, false, true, 0);
+
             //Infobar
-            this.setup_infobar();
             this.pack_end(infobar, false, true, 0);
 
         }
@@ -90,7 +101,6 @@ namespace Dockery.View {
             });
 
             //End connect signals
-
             this.local_docker_perspective.pack_start(perspective, false, false);
 
 
@@ -115,16 +125,6 @@ namespace Dockery.View {
             container.pack_start(stack, true, true, 0);
 
             this.local_docker_perspective.pack_start(container, true, true);
-
-        }
-
-        private void setup_infobar() {
-            this.infobar.set_no_show_all(true);
-            this.infobar.show_close_button = true;
-
-            this.infobar.response.connect((id) => {
-                infobar.hide();
-            });
         }
    }
 
