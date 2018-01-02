@@ -1,6 +1,6 @@
 namespace Dockery.View.Stacks {
 
-    class SettingsBox : Gtk.Box, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
+    class SettingsComponent : Gtk.Box, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
 
         private Gtk.Button connect_button = new Gtk.Button();
         private Gtk.Image connect_button_image = new Gtk.Image();
@@ -23,10 +23,14 @@ namespace Dockery.View.Stacks {
             this.connect_signals();
         }
 
-        public SettingsBox() {
+        public SettingsComponent() {
 
             Object(orientation: Gtk.Orientation.HORIZONTAL, spacing: 0);
-
+            
+            this.set_border_width(3);
+            
+            this.pack_start(new Gtk.Label("Local Docker stack settings"), false, false, 5);
+            
             Gtk.SizeGroup sizegroup = new Gtk.SizeGroup(Gtk.SizeGroupMode.VERTICAL);
             sizegroup.add_widget(connect_button);
             sizegroup.add_widget(discover_button);
@@ -43,9 +47,9 @@ namespace Dockery.View.Stacks {
             entry_and_button.pack_start(this.docker_entrypoint_entry);
             entry_and_button.pack_start(this.connect_button);
 
-            this.pack_start(entry_and_button, false, false, 0);
-            this.pack_start(this.discover_button, false, false, 5);
             this.pack_end(this.hub_open_button, false, false, 5);
+            this.pack_end(this.discover_button, false, false, 5);
+            this.pack_end(entry_and_button, false, false, 0);
         }
 
         private void connect_signals() {

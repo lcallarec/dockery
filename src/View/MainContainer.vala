@@ -59,49 +59,47 @@ namespace Dockery.View {
 
         private void setup_local_docker_perspective(Gtk.Stack stack) {
 
-            var settings_box = new Dockery.View.Stacks.SettingsBox();
-            var perspective = new Dockery.View.Stacks.Stack(settings_box);
+            var settings = new Dockery.View.Stacks.SettingsComponent();
 
             //Start connect signals
-            settings_box.on_docker_service_connect_request.connect((docker_entrypoint) => {
+            settings.on_docker_service_connect_request.connect((docker_entrypoint) => {
                 this.on_docker_service_connect_request(docker_entrypoint);
             });
 
-            settings_box.on_docker_service_disconnect_request.connect(() => {
+            settings.on_docker_service_disconnect_request.connect(() => {
                 this.on_docker_service_disconnect_request();
             });
 
-            settings_box.on_docker_service_discover_request.connect(() => {
+            settings.on_docker_service_discover_request.connect(() => {
                 this.on_docker_service_discover_request();
             });
 
-            settings_box.on_docker_public_registry_open_request.connect(() => {
+            settings.on_docker_public_registry_open_request.connect(() => {
                 this.on_docker_public_registry_open_request();
             });
 
             this.on_docker_service_discover_success.connect(() => {
-                settings_box.on_docker_service_discover_success();
+                settings.on_docker_service_discover_success();
             });
 
             this.on_docker_service_discover_failure.connect(() => {
-                settings_box.on_docker_service_discover_failure();
+                settings.on_docker_service_discover_failure();
             });
 
             this.on_docker_service_connect_success.connect((docker_entrypoint) => {
-                settings_box.on_docker_service_connect_success(docker_entrypoint);
+                settings.on_docker_service_connect_success(docker_entrypoint);
             });
 
             this.on_docker_service_connect_failure.connect((docker_entrypoint) => {
-                settings_box.on_docker_service_connect_failure(docker_entrypoint);
+                settings.on_docker_service_connect_failure(docker_entrypoint);
             });
 
             this.on_docker_service_disconnected.connect(() => {
-                settings_box.on_docker_service_disconnected();
+                settings.on_docker_service_disconnected();
             });
 
             //End connect signals
-            this.local_docker_perspective.pack_start(perspective, false, false);
-
+            this.local_docker_perspective.pack_start(settings, false, false);
 
             var container = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
 

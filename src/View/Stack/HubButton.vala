@@ -1,4 +1,4 @@
-namespace View.Docker.Stacks.Hub {
+namespace View.Docker.Stacks {
 
     class HubButton : Gtk.Button, Signals.DockerServiceAware {
 
