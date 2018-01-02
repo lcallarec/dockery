@@ -8,6 +8,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
     private Dockery.View.MessageDispatcher message_dispatcher;
     private Dockery.View.MainContainer view;
     private Dockery.Listener.ContainerListListener container_list_listener;
+    private Dockery.Listener.ImageListListener image_list_listener;
     private Dockery.Listener.DaemonEventListener daemon_event_listener;
     private Dockery.Listener.StackHubListener stack_hub_listener;
 
@@ -56,105 +57,11 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
     }
 
     private void listen_image_view() {
-
-         view.images.images_remove_request.connect((images) => {
-
-            try {
-                /** Find containers created from the images we want to remove */
-                Sdk.Docker.Model.ContainerCollection containers = this.repository.containers().find_by_images(images);
-                var dialog = new View.Docker.Dialog.RemoveImagesDialog(images, containers, window);
-
-                dialog.response.connect((source, response_id) => {
-
-                    switch (response_id) {
-                        case Gtk.ResponseType.APPLY:
-                            try {
-                                if (containers.size > 0) {
-                                    foreach(Sdk.Docker.Model.ContainerStatus status in Sdk.Docker.Model.ContainerStatus.all()) {
-                                        foreach(Sdk.Docker.Model.Container container in containers.get_by_status(status)) {
-                                            this.repository.containers().remove(container, true);
-                                            message_dispatcher.dispatch(Gtk.MessageType.INFO, "Container %s successfully removed".printf(container.name));
-                                        }
-                                    }
-                                }
-
-                                foreach (Sdk.Docker.Model.Image image in images) {
-                                    this.repository.images().remove(image, true);
-                                    message_dispatcher.dispatch(Gtk.MessageType.INFO, "Image %s successfully removed".printf(image.name));
-                                }
-
-                                message_dispatcher.dispatch(Gtk.MessageType.INFO, "All images and containers being used successfully removed");
-
-                            } catch (Sdk.Docker.Io.RequestError e) {
-                                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                            }
-
-                            this.init_container_list();
-                            this.init_image_list();
-
-                            break;
-                        case Gtk.ResponseType.CANCEL:
-                            break;
-                        case Gtk.ResponseType.DELETE_EVENT:
-                            break;
-                        case Gtk.ResponseType.CLOSE:
-                            break;
-                    }
-
-                    dialog.destroy();
-
-                });
-
-                dialog.show_all();
-
-            } catch (Sdk.Docker.Io.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
-        });
-
-        view.images.image_create_container_request.connect((image) => {
-
-            try {
-                this.repository.containers().create(new Sdk.Docker.Model.ContainerCreate.from_image(image));
-                this.init_container_list();
-            } catch (Sdk.Docker.Io.RequestError e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-            }
-
-        });
-
-        view.images.image_create_container_with_request.connect((image) => {
-
-            var dialog = new View.Docker.Dialog.CreateContainerWith(image, window);
-
-            dialog.response.connect((source, response_id) => {
-
-                switch (response_id) {
-                    case Gtk.ResponseType.APPLY:
-
-                        Gee.HashMap<string, string> data = dialog.get_view_data();
-
-                        try {
-                            this.repository.containers().create(new Sdk.Docker.Model.ContainerCreate.from_hash_map(image, data));
-                        } catch (Error e) {
-                            message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
-                        }
-
-                        dialog.destroy();
-
-                        this.init_container_list();
-
-                        break;
-
-                    case Gtk.ResponseType.DELETE_EVENT:
-                    case Gtk.ResponseType.CLOSE:
-                        dialog.destroy();
-                        break;
-                }
-            });
-
-            dialog.show_all();
-        });
+        image_list_listener = new Dockery.Listener.ImageListListener(window, repository, view.images);
+        image_list_listener.container_states_changed.connect(() => this.init_container_list());
+        image_list_listener.image_states_changed.connect(() => this.init_image_list());
+        image_list_listener.feedback.connect((type, message) =>  message_dispatcher.dispatch(type, message));
+        image_list_listener.listen();
     }
 
     private void listen_headerbar() {
