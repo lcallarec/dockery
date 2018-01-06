@@ -1,4 +1,4 @@
-namespace Sdk.Docker {
+namespace Dockery.DockerSdk {
 
     /**
      * Containers related endpoints
@@ -67,7 +67,7 @@ namespace Sdk.Docker {
          *
          * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#pause-a-container]]
          */
-        public void pause(Sdk.Docker.Model.Container container) throws Io.RequestError {
+        public void pause(Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST", "/containers/%s/pause".printf(container.id));
@@ -87,7 +87,7 @@ namespace Sdk.Docker {
          *
          * Se See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#unpause-a-container]]
          */
-        public void unpause(Sdk.Docker.Model.Container container) throws Io.RequestError {
+        public void unpause(Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST", "/containers/%s/unpause".printf(container.id));
@@ -108,7 +108,7 @@ namespace Sdk.Docker {
          *
          * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/restart-a-container]]
          */
-        public void restart(Sdk.Docker.Model.Container container) throws Io.RequestError {
+        public void restart(Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST", "/containers/%s/restart".printf(container.id));
@@ -127,7 +127,7 @@ namespace Sdk.Docker {
          * Remove a single container
          * Force option : when set to true, will force the removal of running containers
          */
-        public void remove(Sdk.Docker.Model.Container container, bool force = false) throws Io.RequestError {
+        public void remove(Model.Container container, bool force = false) throws Io.RequestError {
 
             try {
 
@@ -154,7 +154,7 @@ namespace Sdk.Docker {
          *
          * See See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#start-a-container]]
          */
-        public void start(Sdk.Docker.Model.Container container) throws Io.RequestError {
+        public void start(Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST", "/containers/%s/start".printf(container.id));
@@ -175,7 +175,7 @@ namespace Sdk.Docker {
          *
          * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#stop-a-container]]
          */
-        public void stop(Sdk.Docker.Model.Container container) throws Io.RequestError {
+        public void stop(Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST", "/containers/%s/stop".printf(container.id));
@@ -196,7 +196,7 @@ namespace Sdk.Docker {
          *
          * See See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#kill-a-container]]
          */
-        public void kill(Sdk.Docker.Model.Container container) throws Io.RequestError {
+        public void kill(Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST", "/containers/%s/kill".printf(container.id));
@@ -217,7 +217,7 @@ namespace Sdk.Docker {
          *
          * See See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#rename-a-container]]
          */
-        public void rename(Sdk.Docker.Model.Container container) throws Io.RequestError {
+        public void rename(Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST", "/containers/%s/rename?name=%s".printf(container.id, container.name));
@@ -238,7 +238,7 @@ namespace Sdk.Docker {
          *
          * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers]]
          */
-        public Model.ContainerCollection find_by_image(Sdk.Docker.Model.Image image) throws Io.RequestError {
+        public Model.ContainerCollection find_by_image(Model.Image image) throws Io.RequestError {
 
             try {
 
@@ -267,7 +267,7 @@ namespace Sdk.Docker {
          *
          * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers]]
          */
-        public Model.ContainerCollection find_by_images(Sdk.Docker.Model.ImageCollection images) throws Io.RequestError {
+        public Model.ContainerCollection find_by_images(Model.ImageCollection images) throws Io.RequestError {
 
             Model.ContainerCollection containers = new Model.ContainerCollection();
             
@@ -287,7 +287,7 @@ namespace Sdk.Docker {
          * Create a container from a given Image
          * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/create-a-container]]
          */
-        public void create(Sdk.Docker.Model.ContainerCreate container_create) throws Io.RequestError {
+        public void create(Model.ContainerCreate container_create) throws Io.RequestError {
 
             try {
                 var response = this.client.send("POST", "/containers/create", container_create.serialize());
@@ -308,7 +308,7 @@ namespace Sdk.Docker {
          * Inspect a container
          * See [[https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/inspect-a-container]]
          */
-        public string inspect(Sdk.Docker.Model.Container container) throws Io.RequestError {
+        public string inspect(Model.Container container) throws Io.RequestError {
 
             try {
                 var response = this.client.send("GET", "/containers/%s/json".printf(container.id));

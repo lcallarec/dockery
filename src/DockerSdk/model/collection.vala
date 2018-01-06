@@ -1,6 +1,6 @@
-namespace Sdk.Docker.Model {
+namespace Dockery.DockerSdk.Model {
     
-    using global::Sdk.Docker.Model;
+    using global::Dockery.DockerSdk.Model;
     
     public class Collection<T> : Gee.ArrayList<T> {
 

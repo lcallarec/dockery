@@ -1,6 +1,6 @@
 namespace View.Docker.Dialog {
 
-    using global::Sdk.Docker.Model;
+    using global::Dockery.DockerSdk.Model;
     
     public class RemoveImagesDialogMessageGenerator : Object {
         

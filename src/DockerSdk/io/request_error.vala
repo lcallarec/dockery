@@ -1,4 +1,4 @@
-namespace Sdk.Docker.Io {
+namespace Dockery.DockerSdk.Io {
 
     /**
      * Request Error

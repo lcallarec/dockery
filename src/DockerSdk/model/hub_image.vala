@@ -1,4 +1,4 @@
-namespace Sdk.Docker.Model {
+namespace Dockery.DockerSdk.Model {
 
     public class HubImage : GLib.Object {
 

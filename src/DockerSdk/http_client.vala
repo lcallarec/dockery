@@ -1,4 +1,4 @@
-namespace Sdk.Docker {
+namespace Dockery.DockerSdk {
 
     public class HttpClient : RestClient {
 

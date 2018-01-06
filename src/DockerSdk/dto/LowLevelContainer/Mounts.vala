@@ -1,4 +1,4 @@
-namespace Dockery.Sdk.Docker.Dto.LowLevelContainer {
+namespace Dockery.Dockery.DockerSdk.Dto.LowLevelContainer {
     
     class Mounts : Object {
         public Mounts() {

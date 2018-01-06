@@ -1,18 +1,16 @@
 namespace Dockery {
 
-    using Dockery.Settings;
-
     public class SettingsManager {
 
         private const string SCHEMA_ID="org.lcallarec.dockery";
 
-        private GLib.Settings settings = new GLib.Settings(Dockery.SettingsManager.SCHEMA_ID);
+        private GLib.Settings settings = new GLib.Settings(SettingsManager.SCHEMA_ID);
 
-        public  Gee.HashMap<string, Stack> get_docker_stacks() {
+        public Gee.HashMap<string, Settings.Stack> get_docker_stacks() {
 
             GLib.Variant? raw_stacks_settings = this.settings.get_value("docker-stacks");
 
-            Gee.HashMap<string, Stack> stacks = new Gee.HashMap<string, Stack>();
+            var stacks = new Gee.HashMap<string, Settings.Stack>();
 
             if (raw_stacks_settings != null) {
                 GLib.VariantIter iter = raw_stacks_settings.iterator();
@@ -26,7 +24,7 @@ namespace Dockery {
                     string stack_name = settings_chunks[1];
                     string stack_uri  = settings_chunks[2];
 
-                    stacks.set(stack_id, new Stack(stack_id, stack_name, stack_uri));
+                    stacks.set(stack_id, new Settings.Stack(stack_id, stack_name, stack_uri));
                 }
             }
 

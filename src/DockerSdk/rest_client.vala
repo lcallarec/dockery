@@ -1,4 +1,4 @@
-namespace Sdk.Docker {
+namespace Dockery.DockerSdk {
 
     public abstract class RestClient : Client, GLib.Object {
         

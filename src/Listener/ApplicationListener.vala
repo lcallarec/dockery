@@ -3,7 +3,7 @@
  */
 public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
 
-    private Sdk.Docker.Repository? repository;
+    private Dockery.DockerSdk.Repository? repository;
     private DockerManager window;
     private Dockery.View.MessageDispatcher message_dispatcher;
     private Dockery.View.MainContainer view;
@@ -101,10 +101,10 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
     }
 
     protected void init_image_list() {
-        Sdk.Docker.Model.ImageCollection images = new Sdk.Docker.Model.ImageCollection();
+        Dockery.DockerSdk.Model.ImageCollection images = new Dockery.DockerSdk.Model.ImageCollection();
         try {
             images = repository.images().list();
-        } catch (Sdk.Docker.Io.RequestError e) {
+        } catch (Dockery.DockerSdk.Io.RequestError e) {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
         } finally {
             this.view.images.init(images);
@@ -113,15 +113,15 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
 
     protected void init_container_list() {
         try {
-            var container_collection = new Sdk.Docker.Model.ContainerCollection();
+            var container_collection = new Dockery.DockerSdk.Model.ContainerCollection();
 
-            foreach(Sdk.Docker.Model.ContainerStatus status in Sdk.Docker.Model.ContainerStatus.all()) {
+            foreach(Dockery.DockerSdk.Model.ContainerStatus status in Dockery.DockerSdk.Model.ContainerStatus.all()) {
                 var containers = repository.containers().list(status);
                 container_collection.add_collection(containers);
             }
 
             this.view.containers.init(container_collection);
-        } catch (Sdk.Docker.Io.RequestError e) {
+        } catch (Dockery.DockerSdk.Io.RequestError e) {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
         }
 
@@ -153,26 +153,26 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
 
         message_dispatcher.dispatch(Gtk.MessageType.INFO, "Disconnected from Docker daemon");
 
-        this.view.images.init(new Sdk.Docker.Model.ImageCollection());
-        this.view.containers.init(new Sdk.Docker.Model.ContainerCollection());
+        this.view.images.init(new Dockery.DockerSdk.Model.ImageCollection());
+        this.view.containers.init(new Dockery.DockerSdk.Model.ContainerCollection());
 
         return true;
     }
 
     protected string? discover_connection() {
 
-        var endpoint_discovery = new Sdk.Docker.UnixSocketEndpointDiscovery();
+        var endpoint_discovery = new Dockery.DockerSdk.UnixSocketEndpointDiscovery();
 
         return endpoint_discovery.discover();
     }
 
 
-    protected Sdk.Docker.Repository? create_repository(string uri) {
+    protected Dockery.DockerSdk.Repository? create_repository(string uri) {
 
-        Sdk.Docker.Client? client = Sdk.Docker.ClientFactory.create_from_uri(uri);
+        Dockery.DockerSdk.Client? client = Dockery.DockerSdk.ClientFactory.create_from_uri(uri);
         
         if (client != null) {
-            return new Sdk.Docker.Repository(client);
+            return new Dockery.DockerSdk.Repository(client);
         }
         
         message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) "Failed to connect to %s".printf(uri));

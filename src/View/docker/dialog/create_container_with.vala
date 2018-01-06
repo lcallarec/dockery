@@ -1,6 +1,6 @@
 namespace View.Docker.Dialog {
 
-    using global::Sdk.Docker.Model;
+    using global::Dockery.DockerSdk.Model;
 
     /**
      * This Dialog is used to ask information about the container to create
@@ -17,7 +17,7 @@ namespace View.Docker.Dialog {
         private Gtk.Entry entry_command = new Gtk.Entry();
 
 
-        public CreateContainerWith(Sdk.Docker.Model.Image from_image, Gtk.Window parent_window) {
+        public CreateContainerWith(Dockery.DockerSdk.Model.Image from_image, Gtk.Window parent_window) {
 
             base(550, 100, "Create container from image %s with...".printf(from_image.id), parent_window);
 
@@ -64,7 +64,7 @@ namespace View.Docker.Dialog {
             grid_layout.row_spacing = 5;
         }
 
-        private void configure_widgets(Sdk.Docker.Model.Image from_image) {
+        private void configure_widgets(Dockery.DockerSdk.Model.Image from_image) {
             label_image_id.halign = Gtk.Align.END;
             label_image_id.halign = Gtk.Align.END;
 

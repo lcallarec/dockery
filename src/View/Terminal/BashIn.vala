@@ -1,13 +1,13 @@
 /** @author Laurent Calalrec <l.callarec@gmail.com> **/
 namespace Dockery.View.Terminal {
 
-    using global::Sdk.Docker.Model;
+    using global::Dockery;
 
     public class BashIn : Vte.Terminal {
 
-        protected Container container;
+        protected DockerSdk.Model.Container container;
 
-        public BashIn(Container container) {
+        public BashIn(DockerSdk.Model.Container container) {
             this.container = container;
             
             this.child_exited.connect((term) => {

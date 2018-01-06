@@ -1,6 +1,6 @@
 namespace Signals {
 
-    using Sdk.Docker.Model;
+    using Dockery.DockerSdk.Model;
 
     /** Signals emitted on container request actions */
     public interface ContainerRequestAction : GLib.Object {
@@ -33,7 +33,7 @@ namespace Signals {
         /** This signal should be emitted as a request to pull an image from docker hub */
         public signal void pull_image_from_docker_hub(View.Docker.Dialog.SearchHubDialog? target, HubImage image);
 
-        public virtual void set_images(Sdk.Docker.Model.HubImage[] images) {}
+        public virtual void set_images(Dockery.DockerSdk.Model.HubImage[] images) {}
     }
 
     public interface DockerServiceAware : GLib.Object {

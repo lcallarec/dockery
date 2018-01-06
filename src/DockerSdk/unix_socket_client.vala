@@ -1,4 +1,6 @@
-namespace Sdk.Docker {
+namespace Dockery.DockerSdk {
+
+    using Dockery;
 
     public class UnixSocketClient : RestClient {
 
@@ -106,7 +108,7 @@ namespace Sdk.Docker {
         private SocketConnection? create_connection() throws Io.RequestError {
             try {
                 
-                var url = Dockery.Convert.Uri.get_url_from_uri(this.uri);
+                var url = Convert.Uri.get_url_from_uri(this.uri);
                 return this.client.connect(
                     new UnixSocketAddress(url)
                 );

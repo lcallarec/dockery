@@ -1,6 +1,6 @@
 namespace View.Docker {
 
-    using global::Sdk.Docker.Model;
+    using global::Dockery.DockerSdk.Model;
 
     public interface Flushable : Gtk.Container {
         /**

@@ -1,4 +1,4 @@
-namespace Sdk.Docker {
+namespace Dockery.DockerSdk {
 
     public class ClientFactory : GLib.Object {
 

@@ -1,4 +1,4 @@
-namespace Sdk.Docker.Io {
+namespace Dockery.DockerSdk.Io {
 
     /**
      * Response from a socket request to a docker remote api

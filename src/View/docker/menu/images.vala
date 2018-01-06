@@ -1,6 +1,6 @@
 namespace View.Docker.Menu {
 
-    using global::Sdk.Docker.Model;
+    using global::Dockery.DockerSdk.Model;
 
     public class ImageMenuFactory {
         public static ImageMenu create_single(Image image) {

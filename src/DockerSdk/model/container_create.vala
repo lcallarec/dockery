@@ -1,4 +1,4 @@
-namespace Sdk.Docker.Model {
+namespace Dockery.DockerSdk.Model {
 
     /**
      * ContainerCreate is a domain used used when a container creation is requested

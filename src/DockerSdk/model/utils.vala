@@ -1,4 +1,4 @@
-namespace Sdk.Docker.Model {
+namespace Dockery.DockerSdk.Model {
 
    /**
     * Static helper class for size formatting     

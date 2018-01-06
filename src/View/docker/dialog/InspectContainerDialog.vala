@@ -1,10 +1,10 @@
 namespace Dockery.View.Docker.Dialog {
 
-    using global::Sdk.Docker.Model;
+    using global::Dockery;
 
-    public class InspectContainer : Dockery.View.Dialog {
+    public class InspectContainer : View.Dialog {
 
-        public InspectContainer(Gtk.Window parent_window, Container container, string inspection_data) {
+        public InspectContainer(Gtk.Window parent_window, DockerSdk.Model.Container container, string inspection_data) {
 
             base(550, 550, "Inspect Low-level information of container %s".printf(container.id), parent_window, false);
 

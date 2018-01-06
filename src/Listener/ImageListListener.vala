@@ -1,7 +1,7 @@
 namespace Dockery.Listener {
     
     using global::View;
-    using global::Sdk.Docker;
+    using global::Dockery.DockerSdk;
     
     class ImageListListener : GLib.Object {
 

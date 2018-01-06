@@ -1,6 +1,6 @@
 namespace View.Docker.List {
 
-    using global::Sdk.Docker.Model;
+    using global::Dockery.DockerSdk.Model;
     using Dockery.View;
 
 

@@ -1,5 +1,8 @@
 namespace Dockery.View {
     
+    using global::Dockery.DockerSdk;
+    using global::Dockery.View;
+
     public class MainContainer : Gtk.Box, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
 
         public Gtk.HeaderBar headerbar =  new HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
@@ -9,7 +12,7 @@ namespace Dockery.View {
         public global::View.Docker.List.Containers containers;
         public global::View.Docker.List.Images images;
         public Gtk.StackSwitcher perspective_switcher = new Gtk.StackSwitcher();
-        public Dockery.View.EventStream.LiveStreamComponent live_stream_component = new Dockery.View.EventStream.LiveStreamComponent();
+        public EventStream.LiveStreamComponent live_stream_component = new EventStream.LiveStreamComponent();
         private Gtk.Paned local_perspective_paned = new Gtk.Paned(Gtk.Orientation.VERTICAL);
         
         construct {
@@ -38,10 +41,10 @@ namespace Dockery.View {
             var docker_view = new ListBuilder();
 
             this.containers = docker_view.create_containers_view();
-            this.containers.init(new global::Sdk.Docker.Model.ContainerCollection());
-
+            this.containers.init(new Model.ContainerCollection());
+            
             this.images = docker_view.create_images_view();
-            this.images.init(new global::Sdk.Docker.Model.ImageCollection());
+            this.images.init(new Model.ImageCollection());
 
             Gtk.Stack stack = new Gtk.Stack();
             stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE);
@@ -59,7 +62,7 @@ namespace Dockery.View {
 
         private void setup_local_docker_perspective(Gtk.Stack stack) {
 
-            var settings = new Dockery.View.Stacks.SettingsComponent();
+            var settings = new View.Stacks.SettingsComponent();
 
             //Start connect signals
             settings.on_docker_service_connect_request.connect((docker_entrypoint) => {

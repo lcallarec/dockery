@@ -1,6 +1,6 @@
 namespace Dockery.Listener {
     
-    using global::View;
+    using global::Dockery;
     
     class StackHubListener : GLib.Object {
 
@@ -8,10 +8,10 @@ namespace Dockery.Listener {
         public signal void feedback(Gtk.MessageType type, string message);
         
         private Gtk.Window parent_window;
-        private Dockery.View.MainContainer main_container;
-        private global::Sdk.Docker.Repository repository;
+        private View.MainContainer main_container;
+        private DockerSdk.Repository repository;
 
-        public StackHubListener(Gtk.Window parent_window, global::Sdk.Docker.Repository repository, Dockery.View.MainContainer main_container) {
+        public StackHubListener(Gtk.Window parent_window, DockerSdk.Repository repository, View.MainContainer main_container) {
             this.parent_window = parent_window;
             this.repository = repository;
             this.main_container = main_container;
@@ -26,9 +26,9 @@ namespace Dockery.Listener {
                 var dialog = new global::View.Docker.Dialog.SearchHubDialog();
                 dialog.search_image_in_docker_hub.connect((target, term) => {
                     try {
-                        global::Sdk.Docker.Model.HubImage[] images = repository.images().search(term);
+                        DockerSdk.Model.HubImage[] images = repository.images().search(term);
                         target.set_images(images);
-                    } catch (global::Sdk.Docker.Io.RequestError e) {
+                    } catch (DockerSdk.Io.RequestError e) {
                         feedback(Gtk.MessageType.ERROR, (string) e.message);
                     }
                 });

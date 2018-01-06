@@ -1,6 +1,6 @@
 namespace View.Docker.Dialog {
 
-    using global::Sdk.Docker.Model;
+    using global::Dockery.DockerSdk.Model;
 
     /**
      * This Dialog is displayed when an image is being removed.
@@ -42,11 +42,11 @@ namespace View.Docker.Dialog {
         }
 
         /** Set images collecyion to the view */
-        public void set_images(Sdk.Docker.Model.HubImage[] images) {
+        public void set_images(Dockery.DockerSdk.Model.HubImage[] images) {
 
             Gtk.TreeIter iter;
             liststore.clear();
-            foreach(Sdk.Docker.Model.HubImage image in images) {
+            foreach(Dockery.DockerSdk.Model.HubImage image in images) {
                 liststore.append (out iter);
                 liststore.set(iter, 0, image.name, 1, image.description, 2, image.is_official.to_string(), 3, image.is_automated.to_string(), 4, image.star_count.to_string());
             }

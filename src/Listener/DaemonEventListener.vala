@@ -1,12 +1,14 @@
 namespace Dockery.Listener {
 
+    using global::Dockery;
+
     public class DaemonEventListener : GLib.Object {
     
-        private global::Sdk.Docker.Repository repository;
-        private Dockery.View.EventStream.LiveStreamComponent live_stream_component;
-        private global::Sdk.Docker.Io.FutureResponse future_response;
+        private DockerSdk.Repository repository;
+        private View.EventStream.LiveStreamComponent live_stream_component;
+        private DockerSdk.Io.FutureResponse future_response;
 
-        public DaemonEventListener(global::Sdk.Docker.Repository repository, Dockery.View.EventStream.LiveStreamComponent live_stream_component) {
+        public DaemonEventListener(DockerSdk.Repository repository, View.EventStream.LiveStreamComponent live_stream_component) {
             this.repository = repository;
             this.live_stream_component = live_stream_component;
             this.future_response = this.repository.daemon().events();

@@ -1,6 +1,6 @@
 namespace View.Docker.List {
 
-    using global::Sdk.Docker.Model;
+    using global::Dockery.DockerSdk.Model;
 
     public class Images : Flushable, ImageViewable, Signals.ImageRequestAction, Gtk.Box {
 
@@ -124,7 +124,7 @@ namespace View.Docker.List {
 
                     } else {
 
-                        var selected_images = new Sdk.Docker.Model.ImageCollection();
+                        var selected_images = new Dockery.DockerSdk.Model.ImageCollection();
                         for (int i = 0; i < rows.length(); i++) {
                             Image? selected_image = get_image_from_row(model, rows.nth_data(i));
                             if (null != selected_image) {

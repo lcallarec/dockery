@@ -1,6 +1,6 @@
 namespace View.Docker.Dialog {
 
-    using global::Sdk.Docker.Model;
+    using global::Dockery.DockerSdk.Model;
 
     /**
      * This Dialog is displayed when one or more images are being removed.
@@ -59,11 +59,11 @@ namespace View.Docker.Dialog {
             this.add_body(view);
         }
 
-        private void populate_liststore_from_containers(Sdk.Docker.Model.ContainerCollection linked_containers) {
+        private void populate_liststore_from_containers(Dockery.DockerSdk.Model.ContainerCollection linked_containers) {
 
             Gtk.TreeIter iter;
-            foreach(Sdk.Docker.Model.ContainerStatus status in Sdk.Docker.Model.ContainerStatus.all()) {
-                foreach(Sdk.Docker.Model.Container container in linked_containers.get_by_status(status)) {
+            foreach(Dockery.DockerSdk.Model.ContainerStatus status in Dockery.DockerSdk.Model.ContainerStatus.all()) {
+                foreach(Dockery.DockerSdk.Model.Container container in linked_containers.get_by_status(status)) {
                     liststore.append (out iter);
                     liststore.set(iter, 0, container.name, 1, container.get_status_string());
                 }

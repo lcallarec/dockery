@@ -1,6 +1,6 @@
 namespace View.Docker.Menu {
 
-    using global::Sdk.Docker.Model;
+    using global::Dockery.DockerSdk.Model;
 
     /**
      * Factory to create Container list item menu
@@ -8,7 +8,7 @@ namespace View.Docker.Menu {
     public class ContainerMenuFactory {
 
         /**
-         * Create a {@ContainerMenu} from a given {@link Sdk.Docker.Model.Container} (status))
+         * Create a {@ContainerMenu} from a given {@link Dockery.DockerSdk.Model.Container} (status))
          */
         public static ContainerMenu? create(Container container) {
 

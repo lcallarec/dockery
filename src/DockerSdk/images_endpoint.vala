@@ -1,4 +1,4 @@
-namespace Sdk.Docker {
+namespace Dockery.DockerSdk {
 
     /**
      * Images related endpoints
@@ -44,7 +44,7 @@ namespace Sdk.Docker {
          *
          * Force option : when set to true, will force the removal
          */
-        public void remove(Sdk.Docker.Model.Image image, bool force = false) throws Io.RequestError {
+        public void remove(Model.Image image, bool force = false) throws Io.RequestError {
 
             try {
 

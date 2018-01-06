@@ -1,6 +1,6 @@
 namespace View.Docker.Menu {
 
-    using global::Sdk.Docker.Model;
+    using global::Dockery.DockerSdk.Model;
 
     public class SearchHubMenuFactory {
         public static SearchHubMenu create(HubImage image) {

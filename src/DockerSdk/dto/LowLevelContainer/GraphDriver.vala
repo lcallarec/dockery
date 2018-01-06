@@ -1,4 +1,4 @@
-namespace Dockery.Sdk.Docker.Dto.LowLevelContainer {
+namespace Dockery.Dockery.DockerSdk.Dto.LowLevelContainer {
     
     class GraphDriver : Object {
         public GraphDriver() {
