@@ -11,7 +11,9 @@ namespace Dockery.View.EventStream {
         construct {
             scrolled.set_size_request(100, 200);
             view.editable = false;
-            view.set_wrap_mode(Gtk.WrapMode.WORD);
+            view.can_focus = false;
+            view.set_wrap_mode(Gtk.WrapMode.CHAR);
+            view.expand = true;
         }
 
         public LiveStreamComponent() {

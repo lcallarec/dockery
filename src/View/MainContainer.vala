@@ -10,6 +10,7 @@ namespace Dockery.View {
         public global::View.Docker.List.Images images;
         public Gtk.StackSwitcher perspective_switcher = new Gtk.StackSwitcher();
         public Dockery.View.EventStream.LiveStreamComponent live_stream_component = new Dockery.View.EventStream.LiveStreamComponent();
+        private Gtk.Paned local_perspective_paned = new Gtk.Paned(Gtk.Orientation.VERTICAL);
         
         construct {
             this.infobar.set_no_show_all(true);
@@ -43,15 +44,14 @@ namespace Dockery.View {
             this.images.init(new global::Sdk.Docker.Model.ImageCollection());
 
             Gtk.Stack stack = new Gtk.Stack();
+            stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE);
+
             this.sidebar = new SideBar(stack);
 
             //Perspectives
             this.setup_local_docker_perspective(stack);
-            perspectives.add_titled(local_docker_perspective, "local-docker", "Local Docker stack");
+            perspectives.add_titled(local_perspective_paned, "local-docker", "Local Docker stack");
             this.pack_start(perspectives, true, true, 0);
-
-            //Event panel
-            this.pack_start(this.live_stream_component, false, true, 0);
 
             //Infobar
             this.pack_end(infobar, false, true, 0);
@@ -99,13 +99,6 @@ namespace Dockery.View {
             });
 
             //End connect signals
-            this.local_docker_perspective.pack_start(settings, false, false);
-
-            var container = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
-
-            stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE);
-
-            container.pack_start(sidebar, false, true, 0);
 
             Gtk.ScrolledWindow containers_scrolled = new Gtk.ScrolledWindow(null, null);
             containers_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
@@ -117,11 +110,25 @@ namespace Dockery.View {
 
             stack.add_named(containers_scrolled, "containers");
             stack.add_named(images_scrolled, "images");
+            
+            local_docker_perspective.pack_start(settings, false, false);
+            
+            var main_view = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+            main_view.pack_start(sidebar, false, true, 0);
+            main_view.pack_start(new Gtk.Separator(Gtk.Orientation.VERTICAL), false, true, 0);
+            main_view.pack_start(stack, false, true, 0);
 
-            container.pack_start(new Gtk.Separator(Gtk.Orientation.VERTICAL), false, true, 0);
-            container.pack_start(stack, true, true, 0);
+            local_docker_perspective.pack_start(main_view, false, true);
 
-            this.local_docker_perspective.pack_start(container, true, true);
+            this.local_perspective_paned.add1(local_docker_perspective);
+            this.local_perspective_paned.add2(this.live_stream_component);
+            
+            //Compute paned positions and limits
+            this.local_perspective_paned.realize.connect(() => {
+                    int pos = this.local_perspective_paned.get_allocated_height() - 22;
+                    this.local_perspective_paned.position = pos;
+            });
+
         }
    }
 
