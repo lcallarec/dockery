@@ -10,6 +10,10 @@ else
     json_glib_version=$(shell dpkg-query -l| grep 'libjson-glib-1.0-common' | awk '{print $$3}' | sed 's/^\([0-9]\.[0-9]\).*$$/\1/g')
 endif
 
+DESKTOP_DIR_PATH := $(shell if [ -d "/usr/local/share/applications" ]; then echo "/usr/local/share/applications"; else echo "/usr/share/applications"; fi)
+DESKTOP_PATH :=$(DESKTOP_DIR_PATH)/dockery.desktop
+ICONS_DIR_PATH := $(shell if [ -d "/usr/local/share/icons" ]; then echo "/usr/local/share/icons"; else echo "/usr/share/icons"; fi)
+
 EXEC=compile
 
 .PHONY: all preprocess compile compile-resources install install-desktop-entry debug
@@ -31,17 +35,17 @@ compile: preprocess compile-resources
 compile-resources:
 	glib-compile-resources gresource.xml --target=resources.c --generate-source
 
-install: clean install-desktop-entry
+install: install-desktop-entry
 	cp -f dockery /usr/bin/dockery
 
 install-desktop-entry:
-	rm -rf /usr/local/share/applications/dockery.desktop
-	cp -f desktop/dockery.desktop /usr/local/share/applications/dockery.desktop
-	chmod 0644 /usr/local/share/applications/dockery.desktop
-	cp desktop/icons/dockery.svg /usr/share/icons/hicolor/scalable/apps/dockery.png
-	cp desktop/icons/dockeryx256.png /usr/share/icons/hicolor/256x256/apps/dockery.png
-	cp desktop/icons/dockeryx48.png /usr/share/icons/hicolor/48x48/apps/dockery.png
-	gtk-update-icon-cache /usr/share/icons/hicolor
+	rm -rf $(DESKTOP_PATH)
+	cp -f desktop/dockery.desktop $(DESKTOP_PATH)
+	chmod 0644 $(DESKTOP_PATH)
+	cp desktop/icons/dockeryx256.png $(ICONS_DIR_PATH)/hicolor/256x256/apps/dockery.png
+	cp desktop/icons/dockery.svg $(ICONS_DIR_PATH)/hicolor/scalable/apps/dockery.png
+	cp desktop/icons/dockeryx48.png $(ICONS_DIR_PATH)/hicolor/48x48/apps/dockery.png
+	gtk-update-icon-cache $(ICONS_DIR_PATH)/hicolor
 
 clean:
 	rm -f dockery
