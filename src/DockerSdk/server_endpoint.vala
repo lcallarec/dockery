@@ -9,7 +9,7 @@ namespace Dockery.DockerSdk {
      */
     public class ServerEndpoint : Endpoint {
 
-        public ServerEndpoint(Client client) {
+        public ServerEndpoint(Client.Client client) {
             base(client);
         }
 

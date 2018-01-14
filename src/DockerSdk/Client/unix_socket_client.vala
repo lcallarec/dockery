@@ -1,4 +1,4 @@
-namespace Dockery.DockerSdk {
+namespace Dockery.DockerSdk.Client {
 
     using Dockery;
 

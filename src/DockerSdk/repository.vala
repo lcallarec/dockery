@@ -11,9 +11,9 @@ namespace Dockery.DockerSdk {
          */
         public signal void connected(Repository repository);
 
-        public Io.Response response     { get; protected set;}
+        public Io.Response response { get; protected set;}
 
-        private Client  client     { get; private set;}
+        private Client.Client client { get; private set;}
 
         public ImageEndpoint images() {
             return this._images;
@@ -32,7 +32,7 @@ namespace Dockery.DockerSdk {
             this.connected(this);
         }
 
-        public Repository(Client client) {
+        public Repository(Client.Client client) {
             this.client     = client;
             this._images     = new ImageEndpoint(client);
             this._containers = new ContainerEndpoint(client);

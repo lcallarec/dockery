@@ -31,7 +31,7 @@ namespace Dockery.DockerSdk {
      */
     public class ContainerEndpoint : Endpoint {
 
-        public ContainerEndpoint(Client client) {
+        public ContainerEndpoint(Client.Client client) {
             base(client);
         }
 

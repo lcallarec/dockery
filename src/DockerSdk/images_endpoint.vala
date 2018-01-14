@@ -19,7 +19,7 @@ namespace Dockery.DockerSdk {
      */
     public class ImageEndpoint : Endpoint {
 
-         public ImageEndpoint(Client client) {
+         public ImageEndpoint(Client.Client client) {
              base(client);
          }
 

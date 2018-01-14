@@ -169,7 +169,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
 
     protected Dockery.DockerSdk.Repository? create_repository(string uri) {
 
-        Dockery.DockerSdk.Client? client = Dockery.DockerSdk.ClientFactory.create_from_uri(uri);
+        Dockery.DockerSdk.Client.Client? client = Dockery.DockerSdk.Client.ClientFactory.create_from_uri(uri);
         
         if (client != null) {
             return new Dockery.DockerSdk.Repository(client);

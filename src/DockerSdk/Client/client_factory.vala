@@ -1,4 +1,4 @@
-namespace Dockery.DockerSdk {
+namespace Dockery.DockerSdk.Client {
 
     public class ClientFactory : GLib.Object {
 
@@ -22,7 +22,7 @@ namespace Dockery.DockerSdk {
             types[0] = typeof(UnixSocketClient);
             types[1] = typeof(HttpClient);
     
-            return  types;
+            return types;
         }
 
     }

@@ -5,11 +5,11 @@ namespace Dockery.DockerSdk {
      */
     public abstract class Endpoint {
 
-        protected Client client;
+        protected Client.Client client;
 
         protected Io.QueryStringBuilder filter_builder = new Io.QueryStringBuilder();
 
-        public Endpoint(Client client) {
+        public Endpoint(Client.Client client) {
             this.client = client;
         }
 
