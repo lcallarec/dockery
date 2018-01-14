@@ -161,7 +161,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
 
     protected string? discover_connection() {
 
-        var endpoint_discovery = new Dockery.DockerSdk.UnixSocketEndpointDiscovery();
+        var endpoint_discovery = new Dockery.DockerSdk.Endpoint.UnixSocketEndpointDiscovery();
 
         return endpoint_discovery.discover();
     }

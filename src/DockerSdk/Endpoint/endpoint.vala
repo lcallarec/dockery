@@ -1,4 +1,4 @@
-namespace Dockery.DockerSdk {
+namespace Dockery.DockerSdk.Endpoint {
 
     /**
      * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21

@@ -1,4 +1,4 @@
-namespace Dockery.DockerSdk {
+namespace Dockery.DockerSdk.Endpoint {
 
     public class UnixSocketEndpointDiscovery : EndpointDiscovery, GLib.Object {
 
@@ -15,6 +15,5 @@ namespace Dockery.DockerSdk {
 
             return null;
         }
-
     }
 }
