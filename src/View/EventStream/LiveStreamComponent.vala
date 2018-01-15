@@ -32,7 +32,7 @@ namespace Dockery.View.EventStream {
             string displayed_event = event.to_string() + "\n\n";
             
             Gtk.TextIter end_iter = this.get_end_iter();
-            view.get_buffer().insert(ref end_iter, displayed_event, displayed_event.length);
+            view.get_buffer().insert(ref end_iter, displayed_event, -1);
 
             Gtk.TextMark mark = view.get_buffer().get_insert();
             view.scroll_mark_onscreen(mark);

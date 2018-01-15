@@ -7,8 +7,9 @@ namespace Dockery.DockerSdk.Dto.Events {
         public string id { get; construct set;}
         public string from { get; construct set;}
 
-        public ContainerEvent(string event, string action, string scope, int64 timeNano, string status, string id, string from) {
+        public ContainerEvent(string event, ContainerEventActor actor, string action, string scope, int64 timeNano, string status, string id, string from) {
             this.event = event;
+            this.actor = actor;
             this.action = action;
             this.scope = scope;            
             this.timeNano = timeNano;
