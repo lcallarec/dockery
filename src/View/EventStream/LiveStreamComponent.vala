@@ -1,4 +1,7 @@
 namespace Dockery.View.EventStream {
+
+    using global::Dockery.DockerSdk;
+
      /**
      * Display live stream event
      */
@@ -24,8 +27,10 @@ namespace Dockery.View.EventStream {
             this.pack_start(this.expander, true, true, 0);
         }
 
-        public void append(string event) {
-            string displayed_event = event + "\n\n";
+        public void append(Dto.Events.Event event) {
+
+            string displayed_event = event.to_string() + "\n\n";
+            
             Gtk.TextIter end_iter = this.get_end_iter();
             view.get_buffer().insert(ref end_iter, displayed_event, displayed_event.length);
 
