@@ -18,10 +18,11 @@ namespace Dockery.DockerSdk.Serializer {
             string scope = rootObject.get_string_member("scope");
             int32 time = (int32) rootObject.get_int_member("time");
             int64 timeNano = rootObject.get_int_member("timeNano");
-            
+
+            Json.Object actorMember = rootObject.get_object_member("Actor");
+
             switch(type) {
                 case "container":
-                    Json.Object actorMember = rootObject.get_object_member("Actor");
                     return eventDTO = new Dto.Events.ContainerEvent(
                         event,
                         new Dto.Events.ContainerEventActor(
@@ -38,8 +39,23 @@ namespace Dockery.DockerSdk.Serializer {
                         rootObject.get_string_member("id"),
                         rootObject.get_string_member("from")
                     );
+                case "image":
+                    return eventDTO = new Dto.Events.ImageEvent(
+                        event,
+                        new Dto.Events.ImageEventActor(
+                            actorMember.get_string_member("ID"),
+                            new Dto.Events.ImageEventActorAttributes(
+                                actorMember.get_object_member("Attributes").get_string_member("name")
+                            )
+                        ),
+                        action,
+                        scope,
+                        timeNano,
+                        rootObject.get_string_member("status"),
+                        rootObject.get_string_member("id")
+                    );                    
                 default:
-                    return new Dto.Events.OtherEvent(event);
+                    return new Dto.Events.OtherEvent(event, action, scope, timeNano);
             }
 
             return null;
