@@ -69,6 +69,19 @@ namespace Dockery.DockerSdk.Serializer {
                         scope,
                         timeNano
                     );
+                case "volume":
+                    return eventDTO = new Dto.Events.VolumeEvent(
+                        event,
+                        new Dto.Events.VolumeEventActor(
+                            actorMember.get_string_member("ID"),
+                            new Dto.Events.VolumeEventActorAttributes(
+                                actorMember.get_object_member("Attributes").get_string_member("driver")
+                            )
+                        ),
+                        action,
+                        scope,
+                        timeNano
+                    );                    
                 default:
                     return new Dto.Events.OtherEvent(event, action, scope, timeNano);
             }
