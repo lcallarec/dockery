@@ -1,15 +1,15 @@
 namespace Dockery.Listener {
 
-    using global::Dockery;
+    using global::Dockery.DockerSdk;
 
     public class DaemonEventListener : GLib.Object {
     
-        private DockerSdk.Repository repository;
+        private Repository repository;
         private View.EventStream.LiveStreamComponent live_stream_component;
-        private DockerSdk.Io.FutureResponse future_response;
-        private DockerSdk.Serializer.EventDeserializer builder = new DockerSdk.Serializer.EventDeserializer();
+        private Io.FutureResponse future_response;
+        private Serializer.EventDeserializer builder = new Serializer.EventDeserializer();
 
-        public DaemonEventListener(DockerSdk.Repository repository, View.EventStream.LiveStreamComponent live_stream_component) {
+        public DaemonEventListener(Repository repository, View.EventStream.LiveStreamComponent live_stream_component) {
             this.repository = repository;
             this.live_stream_component = live_stream_component;
             this.future_response = this.repository.daemon().events();
@@ -18,9 +18,13 @@ namespace Dockery.Listener {
         public void listen() {
             
             this.future_response.on_payload_line_received.connect((event) => {
-                var eventDTO = builder.deserialize(event);
-                if (eventDTO != null) {
-                    this.live_stream_component.append(eventDTO);
+                try {
+                    var eventDTO = builder.deserialize(event);
+                    if (eventDTO != null) {
+                        this.live_stream_component.append(eventDTO);
+                    }
+                } catch (Serializer.DeserializationError e) {
+                    GLib.warning(e.message);
                 }
             });
         }
