@@ -53,7 +53,22 @@ namespace Dockery.DockerSdk.Serializer {
                         timeNano,
                         rootObject.get_string_member("status"),
                         rootObject.get_string_member("id")
-                    );                    
+                    );
+                case "network":
+                    return eventDTO = new Dto.Events.NetworkEvent(
+                        event,
+                        new Dto.Events.NetworkEventActor(
+                            actorMember.get_string_member("ID"),
+                            new Dto.Events.NetworkEventActorAttributes(
+                                actorMember.get_object_member("Attributes").get_string_member("container"),
+                                actorMember.get_object_member("Attributes").get_string_member("name"),
+                                actorMember.get_object_member("Attributes").get_string_member("type")
+                            )
+                        ),
+                        action,
+                        scope,
+                        timeNano
+                    );
                 default:
                     return new Dto.Events.OtherEvent(event, action, scope, timeNano);
             }
