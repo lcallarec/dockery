@@ -17,7 +17,6 @@ namespace Dockery.DockerSdk.Serializer {
                 string type = rootObject.get_string_member("Type");
                 string action = rootObject.get_string_member("Action");
                 string scope = rootObject.get_string_member("scope");
-                int32 time = (int32) rootObject.get_int_member("time");
                 int64 timeNano = rootObject.get_int_member("timeNano");
 
                 Json.Object actorMember = rootObject.get_object_member("Actor");
