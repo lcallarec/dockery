@@ -89,15 +89,15 @@ Yes, likely from me. And whainspectiont about _from_ **you** ? Feel free to cont
 # More screenshots
 
 | ![Main SC](docs/resources/screenshots/hub.png) |
-|:---:|:---:|
+|:---:|
 | *Search and download image to docker public registry* |
 
 
 | ![Main SC](docs/resources/screenshots/live-events.png) |
-|:---:|:---:|
+|:---:|
 | *Watch live docker daemon event stream* |
 
 
 | ![Main SC](docs/resources/screenshots/container-inspect.png) |
-|:---:|:---:|
+|:---:|
 | *Container inspection* |
