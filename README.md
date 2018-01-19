@@ -84,7 +84,7 @@ Feel free to contribute quicker and better than I can :p Any contributions are w
 
 # More features ?
 
-Yes, likely from me. And whainspectiont about _from_ **you** ? Feel free to contribute, everyone is welcome !
+Feel free to ask any feature you'd like to have !
 
 # More screenshots
 
