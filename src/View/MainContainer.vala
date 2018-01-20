@@ -11,6 +11,7 @@ namespace Dockery.View {
         public SideBar sidebar;
         public global::View.Docker.List.Containers containers;
         public global::View.Docker.List.Images images;
+        public global::Dockery.View.ObjectList.Volumes volumes;
         public Gtk.StackSwitcher perspective_switcher = new Gtk.StackSwitcher();
         public EventStream.LiveStreamComponent live_stream_component = new EventStream.LiveStreamComponent();
         private Gtk.Paned local_perspective_paned = new Gtk.Paned(Gtk.Orientation.VERTICAL);
@@ -45,6 +46,9 @@ namespace Dockery.View {
             
             this.images = docker_view.create_images_view();
             this.images.init(new Model.ImageCollection());
+
+            this.volumes = docker_view.create_volumes_view();
+            this.volumes.init(new Model.VolumeCollection());
 
             Gtk.Stack stack = new Gtk.Stack();
             stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE);
@@ -111,8 +115,13 @@ namespace Dockery.View {
             images_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
             images_scrolled.add(images);
 
+            Gtk.ScrolledWindow volumes_scrolled = new Gtk.ScrolledWindow(null, null);
+            volumes_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+            volumes_scrolled.add(volumes);
+
             stack.add_named(containers_scrolled, "containers");
             stack.add_named(images_scrolled, "images");
+            stack.add_named(volumes_scrolled, "volumes");
             
             local_docker_perspective.pack_start(settings, false, false);
             
@@ -128,8 +137,8 @@ namespace Dockery.View {
             
             //Compute paned positions and limits
             this.local_perspective_paned.realize.connect(() => {
-                    int pos = this.local_perspective_paned.get_allocated_height() - 22;
-                    this.local_perspective_paned.position = pos;
+                int pos = this.local_perspective_paned.get_allocated_height() - 22;
+                this.local_perspective_paned.position = pos;
             });
 
         }
@@ -143,6 +152,10 @@ namespace Dockery.View {
 
         public global::View.Docker.List.Containers create_containers_view() {
             return new global::View.Docker.List.Containers();
+        }
+
+         public global::Dockery.View.ObjectList.Volumes create_volumes_view() {
+            return new global::Dockery.View.ObjectList.Volumes();
         }
    }
 }

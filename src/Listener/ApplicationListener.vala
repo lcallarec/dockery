@@ -9,6 +9,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
     private Dockery.View.MainContainer view;
     private Dockery.Listener.ContainerListListener container_list_listener;
     private Dockery.Listener.ImageListListener image_list_listener;
+    private Dockery.Listener.VolumeListListener volume_list_listener;
     private Dockery.Listener.DaemonEventListener daemon_event_listener;
     private Dockery.Listener.StackHubListener stack_hub_listener;
 
@@ -36,6 +37,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         this.listen_stack_hub();
         this.listen_container_view();
         this.listen_image_view();
+        this.listen_volumes_view();
     }
 
     private void listen_daemon_events() {
@@ -62,6 +64,11 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         image_list_listener.image_states_changed.connect(() => this.init_image_list());
         image_list_listener.feedback.connect((type, message) =>  message_dispatcher.dispatch(type, message));
         image_list_listener.listen();
+    }
+
+    private void listen_volumes_view() {
+        volume_list_listener = new Dockery.Listener.VolumeListListener(window, repository, view.volumes);
+        volume_list_listener.listen();
     }
 
     private void listen_headerbar() {
@@ -111,6 +118,17 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         }
     }
 
+    protected void init_volume_list() {
+        Dockery.DockerSdk.Model.VolumeCollection volumes = new Dockery.DockerSdk.Model.VolumeCollection();
+        try {
+            volumes = repository.volumes().list();
+        } catch (Dockery.DockerSdk.Io.RequestError e) {
+            message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
+        } finally {
+            this.view.volumes.init(volumes);
+        }
+    }
+
     protected void init_container_list() {
         try {
             var container_collection = new Dockery.DockerSdk.Model.ContainerCollection();
@@ -124,7 +142,6 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         } catch (Dockery.DockerSdk.Io.RequestError e) {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
         }
-
     }
 
     protected bool __connect(string docker_endpoint) throws Error {
@@ -142,7 +159,6 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         }
 
         return false;
-        
     }
 
      protected bool __disconnect() {
@@ -155,6 +171,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
 
         this.view.images.init(new Dockery.DockerSdk.Model.ImageCollection());
         this.view.containers.init(new Dockery.DockerSdk.Model.ContainerCollection());
+        this.view.volumes.init(new Dockery.DockerSdk.Model.VolumeCollection());
 
         return true;
     }
@@ -185,6 +202,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         this.view.on_docker_service_connect_success(docker_entrypoint);
         this.init_image_list();
         this.init_container_list();
+        this.init_volume_list();
         message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
     }
 }

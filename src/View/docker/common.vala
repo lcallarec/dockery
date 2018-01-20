@@ -21,6 +21,14 @@ namespace View.Docker {
         public abstract View.Docker.List.Images init(ImageCollection images, bool show_after_refresh = true);
     }
 
+    public interface VolumeViewable : Gtk.Widget {
+
+        /**
+         * Init the volumes view from a given collection of volumes
+         */
+        public abstract Dockery.View.ObjectList.Volumes init(VolumeCollection volumes, bool show_after_refresh = true);
+    }
+
     /**
      *
      */

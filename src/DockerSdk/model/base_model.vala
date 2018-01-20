@@ -15,7 +15,6 @@ namespace Dockery.DockerSdk.Model {
                 } else {
                     _id = value;
                 }
-                
             }
         }
 

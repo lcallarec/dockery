@@ -13,7 +13,6 @@ namespace Dockery.DockerSdk.Endpoint {
          public Model.VolumeCollection list() throws Io.RequestError {
 
             try {
-                GLib.warning("LIST ----------------------------------------");
                 return parse_volume_list_payload(this.client.send("GET", "/volumes").payload);
             } catch (Io.RequestError e) {
                  throw new Io.RequestError.FATAL("Error while fetching volumes list from docker daemon : %s".printf(e.message));
@@ -64,6 +63,5 @@ namespace Dockery.DockerSdk.Endpoint {
 
             return volumes;
         }
-
     }
 }

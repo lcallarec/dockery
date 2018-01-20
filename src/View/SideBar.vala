@@ -14,6 +14,7 @@ namespace Dockery.View {
 
             add_containers_row();
             add_images_row();
+            add_volumes_row();
         }
 
         public void add_row_header(Gtk.ListBoxRow row, Gtk.ListBoxRow? before) {
@@ -66,5 +67,28 @@ namespace Dockery.View {
 
             add(images_row);
         }
+
+        private void add_volumes_row() {
+            Gtk.ListBoxRow volumes_row = new Gtk.ListBoxRow();
+            volumes_row.height_request = SideBar.ROW_HEIGHT;
+            volumes_row.name = "volumes";
+
+            var volumes_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+            volumes_box.height_request = SideBar.ROW_HEIGHT;
+
+            var volumes_row_label = new Gtk.Label("Volumes");
+            volumes_row_label.halign = Gtk.Align.START;
+
+            volumes_row.add(volumes_box);
+
+            var icon = new Gtk.Image();
+            icon.set_from_icon_name("drive-multidisk-symbolic", Gtk.IconSize.BUTTON);
+            icon.opacity = 0.7;
+
+            volumes_box.pack_start(icon, false, true, 5);
+            volumes_box.pack_start(volumes_row_label);
+
+            add(volumes_row);
+        }        
     }
 }
