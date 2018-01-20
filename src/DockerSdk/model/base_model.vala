@@ -9,7 +9,14 @@ namespace Dockery.DockerSdk.Model {
 
         public string id {
             get { return _id; }
-            private set { _id = value.substring(0, 12); }
+            private set { 
+                if (value.length > 12) {
+                    _id = value.substring(0, 12);
+                } else {
+                    _id = value;
+                }
+                
+            }
         }
 
         public string full_id {

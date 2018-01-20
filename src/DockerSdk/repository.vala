@@ -5,6 +5,7 @@ namespace Dockery.DockerSdk {
         private Endpoint.ImageEndpoint     _images;
         private Endpoint.ContainerEndpoint _containers;
         private Endpoint.ServerEndpoint    _server;
+        private Endpoint.VolumeEndpoint    _volumes;
 
         /**
          * Event emitted on connection
@@ -27,6 +28,10 @@ namespace Dockery.DockerSdk {
             return this._server;
         }
 
+        public Endpoint.VolumeEndpoint volumes() {
+            return this._volumes;
+        }
+
         public new void connect() throws Error {
             this._server.ping();
             this.connected(this);
@@ -37,6 +42,7 @@ namespace Dockery.DockerSdk {
             this._images     = new Endpoint.ImageEndpoint(client);
             this._containers = new Endpoint.ContainerEndpoint(client);
             this._server     = new Endpoint.ServerEndpoint(client);
+            this._volumes    = new Endpoint.VolumeEndpoint(client);
         }
     }
 }
