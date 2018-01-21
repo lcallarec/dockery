@@ -13,13 +13,15 @@ Until the project move the build system from plain _Makefile_ to _autotools_, th
 * Connect to a local docker deamon via Unix Socket (http support coming soon)
  (autodiscover socket location)
 
-* Get container list and execute some basic actions
+* List all containers and execute some basic actions
   - update status (kill, pause, stop, start, restart)
   - rename 
   - inspect
   - destroy
 
-* Get image list and basic informations
+* List all images, with basic informations
+
+* List all created volumes
 
 * Create a container from an image (with command overriding)
 
