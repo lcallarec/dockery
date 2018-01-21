@@ -11,10 +11,9 @@ namespace Dockery.View {
         
         public Dialog(int width, int height, string title, Gtk.Window? parent = null, bool is_modal = true, int use_header_bar = 1) {
             
-            #if GTK_GTE_3_18
+            #if NOT_ON_TRAVIS
             Object(use_header_bar: use_header_bar);
             #endif
-            
             this.set_default_size(width, height);
             this.title  = title;
             if (parent != null) {

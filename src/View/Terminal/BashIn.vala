@@ -22,19 +22,14 @@ namespace Dockery.View.Terminal {
             });
         }
 
-        public Pid start() throws GLib.Error {
+        public void start() throws GLib.Error {
 
             string[] command = {"/usr/bin/docker", "exec", "-ti", container.id, "bash"};
 
             Pid pid;
             
-            #if LIBVTE_2.91
+            #if PPS_LIBVTE_2_90
             fork_command_full(
-            #endif
-            
-            #if LIBVTE_2.90
-            spawn_sync(
-            #endif
                 Vte.PtyFlags.DEFAULT,
                 Environment.get_variable("HOME"),
                 command,
@@ -42,12 +37,21 @@ namespace Dockery.View.Terminal {
                 SpawnFlags.LEAVE_DESCRIPTORS_OPEN,
                 null,
                 out pid
-            #if LIBVTE_2.90
-            ,null
+            );    
             #endif
-            );
             
-            return pid;
+            #if PPS_LIBVTE_2_91
+            spawn_sync(
+                Vte.PtyFlags.DEFAULT,
+                Environment.get_variable("HOME"),
+                command,
+                new string[]{Environment.get_variable("HOME"), Environment.get_variable("PATH")},
+                SpawnFlags.LEAVE_DESCRIPTORS_OPEN,
+                null,
+                out pid,
+                null
+            );
+            #endif
         }
 
         public Gtk.Container? parent_container_widget {

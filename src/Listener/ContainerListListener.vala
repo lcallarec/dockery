@@ -185,14 +185,12 @@ namespace Dockery.Listener {
                     var inspection_data = repository.containers().inspect(container);
                     Json.Parser parser = new Json.Parser();
                     parser.load_from_data(inspection_data);
-                    
-                    #if JSONGLIB_1.2
-                    var pretty_inspection_data = inspection_data;
-                    #endif
 
-                    #if JSONGLIB_0.1
+                    #if JSON_PRETTY_PRINT
                     Json.Node node = parser.get_root();
                     var pretty_inspection_data = Json.to_string(node, true);
+                    #else
+                    var pretty_inspection_data = inspection_data;
                     #endif
 
                     string message = "Low-level information successfully fetched for container %s".printf(container.id);
@@ -210,7 +208,7 @@ namespace Dockery.Listener {
         private void container_rename_request() {
             this.container_list.container_rename_request.connect((container, relative_to, pointing_to) => {
                 
-                #if GTK_GTE_3_16
+                #if NOT_ON_TRAVIS
                 var pop = new Gtk.Popover(relative_to);
                 pop.position = Gtk.PositionType.BOTTOM;
                 pop.pointing_to = pointing_to;

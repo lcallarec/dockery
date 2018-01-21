@@ -1,6 +1,6 @@
-SHELL := /bin/bash
+SHELL=/bin/bash
 
-gtk_version := $(shell pkg-config --modversion gtk+-3.0 | cut -d'.' -f1,2)
+gtk_version= $(shell pkg-config --modversion gtk+-3.0 | cut -d'.' -f1,2)
 
 ifdef ($(TRAVIS))
 	libvte_version=$(shell dpkg-query -l|grep 'libvte-2.9[0-9]-dev' | sed 's/^.*libvte-([0-9].[0-9][0-9])-dev.*/$1/g')
@@ -10,26 +10,44 @@ else
     json_glib_version=$(shell dpkg-query -l| grep 'libjson-glib-1.0-common' | awk '{print $$3}' | sed 's/^\([0-9]\.[0-9]\).*$$/\1/g')
 endif
 
+PPSYMBOLS=
+
+ifeq ($(libvte_version),2.91)
+        PPSYMBOLS :=-D PPS_LIBVTE_2_91
+endif
+ifeq ($(libvte_version),2.90)
+        PPSYMBOLS :=-D PPS_LIBVTE_2_91
+endif
+
+ifeq ($(json_glib_version), 1.2)
+        PPSYMBOLS :=-D JSON_PRETTY_PRINT
+endif
+
+ifneq ($(TRAVIS), true)
+        PPSYMBOLS :=-D NOT_ON_TRAVIS
+endif
+
+SOURCES=$(shell find src/ -name *.vala)
+
 DESKTOP_DIR_PATH := $(shell if [ -d "/usr/local/share/applications" ]; then echo "/usr/local/share/applications"; else echo "/usr/share/applications"; fi)
 DESKTOP_PATH :=$(DESKTOP_DIR_PATH)/dockery.desktop
 ICONS_DIR_PATH := $(shell if [ -d "/usr/local/share/icons" ]; then echo "/usr/local/share/icons"; else echo "/usr/share/icons"; fi)
 
 EXEC=compile
 
-.PHONY: all preprocess compile compile-resources install install-desktop-entry debug
+.PHONY: all clean compile compile-resources install install-desktop-entry debug
 
 all: $(EXEC)
 
-preprocess:
-	mkdir -p build/source && build/pre-process.py src build/source $(gtk_version) $(libvte_version) $(json_glib_version)
-
-compile: preprocess compile-resources
-	valac -g --save-temps --thread \
+compile: compile-resources
+	echo $(libvte_version)
+	echo $(PPSYMBOLS)
+	valac $(PPSYMBOLS) -g --save-temps --thread \
         -X -w -X -lm -v \
         --target-glib 2.32 \
         --pkg gtk+-3.0 --pkg gio-2.0 --pkg libsoup-2.4 \
         --pkg gio-unix-2.0 --pkg gee-0.8 --pkg json-glib-1.0 --pkg vte-$(libvte_version) \
-        build/source/*.vala resources.c --gresources gresource.xml \
+        $(SOURCES) resources.c --gresources gresource.xml \
         -o dockery
 
 compile-resources:
@@ -49,7 +67,6 @@ install-desktop-entry:
 
 clean:
 	rm -f dockery
-	rm -rf build/source
 	find . -type f -name '*.c' -delete
 
 debug: clean compile

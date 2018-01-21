@@ -69,19 +69,17 @@ public class DockerManager : Gtk.Window {
 
         var provider = new Gtk.CssProvider();
 
-        #if GTK_LTE_3_14
-        provider.load_from_path(css_path);
-        #endif
-
-        #if GTK_GTE_3_16
+        #if NOT_ON_TRAVIS
         provider.load_from_resource("/org/lcallarec/dockery/" + css_path);
+        #else
+        provider.load_from_path(css_path);
         #endif
 
         return provider;
     }
 
     protected void set_icon_theme(string icon_path) {
-        #if GTK_GTE_3_16
+        #if NOT_ON_TRAVIS
         new Gtk.IconTheme().get_default().add_resource_path("/org/lcallarec/dockery/" + icon_path);
         #endif
     }
