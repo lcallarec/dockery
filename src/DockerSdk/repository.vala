@@ -1,5 +1,7 @@
 namespace Dockery.DockerSdk {
 
+    using global::Dockery.DockerSdk.Serializer;
+
     public class Repository : Endpoint.EndpointAware, GLib.Object {
 
         private Endpoint.ImageEndpoint     _images;
@@ -39,7 +41,7 @@ namespace Dockery.DockerSdk {
 
         public Repository(Client.Client client) {
             this.client     = client;
-            this._images     = new Endpoint.ImageEndpoint(client);
+            this._images     = new Endpoint.ImageEndpoint(client, new ImageDeserializer());
             this._containers = new Endpoint.ContainerEndpoint(client);
             this._server     = new Endpoint.ServerEndpoint(client);
             this._volumes    = new Endpoint.VolumeEndpoint(client);

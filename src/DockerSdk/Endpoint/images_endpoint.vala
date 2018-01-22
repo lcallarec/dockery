@@ -1,5 +1,7 @@
 namespace Dockery.DockerSdk.Endpoint {
 
+    using global::Dockery.DockerSdk.Serializer;
+
     /**
      * Images related endpoints
      *
@@ -19,19 +21,22 @@ namespace Dockery.DockerSdk.Endpoint {
      */
     public class ImageEndpoint : Endpoint {
 
-         public ImageEndpoint(Client.Client client) {
-             base(client);
-         }
+        private ImageDeserializerInterface image_deserializer;
+
+        public ImageEndpoint(Client.Client client, ImageDeserializerInterface image_deserializer) {
+            base(client);
+            this.image_deserializer = image_deserializer;
+        }
 
          /**
           * Get a list of all images
           * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers
           */
-         public Model.ImageCollection list() throws Io.RequestError {
+        public Model.ImageCollection list() throws Io.RequestError {
 
             try {
 
-                return parse_images_list_payload(this.client.send("GET", "/images/json").payload);
+                return deserializeImages(this.client.send("GET", "/images/json").payload);
 
             } catch (Io.RequestError e) {
                  throw new Io.RequestError.FATAL("Error while fetching images list from docker daemon : %s".printf(e.message));
@@ -123,30 +128,15 @@ namespace Dockery.DockerSdk.Endpoint {
         }
 
         /**
-         * Parse images list response payload
+         * Deserialize images list response payload
          */
-        private Model.ImageCollection parse_images_list_payload(string payload) {
+        private Model.ImageCollection deserializeImages(string payload) {
 
-            var images = new Model.ImageCollection();
             try {
-                var parser = new Json.Parser();
-                parser.load_from_data(payload);
-
-                var nodes = parser.get_root().get_array().get_elements();
-
-                foreach (unowned Json.Node node in nodes) {
-                    images.add(new Model.Image.from(
-                        node.get_object().get_string_member("Id"),
-                        node.get_object().get_int_member("Created"),
-                        node.get_object().get_array_member("RepoTags").get_string_element(0),
-                        (uint) node.get_object().get_int_member("VirtualSize")
-                    ));
-                }
+                return image_deserializer.deserializeList(payload);
             } catch (Error e) {
-                return images;
+                return new Model.ImageCollection();
             }
-
-            return images;
         }
 
         /**
