@@ -9,3 +9,4 @@ before_install:
  
 script:
   - TRAVIS=true make
+  - TRAVIS=true make test
