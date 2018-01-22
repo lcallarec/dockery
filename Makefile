@@ -28,6 +28,8 @@ ifneq ($(TRAVIS), true)
 endif
 
 SOURCES=$(shell find src/ -name *.vala)
+SOURCES_FOR_TESTS=$(shell find src/ -name *.vala |grep -v "main.vala" |grep -v "ApplicationListener.vala" |grep -v "MainContainer.vala" |grep -v "StackHubListener.vala")
+SOURCES_TESTS=$(shell find tests/ -name *.vala)
 
 DESKTOP_DIR_PATH := $(shell if [ -d "/usr/local/share/applications" ]; then echo "/usr/local/share/applications"; else echo "/usr/share/applications"; fi)
 DESKTOP_PATH :=$(DESKTOP_DIR_PATH)/dockery.desktop
@@ -71,3 +73,12 @@ clean:
 
 debug: clean compile
 
+test:
+	@echo "Compiling... It can take a while."
+	@valac $(PPSYMBOLS) --disable-warnings --thread -X -w -X -lm --target-glib 2.32 \
+	--pkg gtk+-3.0 --pkg gio-2.0 --pkg libsoup-2.4 \
+        --pkg gio-unix-2.0 --pkg gee-0.8 --pkg json-glib-1.0 --pkg vte-$(libvte_version) \
+        $(SOURCES_FOR_TESTS) $(SOURCES_TESTS) -o dockery-tests
+	@echo "Executing tests suites :"
+	@echo
+	@./dockery-tests && rm ./dockery-tests
