@@ -30,14 +30,5 @@ namespace Dockery.DockerSdk.Model {
             
             return ids;
         }
-        
-        public T? first() {
-            if (iterator().has_next()) {
-                return iterator().next();
-            }
-            
-            return null;
-        }
-
     }
 }
