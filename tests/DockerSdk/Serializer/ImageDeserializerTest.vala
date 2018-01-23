@@ -29,6 +29,18 @@ private void register_image_deserializer_test() {
         assert(images.get(1).id == "bafe274aa7c0");
         assert(images.get(1).name == "ubuntu:14.04");
     });
+
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/GetImagesFromBadFormattedPayload", () => {
+
+        var deserializer = new Serializer.ImageDeserializer();
+
+        try {
+          var images = deserializer.deserializeList(malformatted_json());
+          assert_not_reached();
+        } catch(Error e) {
+          assert(e is Serializer.DeserializationError.IMAGES);
+        }
+    });
 }
 
 private string one_complete_json_image() {
@@ -75,3 +87,6 @@ private string many_complete_json_image() {
         """;
 }
 
+private string malformatted_json() {
+  return "[{]";
+}
