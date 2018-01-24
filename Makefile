@@ -42,9 +42,7 @@ EXEC=compile
 all: $(EXEC)
 
 compile: compile-resources
-	echo $(libvte_version)
-	echo $(PPSYMBOLS)
-	valac $(PPSYMBOLS) -g --save-temps --thread \
+	@valac $(PPSYMBOLS) -g --save-temps --thread \
         -X -w -X -lm -v \
         --target-glib 2.32 \
         --pkg gtk+-3.0 --pkg gio-2.0 --pkg libsoup-2.4 \
