@@ -1,14 +1,19 @@
 SHELL=/bin/bash
 
-gtk_version= $(shell pkg-config --modversion gtk+-3.0 | cut -d'.' -f1,2)
+gtk_version=$(shell pkg-config --modversion gtk+-3.0 | cut -d'.' -f1,2)
 
 ifdef ($(TRAVIS))
 	libvte_version=$(shell dpkg-query -l|grep 'libvte-2.9[0-9]-dev' | sed 's/^.*libvte-([0-9].[0-9][0-9])-dev.*/$1/g')
-    json_glib_version=$(shell dpkg-query -l| grep 'libjson-glib-1.0-common' | awk '{print $3}' | sed 's/^\([0-9]\.[0-9]\).*/$1/g')
+	json_glib_version=$(shell dpkg-query -l| grep 'libjson-glib-1.0-common' | awk '{print $3}' | sed 's/^\([0-9]\.[0-9]\).*/$1/g')
 else
-    libvte_version=$(shell dpkg-query -l|grep 'libvte-2.9[0-9]-dev' | sed 's/^.*libvte-\([0-9].[0-9][0-9]\)-dev.*$$/\1/g')
-    json_glib_version=$(shell dpkg-query -l| grep 'libjson-glib-1.0-common' | awk '{print $$3}' | sed 's/^\([0-9]\.[0-9]\).*$$/\1/g')
+    	libvte_version=$(shell dpkg-query -l|grep 'libvte-2.9[0-9]-dev' | sed 's/^.*libvte-\([0-9].[0-9][0-9]\)-dev.*$$/\1/g')
+    	json_glib_version=$(shell dpkg-query -l| grep 'libjson-glib-1.0-common' | awk '{print $$3}' | sed 's/^\([0-9]\.[0-9]\).*$$/\1/g')
 endif
+
+ifdef DEBUG
+	DEBUG= -g
+endif
+
 
 PPSYMBOLS=
 
@@ -42,7 +47,7 @@ EXEC=compile
 all: $(EXEC)
 
 compile: compile-resources
-	@valac $(PPSYMBOLS) -g --save-temps --thread \
+	valac $(PPSYMBOLS) $(DEBUG) --thread \
         -X -w -X -lm -v \
         --target-glib 2.32 \
         --pkg gtk+-3.0 --pkg gio-2.0 --pkg libsoup-2.4 \
