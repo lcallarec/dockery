@@ -28,7 +28,7 @@ namespace Dockery.View.Terminal {
 
             Pid pid;
             
-            #if PPS_LIBVTE_2_91
+            #if PPS_LIBVTE_2_90
             fork_command_full(
                 Vte.PtyFlags.DEFAULT,
                 Environment.get_variable("HOME"),
@@ -40,7 +40,7 @@ namespace Dockery.View.Terminal {
             );    
             #endif
             
-            #if PPS_LIBVTE_2_90
+            #if PPS_LIBVTE_2_91
             spawn_sync(
                 Vte.PtyFlags.DEFAULT,
                 Environment.get_variable("HOME"),
