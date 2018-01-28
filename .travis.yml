@@ -11,4 +11,4 @@ after_success:
 
 script:
   - TRAVIS=true make
-  - TRAVIS=true make test-coverage
+  #- TRAVIS=true make test-coverage
