@@ -21,7 +21,7 @@ ifeq ($(libvte_version),2.91)
         PPSYMBOLS :=-D PPS_LIBVTE_2_91
 endif
 ifeq ($(libvte_version),2.90)
-        PPSYMBOLS :=-D PPS_LIBVTE_2_91
+        PPSYMBOLS :=-D PPS_LIBVTE_2_90
 endif
 
 ifeq ($(json_glib_version), 1.2)
