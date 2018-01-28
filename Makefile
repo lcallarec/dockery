@@ -33,8 +33,7 @@ ifneq ($(TRAVIS), true)
 endif
 
 SOURCES=$(shell find src/ -name *.vala)
-SOURCES_FOR_TESTS=$(shell find src/ -name *.vala |grep -v "main.vala" |grep -v "ApplicationListener.vala" |grep -v "MainContainer.vala" |grep -v "StackHubListener.vala")
-SOURCES_TESTS=$(shell find tests/ -name *.vala)
+TSOURCES=$(shell find src/ -name *.vala |grep -v "main.vala" |grep -v "ApplicationListener.vala" |grep -v "MainContainer.vala" |grep -v "StackHubListener.vala")
 
 DESKTOP_DIR_PATH := $(shell if [ -d "/usr/local/share/applications" ]; then echo "/usr/local/share/applications"; else echo "/usr/share/applications"; fi)
 DESKTOP_PATH :=$(DESKTOP_DIR_PATH)/dockery.desktop
@@ -71,17 +70,47 @@ install-desktop-entry:
 	gtk-update-icon-cache $(ICONS_DIR_PATH)/hicolor
 
 clean:
+	@echo "Cleaning Dockery workspace..."
 	rm -f dockery
 	find . -type f -name '*.c' -delete
+	find . -type f -name '*.o' -delete
+	find . -type f -name '*.gcno' -delete
+	find . -type f -name '*.gcda' -delete
+	find . -type f -name '*.gcov' -delete
 
 debug: clean compile
+
+T_SOURCES:=$(shell find tests/ -name '*.vala')
 
 test:
 	@echo "Compiling... It can take a while."
 	@valac $(PPSYMBOLS) --disable-warnings --thread -X -w -X -lm --target-glib 2.32 \
 	--pkg gtk+-3.0 --pkg gio-2.0 --pkg libsoup-2.4 \
         --pkg gio-unix-2.0 --pkg gee-0.8 --pkg json-glib-1.0 --pkg vte-$(libvte_version) \
-        $(SOURCES_FOR_TESTS) $(SOURCES_TESTS) -o dockery-tests
+        $(TSOURCES) $(T_SOURCES) -o dockery-tests
 	@echo "Executing tests suites :"
 	@echo
 	@./dockery-tests && rm ./dockery-tests
+
+TCSOURCES=$(shell find src/ tests/ -name '*.c' |grep -v "main.c" |grep -v "ApplicationListener.c" |grep -v "MainContainer.c" |grep -v "StackHubListener.c")
+TOBJECTS=$(TCSOURCES:.c=.o)
+
+test-coverage: clean generate-ccode
+	@echo "Compiling C files to object files..."
+	$(foreach file,$(TCSOURCES),$(shell gcc -W -g -O0 -pthread -I/usr/include/libsoup-2.4 -I/usr/include/libxml2 -I/usr/include/gee-0.8 -I/usr/include/json-glib-1.0 -I/usr/include/vte-2.91 -I/usr/include/gtk-3.0 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/x86_64-linux-gnu/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/mirclient -I/usr/include/mircore -I/usr/include/mircookie -I/usr/include/cairo -I/usr/include/pango-1.0 -I/usr/include/harfbuzz -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/libpng16 -I/usr/include/gio-unix-2.0/ -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/p11-kit-1 -lsoup-2.4 -lgee-0.8 -ljson-glib-1.0 -lvte-2.91 -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lz -lgnutls \
+	-ftest-coverage -fprofile-arcs -c $(file) -o $(file:.c=.o)))
+	
+	@echo "Linking..."
+	gcc -ftest-coverage -fprofile-arcs $(TOBJECTS) -W -g -O0 -o dockery-tests -lm -lsoup-2.4 -lgee-0.8 -ljson-glib-1.0 -lvte-2.91 -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lz -lgnutls
+	./dockery-tests
+
+	@echo "Running GCOV..."
+	for file in $(shell find src/ -name *.vala); do gcov $$file; done
+	hash gcovr && gcovr -g -r . --exclude='^.*.c$$' --html --html-details -o coverage/codecoverage.html
+	
+generate-ccode :
+	@echo "Transpiling vala files C files..."
+	valac $(PPSYMBOLS) -q --debug --thread --target-glib 2.32 \
+	--pkg gtk+-3.0 --pkg gio-2.0 --pkg libsoup-2.4 \
+        --pkg gio-unix-2.0 --pkg gee-0.8 --pkg json-glib-1.0 --pkg vte-$(libvte_version) \
+        $(TSOURCES) $(T_SOURCES) --ccode
