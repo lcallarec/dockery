@@ -1,6 +1,7 @@
 # Dockery
 
 [![Build Status](https://travis-ci.org/lcallarec/dockery.svg?branch=master)](https://travis-ci.org/lcallarec/dockery)
+[![codecov](https://codecov.io/gh/lcallarec/dockery/branch/master/graph/badge.svg)](https://codecov.io/gh/lcallarec/dockery)
 
 **Dockery** is a _Docker_ GUI client written in *Vala*, targeted to be compiled on a GNU/Linux platform.
 
