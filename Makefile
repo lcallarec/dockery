@@ -108,8 +108,10 @@ test-coverage: clean generate-ccode
 
 	@echo "Running GCOV..."
 	for file in $(shell find src/ -name *.vala); do gcov $$file; done
+
+coverage-report: test-coverage
 	hash gcovr && gcovr -g -r . --exclude='^.*.c$$' --html --html-details -o coverage/codecoverage.html
-	
+
 generate-ccode :
 	echo $(VALA_PKG)
 	@echo "Transpiling vala files C files..."
