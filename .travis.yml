@@ -11,4 +11,4 @@ after_success:
 
 script:
   - TRAVIS=true make
-  - TRAVIS=true make test-overage
+  - TRAVIS=true make test-coverage
