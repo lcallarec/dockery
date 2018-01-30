@@ -18,10 +18,10 @@ namespace Dockery.DockerSdk.Serializer {
 
                     var names_node = node.get_object().get_array_member("Names");
                     uint len       = names_node.get_length();
-                    string[] names = {};
+                    Array<string> names = new Array<string>();
 
                     for (int i = 0; i < len; i++) {
-                        names[i] = names_node.get_string_element(i);
+                        names.append_val(names_node.get_string_element(i));
                     }
 
                     containers.add(new Model.Container.from(

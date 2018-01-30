@@ -13,7 +13,12 @@ private void register_container_deserializer_test() {
         assert(firstContainer.command == "echo 1");
         assert(firstContainer.image_id == "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82");
         assert(firstContainer.name == "boring_feynman");
-        //names propery is missing tests
+        
+        Array<string> expectedNames = new Array<string>();
+        expectedNames.append_val("/boring_feynman");
+        expectedNames.append_val("/test_name");
+
+        assert(array_equals(expectedNames, firstContainer.names));
         assert(firstContainer.status == Model.ContainerStatus.EXITED);
         assert(firstContainer.get_status_string() == "exited");
     });
@@ -48,7 +53,7 @@ internal string one_complete_json_container() {
         [
           {
             "Id": "8dfafdbcv3a40",
-            "Names":["/boring_feynman"],
+            "Names":["/boring_feynman", "/test_name"],
             "Image": "ubuntu:latest",
             "ImageID": "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82",
             "Command": "echo 1",
@@ -91,10 +96,10 @@ internal string container_malformatted_json() {
   return "[{]";
 }
 
-bool array_equals(string[] array_one, string[] array_two){
+bool array_equals(Array<string> array_one, Array<string> array_two){
     if(array_one.length != array_two.length) return false;
     for (int i=0; i< array_one.length; i++) {
-        if(array_one[i] != array_two[i]) {
+        if(array_one.index(i) != array_two.index(i)) {
             return false;
         }
     }

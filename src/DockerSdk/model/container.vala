@@ -9,19 +9,21 @@ namespace Dockery.DockerSdk.Model {
 
         public string image_id {get; construct set;}
 
-        public string[] names {get; construct set;}
+        public Array<string> names {get; construct set;}
 
         public string name {get; construct set;}
 
         public ContainerStatus status {get; construct set;}
 
-        public Container.from(string id, int64 created_at, string command, string image_id, string[] names, ContainerStatus status) {
+        public Container.from(string id, int64 created_at, string command, string image_id, Array<string> names, ContainerStatus status) {
             this.full_id    = id;
             this.created_at = new DateTime.from_unix_local(created_at);
             this.command    = command;
             this.image_id   = image_id;
             this.names      = names;
-            this.name       = names[0].replace("/", "");
+            if (names.length > 0) {
+                this.name = names.index(0).replace("/", "");
+            }
             this.status     = status;
         }
 
