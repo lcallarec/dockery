@@ -21,7 +21,7 @@ namespace Dockery.DockerSdk.Serializer {
                     ));
                 }
             } catch (Error e) {
-                throw new DeserializationError.IMAGES("Error while deserializing images : %s".printf(e.message));
+                throw new DeserializationError.IMAGE("Error while deserializing images : %s".printf(e.message));
             }
 
             return images;

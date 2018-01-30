@@ -1,0 +1,102 @@
+using global::Dockery.DockerSdk;
+
+private void register_container_deserializer_test() {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/GetContainerFromWellFormattedPayload", () => {
+
+        var deserializer = new Serializer.ContainerDeserializer();
+        var containers = deserializer.deserializeList(one_complete_json_container(), Model.ContainerStatus.EXITED);
+
+        var firstContainer = containers.get(0);
+
+        assert(firstContainer.full_id == "8dfafdbcv3a40");
+        assert(firstContainer.created_at.equal(new DateTime.utc(2013, 5, 6, 15, 29, 15)));
+        assert(firstContainer.command == "echo 1");
+        assert(firstContainer.image_id == "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82");
+        assert(firstContainer.name == "boring_feynman");
+        //names propery is missing tests
+        assert(firstContainer.status == Model.ContainerStatus.EXITED);
+        assert(firstContainer.get_status_string() == "exited");
+    });
+
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/GetContainersFromWellFormattedPayload", () => {
+
+        var deserializer = new Serializer.ContainerDeserializer();
+        var containers = deserializer.deserializeList(many_complete_json_container(), Model.ContainerStatus.EXITED);
+
+        assert(containers.size == 2);
+        assert(containers.get(0).id == "8dfafdbc3a40");
+        assert(containers.get(0).image_id == "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82");
+        assert(containers.get(1).id == "9cd87474be90");
+        assert(containers.get(1).image_id == "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82");
+    });
+
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/GetContainersFromBadFormattedPayload", () => {
+
+        var deserializer = new Serializer.ContainerDeserializer();
+
+        try {
+          deserializer.deserializeList(container_malformatted_json(), Model.ContainerStatus.EXITED);
+          assert_not_reached();
+        } catch(Error e) {
+          assert(e is Serializer.DeserializationError.CONTAINER);
+        }
+    });
+}
+
+internal string one_complete_json_container() {
+  return """
+        [
+          {
+            "Id": "8dfafdbcv3a40",
+            "Names":["/boring_feynman"],
+            "Image": "ubuntu:latest",
+            "ImageID": "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82",
+            "Command": "echo 1",
+            "Created": 1367854155,
+            "State": "exited",
+            "Status": "Exit 0"
+          }
+        ]
+        """;
+}
+
+internal string many_complete_json_container() {
+  return """
+        [
+          {
+            "Id": "8dfafdbc3a40",
+            "Names":["/boring_feynman"],
+            "Image": "ubuntu:latest",
+            "ImageID": "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82",
+            "Command": "echo 1",
+            "Created": 1367854155,
+            "State": "exited",
+            "Status": "Exit 0"
+          },
+          {
+            "Id": "9cd87474be90",
+            "Names":["/coolName"],
+            "Image": "ubuntu:latest",
+            "ImageID": "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82",
+            "Command": "echo 222222",
+            "Created": 1367854155,
+            "State": "exited",
+            "Status": "Exit 0"
+          }
+        ]
+        """;
+}
+
+internal string container_malformatted_json() {
+  return "[{]";
+}
+
+bool array_equals(string[] array_one, string[] array_two){
+    if(array_one.length != array_two.length) return false;
+    for (int i=0; i< array_one.length; i++) {
+        if(array_one[i] != array_two[i]) {
+            return false;
+        }
+    }
+    return true;
+}

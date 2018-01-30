@@ -5,10 +5,15 @@ namespace Dockery.DockerSdk.Model {
      */
     public class Container : BaseModel, Validatable {
 
-        /** attribute for name properties */
-        private string[] _names;
+        public string command {get; construct set;}
 
-        public string command {get; set;}
+        public string image_id {get; construct set;}
+
+        public string[] names {get; construct set;}
+
+        public string name {get; construct set;}
+
+        public ContainerStatus status {get; construct set;}
 
         public Container.from(string id, int64 created_at, string command, string image_id, string[] names, ContainerStatus status) {
             this.full_id    = id;
@@ -16,32 +21,9 @@ namespace Dockery.DockerSdk.Model {
             this.command    = command;
             this.image_id   = image_id;
             this.names      = names;
+            this.name       = names[0].replace("/", "");
             this.status     = status;
         }
-
-        /**
-         * Container names property
-         */
-        public string[] names {
-            get {
-                return _names;
-            }
-
-            set {
-                _names = value;
-                name   = value[0].replace("/", "");
-            }
-        }
-
-        public string image_id {get; set;}
-
-        /**
-         * Container name property
-         */
-        public string name {get; set;}
-
-        public ContainerStatus status {get; set;}
-
 
         public string get_status_string() {
             return ContainerStatusConverter.convert_from_enum(status);

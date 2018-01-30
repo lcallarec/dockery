@@ -42,7 +42,7 @@ namespace Dockery.DockerSdk {
         public Repository(Client.Client client) {
             this.client     = client;
             this._images     = new Endpoint.ImageEndpoint(client, new ImageDeserializer());
-            this._containers = new Endpoint.ContainerEndpoint(client);
+            this._containers = new Endpoint.ContainerEndpoint(client, new ContainerDeserializer());
             this._server     = new Endpoint.ServerEndpoint(client);
             this._volumes    = new Endpoint.VolumeEndpoint(client);
         }

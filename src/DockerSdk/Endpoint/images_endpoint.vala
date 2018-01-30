@@ -131,9 +131,8 @@ namespace Dockery.DockerSdk.Endpoint {
          * Deserialize images list response payload
          */
         private Model.ImageCollection deserializeImages(string payload) {
-
             try {
-                return image_deserializer.deserializeList(payload);
+                return this.image_deserializer.deserializeList(payload);
             } catch (Error e) {
                 return new Model.ImageCollection();
             }

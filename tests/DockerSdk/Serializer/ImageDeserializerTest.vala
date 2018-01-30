@@ -35,15 +35,15 @@ private void register_image_deserializer_test() {
         var deserializer = new Serializer.ImageDeserializer();
 
         try {
-          var images = deserializer.deserializeList(malformatted_json());
+          deserializer.deserializeList(image_malformatted_json());
           assert_not_reached();
         } catch(Error e) {
-          assert(e is Serializer.DeserializationError.IMAGES);
+          assert(e is Serializer.DeserializationError.IMAGE);
         }
     });
 }
 
-private string one_complete_json_image() {
+internal string one_complete_json_image() {
   return """
         [{
           "RepoTags": [
@@ -60,7 +60,7 @@ private string one_complete_json_image() {
         """;
 }
 
-private string many_complete_json_image() {
+internal string many_complete_json_image() {
   return """
         [{
           "RepoTags": [
@@ -87,6 +87,6 @@ private string many_complete_json_image() {
         """;
 }
 
-private string malformatted_json() {
+internal string image_malformatted_json() {
   return "[{]";
 }

@@ -1,5 +1,7 @@
 namespace Dockery.DockerSdk.Endpoint {
 
+    using global::Dockery.DockerSdk.Serializer;
+
     /**
      * Containers related endpoints
      *
@@ -30,9 +32,10 @@ namespace Dockery.DockerSdk.Endpoint {
      * - Extract an archive of files or folders to a directory in a container
      */
     public class ContainerEndpoint : Endpoint {
-
-        public ContainerEndpoint(Client.Client client) {
+        private ContainerDeserializerInterface container_deserializer;
+        public ContainerEndpoint(Client.Client client, ContainerDeserializerInterface container_deserializer) {
             base(client);
+            this.container_deserializer = container_deserializer;
         }
 
         /**
@@ -55,7 +58,7 @@ namespace Dockery.DockerSdk.Endpoint {
 
                 var message_builder = new StringBuilder("/containers/json");
                 message_builder.append(filter_builder.build());
-                return parse_containers_list_payload(this.client.send("GET", message_builder.str).payload, status);
+                return deserializeContainers(this.client.send("GET", message_builder.str).payload, status);
 
             } catch (Io.RequestError e) {
                 throw new Io.RequestError.FATAL("Error while fetching container list from docker daemon : %s".printf(e.message));
@@ -325,44 +328,15 @@ namespace Dockery.DockerSdk.Endpoint {
             }
         }
 
-
         /**
          * Parse containers payload
          */
-        private Model.ContainerCollection parse_containers_list_payload(string payload, Model.ContainerStatus status) {
-
-            Model.ContainerCollection containers = new Model.ContainerCollection();
-
+        private Model.ContainerCollection deserializeContainers(string payload, Model.ContainerStatus status) {
             try {
-                var parser = new Json.Parser();
-                parser.load_from_data(payload);
-
-                var nodes = parser.get_root().get_array().get_elements();
-
-                foreach (unowned Json.Node node in nodes) {
-
-                    var names_node = node.get_object().get_array_member("Names");
-                    uint len       = names_node.get_length();
-                    string[] names = {};
-
-                    for (int i = 0; i <= len - 1; i++) {
-                        names[i] = names_node.get_string_element(i);
-                    }
-
-                    containers.add(new Model.Container.from(
-                        node.get_object().get_string_member("Id"),
-                        node.get_object().get_int_member("Created"),
-                        node.get_object().get_string_member("Command"),
-                        node.get_object().get_string_member("ImageID"),
-                        names,
-                        status
-                    ));
-                }
+                return this.container_deserializer.deserializeList(payload, status);
             } catch (Error e) {
-                return containers;
+                return new Model.ContainerCollection();
             }
-
-            return containers;
         }
     }
 }
