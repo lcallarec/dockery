@@ -86,7 +86,7 @@ debug: clean compile
 
 T_SOURCES:=$(shell find tests/ -name '*.vala')
 
-test:
+test: clean
 	@echo "Compiling... It can take a while."
 	@valac $(PPSYMBOLS) --disable-warnings -q --thread -X -w -X -lm $(TARGET_GLIB_FLAG) $(VALALIBS) \
         $(TSOURCES) $(T_SOURCES) -o dockery-tests
