@@ -112,8 +112,7 @@ test-coverage: clean generate-ccode
 coverage-report: test-coverage
 	hash gcovr && gcovr -g -r . --exclude='^.*.c$$' --html --html-details -o coverage/codecoverage.html
 
-generate-ccode :
-	echo $(VALA_PKG)
+generate-ccode:
 	@echo "Transpiling vala files C files..."
 	@valac $(PPSYMBOLS) -q --ccode --debug --thread $(TARGET_GLIB_FLAG) $(VALALIBS) \
         $(TSOURCES) $(T_SOURCES) 
