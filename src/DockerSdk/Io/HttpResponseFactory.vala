@@ -40,7 +40,6 @@ namespace Dockery.DockerSdk.Io {
             response.payload = (string) message.response_body.data;
 
             return response;
-                
         }
     }
 }
