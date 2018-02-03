@@ -13,10 +13,6 @@ namespace Dockery.DockerSdk.Endpoint {
             this.client = client;
         }
 
-        /**
-         * Throw error with the right message or do nothing if actual code == ok_status_code
-         * If paylod is not empty, then the message is fetched from the response payload
-         */
         protected void throw_error_from_status_code(
             int ok_status_code,
             Io.Response response,
@@ -25,8 +21,16 @@ namespace Dockery.DockerSdk.Endpoint {
 
             if (response.status != ok_status_code) {
                 string? message = map.get(response.status);
-                if (null != message) {
+                if (null == message) {
                     message = response.payload;
+                }
+
+                if (null == message && response.status < 100) {
+                    message = "Unable to reach the service. Aborting.";
+                }
+
+                if (null == message) {
+                    message = "Unkown error while requesting the docker deamon";
                 }
 
                 throw new Io.RequestError.FATAL(message);
