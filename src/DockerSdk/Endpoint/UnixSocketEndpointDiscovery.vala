@@ -1,6 +1,6 @@
 namespace Dockery.DockerSdk.Endpoint {
 
-    public class UnixSocketEndpointDiscovery : EndpointDiscovery, GLib.Object {
+    public class UnixSocketEndpointDiscovery : EndpointDiscoveryInterface, GLib.Object {
 
         private const string[] UNIX_SOCKETS = {"/var/run/docker.sock"};
 

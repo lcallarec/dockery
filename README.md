@@ -11,7 +11,7 @@ Until the project move the build system from plain _Makefile_ to _autotools_, th
 
 ![Main SC](docs/resources/screenshots/main.png)
 
-* Connect to a local docker deamon via Unix Socket (http support coming soon)
+* Connect to a local docker deamon via Unix Socket or TCP
  (autodiscover socket location)
 
 * List all containers and execute some basic actions

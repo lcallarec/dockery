@@ -77,7 +77,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
             try {
                 __connect(docker_entrypoint);
             } catch (Error e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't connect  docker daemon at %s".printf(docker_entrypoint));
+                message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't connect docker daemon at %s. Reason: %s".printf(docker_entrypoint, e.message));
             }
         });
 
@@ -99,7 +99,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
                 try {
                     __connect(docker_endpoint);
                 } catch(GLib.Error e) {
-                    message_dispatcher.dispatch(Gtk.MessageType.ERROR, e.message);
+                    message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Error connecting to docker daemon at %s".printf(docker_endpoint));
                 }
             } else {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't locate docker daemon");
@@ -154,7 +154,6 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
             });
 
             repository.connect();
-
             return true;
         }
 
@@ -178,7 +177,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
 
     protected string? discover_connection() {
 
-        var endpoint_discovery = new Dockery.DockerSdk.Endpoint.UnixSocketEndpointDiscovery();
+        var endpoint_discovery = new Dockery.DockerSdk.Endpoint.EndpointDiscovery();
 
         return endpoint_discovery.discover();
     }
@@ -187,11 +186,10 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
     protected Dockery.DockerSdk.Repository? create_repository(string uri) {
 
         Dockery.DockerSdk.Client.Client? client = Dockery.DockerSdk.Client.ClientFactory.create_from_uri(uri);
-        
+
         if (client != null) {
             return new Dockery.DockerSdk.Repository(client);
         }
-        
         message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) "Failed to connect to %s".printf(uri));
         
         return null;
