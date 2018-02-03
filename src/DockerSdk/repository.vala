@@ -44,7 +44,7 @@ namespace Dockery.DockerSdk {
             this._images     = new Endpoint.ImageEndpoint(client, new ImageDeserializer());
             this._containers = new Endpoint.ContainerEndpoint(client, new ContainerDeserializer());
             this._server     = new Endpoint.ServerEndpoint(client);
-            this._volumes    = new Endpoint.VolumeEndpoint(client);
+            this._volumes    = new Endpoint.VolumeEndpoint(client, new VolumeDeserializer());
         }
     }
 }

@@ -1,9 +1,14 @@
 namespace Dockery.DockerSdk.Endpoint {
 
+    using global::Dockery.DockerSdk.Serializer;
+
     public class VolumeEndpoint : Endpoint {
 
-         public VolumeEndpoint(Client.Client client) {
+        private VolumeDeserializerInterface volume_deserializer;
+
+         public VolumeEndpoint(Client.Client client, VolumeDeserializerInterface volume_deserializer) {
              base(client);
+             this.volume_deserializer = volume_deserializer;
          }
 
          /**
@@ -23,45 +28,12 @@ namespace Dockery.DockerSdk.Endpoint {
          * Parse volume list response payload
          */
         private Model.VolumeCollection parse_volume_list_payload(string payload) {
-
-            var volumes = new Model.VolumeCollection();
-
             try {
-                var parser = new Json.Parser();
-                parser.load_from_data(payload);
-
-                var nodes = parser.get_root().get_object().get_array_member("Volumes").get_elements();
-                
-                foreach (unowned Json.Node node in nodes) {
-                    var labels = new Gee.HashMap<string, string>();
-                    var nodeLabels = node.get_object().get_object_member("Labels");
-                    if (nodeLabels != null) {
-                        nodeLabels.foreach_member((object, name, _node) => {
-                            labels.set(name, _node.get_object().get_string_member(name));
-                        });
-                    }
-
-                    var options = new Gee.HashMap<string, string>();
-                    var nodeOptions = node.get_object().get_object_member("Options");
-                    if (nodeOptions != null) {
-                        nodeOptions.foreach_member((object, name, _node) => {
-                            options.set(name, _node.get_object().get_string_member(name));
-                        });
-                    }
-                    
-                    volumes.add(new Model.Volume.from(
-                        node.get_object().get_string_member("Name"),
-                        node.get_object().get_string_member("Driver"),
-                        node.get_object().get_string_member("Mountpoint"),
-                        labels,
-                        options
-                    ));
-                }
+                return this.volume_deserializer.deserializeList(payload);
             } catch (Error e) {
-                return volumes;
+                return new Model.VolumeCollection();
             }
-
-            return volumes;
+            
         }
     }
 }
