@@ -6,6 +6,9 @@ void main (string[] args) {
     //DockerSdk/Io
     register_http_response_factory_test();
 
+    //DockerSdk/Endpoint
+    register_sdk_endpoint_server_test();
+    
     //
     Test.run();
 }
