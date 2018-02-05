@@ -58,6 +58,9 @@ compile: compile-resources
         $(SOURCES) resources.c --gresources gresource.xml \
         -o dockery
 
+compile-and-run: compile
+	./dockery
+
 compile-resources:
 	glib-compile-resources gresource.xml --target=resources.c --generate-source
 
