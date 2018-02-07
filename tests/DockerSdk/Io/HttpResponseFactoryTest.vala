@@ -27,7 +27,7 @@ private void register_http_response_factory_test() {
 
     Test.add_func ("/Dockery/DockerSdk/Io/HttpResponseFactory/FutureCreate#NominalCase", () => {
 
-        Soup.Message msg = new Soup.Message("HEAD", "http://lcallarec.github/dockery");
+        Soup.Message msg = new Soup.Message("GET", "https://www.google.com");
         
         msg.set_status(301);
         
@@ -43,6 +43,7 @@ private void register_http_response_factory_test() {
         var response = Io.HttpResponseFactory.future_create(msg, new Io.FutureResponse());
 
         assert(response is Io.FutureResponse);
+        stdout.printf("RP : %s", response.payload);
         assert(response.payload == "This is a response body");
         assert(response.status == 301);
         assert(response.headers.size == 1);
