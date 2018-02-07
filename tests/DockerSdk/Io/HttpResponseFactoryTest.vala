@@ -1,7 +1,7 @@
 using global::Dockery.DockerSdk;
 
 private void register_http_response_factory_test() {
-    Test.add_func ("/Dockery/DockerSdk/Io/HttpResponseFactory/Create", () => {
+    Test.add_func ("/Dockery/DockerSdk/Io/HttpResponseFactory/Create#NominalCase", () => {
 
         Soup.Message msg = new Soup.Message("HEAD", "http://lcallarec.github/dockery");
     
@@ -25,7 +25,7 @@ private void register_http_response_factory_test() {
         assert(response.headers.get("X-Dockery-Version") == "1.76");
     });
 
-    Test.add_func ("/Dockery/DockerSdk/Io/HttpResponseFactory/FutureCreate", () => {
+    Test.add_func ("/Dockery/DockerSdk/Io/HttpResponseFactory/FutureCreate#NominalCase", () => {
 
         Soup.Message msg = new Soup.Message("HEAD", "http://lcallarec.github/dockery");
         

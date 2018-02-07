@@ -1,7 +1,7 @@
 using global::Dockery.DockerSdk;
 
 private void register_container_deserializer_test() {
-    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/GetContainerFromWellFormattedPayload", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/DeserializeList#OneContainerWellFormattedPayload", () => {
 
         var deserializer = new Serializer.ContainerDeserializer();
         var containers = deserializer.deserializeList(one_complete_json_container(), Model.ContainerStatus.EXITED);
@@ -23,7 +23,7 @@ private void register_container_deserializer_test() {
         assert(firstContainer.get_status_string() == "exited");
     });
 
-    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/GetContainersFromWellFormattedPayload", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/DeserializeList#ManyContainersWellFormattedPayload", () => {
 
         var deserializer = new Serializer.ContainerDeserializer();
         var containers = deserializer.deserializeList(many_complete_json_container(), Model.ContainerStatus.EXITED);
@@ -35,7 +35,7 @@ private void register_container_deserializer_test() {
         assert(containers.get(1).image_id == "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82");
     });
 
-    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/GetContainersFromBadFormattedPayload", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/DeserializeList#BadFormattedPayload", () => {
 
         var deserializer = new Serializer.ContainerDeserializer();
 

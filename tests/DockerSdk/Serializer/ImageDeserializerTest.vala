@@ -1,7 +1,7 @@
 using global::Dockery.DockerSdk;
 
 private void register_image_deserializer_test() {
-    Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/GetImageFromWellFormattedPayload", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/DeserializeList#OneImageWellFormattedPayload", () => {
 
         var deserializer = new Serializer.ImageDeserializer();
         var images = deserializer.deserializeList(one_complete_json_image());
@@ -18,7 +18,7 @@ private void register_image_deserializer_test() {
         assert(firstImage.size == "132MB");
     });
 
-     Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/GetImagesFromWellFormattedPayload", () => {
+     Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/DeserializeList#ManyImagesWellFormattedPayload", () => {
 
         var deserializer = new Serializer.ImageDeserializer();
         var images = deserializer.deserializeList(many_complete_json_image());
@@ -30,7 +30,7 @@ private void register_image_deserializer_test() {
         assert(images.get(1).name == "ubuntu:14.04");
     });
 
-    Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/GetImagesFromBadFormattedPayload", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/DeserializeList#BadFormattedPayload", () => {
 
         var deserializer = new Serializer.ImageDeserializer();
 
