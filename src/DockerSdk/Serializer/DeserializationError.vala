@@ -3,6 +3,7 @@ namespace Dockery.DockerSdk.Serializer {
         EVENT,
         IMAGE,
         CONTAINER,
-        VOLUME
+        VOLUME,
+        IMAGE_TAG
     }
 }
