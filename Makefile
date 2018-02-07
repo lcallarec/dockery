@@ -52,9 +52,6 @@ EXEC=compile
 
 all: $(EXEC)
 
-r:
-	echo $(PPSYMBOLS)
-
 compile: compile-resources
 	valac $(PPSYMBOLS) $(DEBUG) --thread -X -w -X -lm -v \
         $(TARGET_GLIB_FLAG) $(VALALIBS) \
