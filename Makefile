@@ -17,18 +17,18 @@ endif
 PPSYMBOLS=
 
 ifeq ($(LIBVTE_VERSION),2.91)
-        PPSYMBOLS :=-D PPS_LIBVTE_2_91
+        PPSYMBOLS :=$(PPSYMBOLS) -D PPS_LIBVTE_2_91
 endif
 ifeq ($(LIBVTE_VERSION),2.90)
-        PPSYMBOLS :=-D PPS_LIBVTE_2_90
+        PPSYMBOLS :=$(PPSYMBOLS) -D PPS_LIBVTE_2_90
 endif
 
 ifeq ($(JSON_GLIB_VERSION), 1.2)
-        PPSYMBOLS :=-D JSON_PRETTY_PRINT
+        PPSYMBOLS :=$(PPSYMBOLS) -D JSON_PRETTY_PRINT
 endif
 
 ifneq ($(TRAVIS), true)
-        PPSYMBOLS :=-D NOT_ON_TRAVIS
+        PPSYMBOLS :=$(PPSYMBOLS) -D NOT_ON_TRAVIS
 endif
 
 LIBVTE:=vte-$(LIBVTE_VERSION)
@@ -51,6 +51,9 @@ EXEC=compile
 .PHONY: all clean compile compile-resources install install-desktop-entry debug
 
 all: $(EXEC)
+
+r:
+	echo $(PPSYMBOLS)
 
 compile: compile-resources
 	valac $(PPSYMBOLS) $(DEBUG) --thread -X -w -X -lm -v \

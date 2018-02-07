@@ -43,7 +43,7 @@ private void register_http_response_factory_test() {
         var response = Io.HttpResponseFactory.future_create(msg, new Io.FutureResponse());
 
         assert(response is Io.FutureResponse);
-        stdout.printf("RP : %s", response.payload);
+        stdout.printf("RP : %s\n", response.payload);
         assert(response.payload == "This is a response body");
         assert(response.status == 301);
         assert(response.headers.size == 1);
