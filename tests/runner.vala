@@ -1,6 +1,8 @@
 void main (string[] args) {
     Test.init (ref args);
     
+    Gtk.init(ref args);
+
     //DockerSdk/Deserializer
     register_image_deserializer_test();
     register_container_deserializer_test();
@@ -11,7 +13,11 @@ void main (string[] args) {
 
     //DockerSdk/Endpoint
     register_sdk_endpoint_server_test();
-    
+
+    //View/Menu/
+    register_view_menu_search_hub_menu_test();
+
+
     //
     Test.run();
 }
