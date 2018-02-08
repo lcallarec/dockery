@@ -10,5 +10,5 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
 
 script:
-  - TRAVIS=true xvfb-run make
-  - TRAVIS=true xvfb-run make test-coverage
+  - NO_AT_BRIDGE=1 TRAVIS=true xvfb-run make
+  - NO_AT_BRIDGE=1 TRAVIS=true xvfb-run make test-coverage
