@@ -1,5 +1,5 @@
-using global::View.Docker.Menu;
-using global::Dockery.DockerSdk;
+using Dockery.DockerSdk;
+using Dockery.View.Hub;
 
 private void register_view_menu_search_hub_menu_test() {
 
