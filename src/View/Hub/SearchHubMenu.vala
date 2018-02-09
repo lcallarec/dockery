@@ -1,4 +1,4 @@
-namespace View.Docker.Menu {
+namespace Dockery.View.Hub {
 
     using global::Dockery.DockerSdk.Model;
 
@@ -8,7 +8,7 @@ namespace View.Docker.Menu {
         }
     }
 
-    public class SearchHubMenu : Signals.DockerHubImageRequestAction, Menu {
+    public class SearchHubMenu : Signals.DockerHubImageRequestAction, global::View.Docker.Menu.Menu {
 
         private HubImage image;
 

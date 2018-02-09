@@ -1,5 +1,6 @@
 using Dockery;
 using View.Docker.Menu;
+using Dockery.View.Hub;
 using Dockery.DockerSdk.Model;
 
 namespace Dockery.View.Hub {
