@@ -1,25 +1,25 @@
-namespace View.Docker.Dialog {
+using Dockery;
+using View.Docker.Menu;
+using Dockery.DockerSdk.Model;
 
-    using global::Dockery.DockerSdk.Model;
-
-    /**
-     * This Dialog is displayed when an image is being removed.
-     */
-    public class SearchHubDialog : Dockery.View.Dialog, Signals.DockerHubImageRequestAction {
+namespace Dockery.View.Hub {
+    
+    public class SearchDialog : View.Dialog, Signals.DockerHubImageRequestAction {
 
         private Gtk.ListStore liststore = new Gtk.ListStore(5, typeof (string),  typeof (string), typeof (string), typeof (string), typeof (string));
         private Gtk.TreeView treeview   = null;
         private Gtk.Box message_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         public Gtk.Label message_box_label = new Gtk.Label(null);
         
-        public SearchHubDialog() {
+        public SearchDialog() {
 
             base(600, 500, "Search image in Docker hub", null, false, 1);
 
             var body = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 
             var scrolled_window = new Gtk.ScrolledWindow (null, null);
-            scrolled_window.add(get_treeview());
+            scrolled_window.
+            add(get_treeview());
 
             var search_entry = new Gtk.Entry();
             this.on_search(search_entry);
@@ -41,12 +41,11 @@ namespace View.Docker.Dialog {
             this.on_row_click_register();
         }
 
-        /** Set images collecyion to the view */
-        public void set_images(Dockery.DockerSdk.Model.HubImage[] images) {
+        public void set_images(HubImage[] images) {
 
             Gtk.TreeIter iter;
             liststore.clear();
-            foreach(Dockery.DockerSdk.Model.HubImage image in images) {
+            foreach(HubImage image in images) {
                 liststore.append (out iter);
                 liststore.set(iter, 0, image.name, 1, image.description, 2, image.is_official.to_string(), 3, image.is_automated.to_string(), 4, image.star_count.to_string());
             }
@@ -111,7 +110,7 @@ namespace View.Docker.Dialog {
 
                     HubImage image = new HubImage.from(name, true, true, name, 0);
 
-                    var menu = View.Docker.Menu.SearchHubMenuFactory.create(image);
+                    var menu = SearchHubMenuFactory.create(image);
 
                     menu.show_all();
                     menu.popup(null, this, null, e.button, e.time);

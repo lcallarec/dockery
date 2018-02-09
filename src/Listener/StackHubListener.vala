@@ -1,7 +1,8 @@
+using Dockery;
+using Dockery.View;
+
 namespace Dockery.Listener {
-    
-    using global::Dockery;
-    
+
     class StackHubListener : GLib.Object {
 
         public signal void image_states_changed();
@@ -23,7 +24,7 @@ namespace Dockery.Listener {
         
         private void docker_public_registry_open_request() {
             this.main_container.on_docker_public_registry_open_request.connect(() => {
-                var dialog = new global::View.Docker.Dialog.SearchHubDialog();
+                var dialog = new Hub.SearchDialog();
                 dialog.search_image_in_docker_hub.connect((target, term) => {
                     try {
                         DockerSdk.Model.HubImage[] images = repository.images().search(term);

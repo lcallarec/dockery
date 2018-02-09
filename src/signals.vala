@@ -28,10 +28,10 @@ namespace Signals {
         public signal void on_docker_public_registry_open_request();
 
         /** This signal should be emitted when an image is searched in docker hub */
-        public signal void search_image_in_docker_hub(View.Docker.Dialog.SearchHubDialog target, string term);
+        public signal void search_image_in_docker_hub(Dockery.View.Hub.SearchDialog target, string term);
 
         /** This signal should be emitted as a request to pull an image from docker hub */
-        public signal void pull_image_from_docker_hub(View.Docker.Dialog.SearchHubDialog? target, HubImage image);
+        public signal void pull_image_from_docker_hub(Dockery.View.Hub.SearchDialog? target, HubImage image);
 
         public virtual void set_images(Dockery.DockerSdk.Model.HubImage[] images) {}
     }
