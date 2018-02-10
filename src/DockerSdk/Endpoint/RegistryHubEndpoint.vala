@@ -14,7 +14,7 @@ namespace Dockery.DockerSdk.Endpoint {
         public Model.ImageTagCollection list(string image_name) throws Io.RequestError {
 
             try {
-                return deserializeImageTags(this.client.send("GET", "/v1/repositories/%s/tags".printf(image_name)).payload);
+                return deserializeImageTags(this.client.send("GET", "/repositories/%s/tags".printf(image_name)).payload);
             } catch (Io.RequestError e) {
                  throw new Io.RequestError.FATAL("Error while fetching image tags from Docker registry hub : %s".printf(e.message));
             }

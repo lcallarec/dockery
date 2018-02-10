@@ -33,6 +33,8 @@ namespace Signals {
         /** This signal should be emitted as a request to pull an image from docker hub */
         public signal void pull_image_from_docker_hub(Dockery.View.Hub.SearchDialog? target, HubImage image);
 
+        public signal void hub_display_image_menu_request(Gdk.EventButton event_button, HubImage image);
+
         public virtual void set_images(Dockery.DockerSdk.Model.HubImage[] images) {}
     }
 

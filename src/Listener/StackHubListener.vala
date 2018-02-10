@@ -1,3 +1,4 @@
+using Dockery.DockerSdk;
 using Dockery;
 using Dockery.View;
 
@@ -35,6 +36,26 @@ namespace Dockery.Listener {
                 });
 
                 dialog.show_all();
+                
+                dialog.hub_display_image_menu_request.connect((event_button, image) => {
+                    
+                    Model.ImageTagCollection tags;
+                    try {
+                        tags = repository.registry().list(image.name);
+                    } catch (Error e) {
+                        tags = new Model.ImageTagCollection();
+                        feedback(Gtk.MessageType.WARNING, (string) "Error while fetching tags of image %s : %s".printf(image.name, e.message));
+                    }
+
+                    var menu = Hub.SearchHubMenuFactory.create(image, tags);
+
+                    menu.show_all();
+                    menu.popup(null, dialog, null, event_button.button, event_button.time);
+                    
+                    menu.pull_image_from_docker_hub.connect((target, image) => {
+                        dialog.pull_image_from_docker_hub(dialog, image);
+                    });    
+                });
 
                 dialog.pull_image_from_docker_hub.connect((target, image) => {
 

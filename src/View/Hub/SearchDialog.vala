@@ -111,14 +111,7 @@ namespace Dockery.View.Hub {
 
                     HubImage image = new HubImage.from(name, true, true, name, 0);
 
-                    var menu = SearchHubMenuFactory.create(image);
-
-                    menu.show_all();
-                    menu.popup(null, this, null, e.button, e.time);
-
-                    menu.pull_image_from_docker_hub.connect((target, image) => {
-                        this.pull_image_from_docker_hub(this, image);
-                    });
+                    this.hub_display_image_menu_request(e, image);
 
                     return true;
                 }

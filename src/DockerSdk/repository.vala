@@ -8,6 +8,7 @@ namespace Dockery.DockerSdk {
         private Endpoint.ContainerEndpoint _containers;
         private Endpoint.ServerEndpoint    _server;
         private Endpoint.VolumeEndpoint    _volumes;
+        private Endpoint.RegistryHubEndpoint _registry;
 
         /**
          * Event emitted on connection
@@ -16,7 +17,8 @@ namespace Dockery.DockerSdk {
 
         public Io.Response response { get; protected set;}
 
-        private Client.Client client { get; private set;}
+        public Client.Client docker_client { get; construct set;}
+        public Client.HttpClient http_client { get; construct set;}
 
         public Endpoint.ImageEndpoint images() {
             return this._images;
@@ -30,6 +32,10 @@ namespace Dockery.DockerSdk {
             return this._server;
         }
 
+        public Endpoint.RegistryHubEndpoint registry() {
+            return this._registry;
+        }
+
         public Endpoint.VolumeEndpoint volumes() {
             return this._volumes;
         }
@@ -39,12 +45,14 @@ namespace Dockery.DockerSdk {
             this.connected(this);
         }
 
-        public Repository(Client.Client client) {
-            this.client     = client;
-            this._images     = new Endpoint.ImageEndpoint(client, new ImageDeserializer());
-            this._containers = new Endpoint.ContainerEndpoint(client, new ContainerDeserializer());
-            this._server     = new Endpoint.ServerEndpoint(client);
-            this._volumes    = new Endpoint.VolumeEndpoint(client, new VolumeDeserializer());
+        public Repository(Client.Client docker_client, Client.HttpClient http_client) {
+            this.docker_client = docker_client;
+            this.http_client = http_client;
+            this._images     = new Endpoint.ImageEndpoint(docker_client, new ImageDeserializer());
+            this._containers = new Endpoint.ContainerEndpoint(docker_client, new ContainerDeserializer());
+            this._server     = new Endpoint.ServerEndpoint(docker_client);
+            this._volumes    = new Endpoint.VolumeEndpoint(docker_client, new VolumeDeserializer());
+            this._registry   = new Endpoint.RegistryHubEndpoint(http_client, new ImageTagDeserializer());
         }
     }
 }

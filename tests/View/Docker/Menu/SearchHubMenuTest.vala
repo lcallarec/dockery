@@ -7,7 +7,7 @@ private void register_view_menu_search_hub_menu_test() {
 
         var hub_image = new Model.HubImage.from("a description", false, false, "dockery/dockery", 1);
 
-        var menu = SearchHubMenuFactory.create(hub_image);
+        var menu = SearchHubMenuFactory.create(hub_image, new Model.ImageTagCollection());
         
         bool connect_was_called = false;
         menu.foreach((widget) => {

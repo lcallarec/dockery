@@ -188,7 +188,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         Dockery.DockerSdk.Client.Client? client = Dockery.DockerSdk.Client.ClientFactory.create_from_uri(uri);
 
         if (client != null) {
-            return new Dockery.DockerSdk.Repository(client);
+            return new Dockery.DockerSdk.Repository(client, new Dockery.DockerSdk.Client.HttpClient("https://registry.hub.docker.com/v1"));
         }
         message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) "Failed to connect to %s".printf(uri));
         
