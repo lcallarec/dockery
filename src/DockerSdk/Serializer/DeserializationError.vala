@@ -4,6 +4,7 @@ namespace Dockery.DockerSdk.Serializer {
         IMAGE,
         CONTAINER,
         VOLUME,
-        IMAGE_TAG
+        IMAGE_TAG,
+        PULL_PROCESS_DATA
     }
 }
