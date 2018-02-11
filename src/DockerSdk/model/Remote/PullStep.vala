@@ -13,7 +13,7 @@ namespace Dockery.DockerSdk.Model.Remote {
             this.progress = progress;
         }
 
-        public static PullStepStatus get_status_from_raw_status(string raw_status) {
+         public static PullStepStatus get_status_from_raw_status(string raw_status) {
 
             if(raw_status.index_of("Downloading") == 0) return PullStepStatus.DOWNLOADING;
             if(raw_status.index_of("Extracting") == 0)   return PullStepStatus.EXTRACTING;
@@ -22,8 +22,9 @@ namespace Dockery.DockerSdk.Model.Remote {
             if(raw_status.index_of("Pulling from") == 0) return PullStepStatus.PULLING_FROM;
             if(raw_status.index_of("Pulling fs layer") == 0) return PullStepStatus.PULLING_FS_LAYER;
             if(raw_status.index_of("Download complete") == 0) return PullStepStatus.DOWNLOAD_COMPLETE;
+            if(raw_status.index_of("Already exists") == 0) return PullStepStatus.ALREADY_EXISTS;
 
             return PullStepStatus.UNKOWN;
-        }
+         }
     }
 }    

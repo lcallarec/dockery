@@ -1,6 +1,7 @@
 namespace Dockery.DockerSdk.Model.Remote {
     public enum PullStepStatus {
         PULLING_FROM,
+        ALREADY_EXISTS,
         PULLING_FS_LAYER,
         WAITING,
         DOWNLOADING,
@@ -23,6 +24,8 @@ namespace Dockery.DockerSdk.Model.Remote {
                     return "Pulling from image tag";
                 case PULLING_FS_LAYER:
                     return "Pulling fs layer";
+                case ALREADY_EXISTS:
+                    return "Already exists";
                 case DOWNLOAD_COMPLETE:
                     return "Download complete";
                 default:
