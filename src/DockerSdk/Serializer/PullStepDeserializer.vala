@@ -16,7 +16,15 @@ namespace Dockery.DockerSdk.Serializer {
 
                 var node = parser.get_root();
 
-                string id = node.get_object().get_string_member("id");
+                string id;
+                
+                if (node.get_object().has_member("id")) {
+                    id = node.get_object().get_string_member("id");
+                } else {
+                    //Digest status case
+                    id = "NA";
+                }
+                
                 string status = node.get_object().get_string_member("status");
                 
                 Remote.PullStepProgress? progress = null;
