@@ -101,7 +101,17 @@ private void register_dockersdk_serializer_pull_step_deserializer_test() {
         assert(step.status == Model.Remote.PullStepStatus.PULL_COMPLETE);
         assert(step.id == "b6f892c0043b");
         assert(step.progress == null);
-    });         
+    });
+
+    Test.add_func("/Dockery/DockerSdk/Serializer/PullStepDeserializer/Deserialize#Step:DIGEST", () => {
+
+        var deserializer = new Serializer.PullStepDeserializer();
+        var step = deserializer.deserialize(pull_step_digest("b6f892c0043b"));
+
+        assert(step.status == Model.Remote.PullStepStatus.DIGEST);
+        assert(step.id == "NA");
+        assert(step.progress == null);
+    });      
 }
 
 private string pull_step_pulling_from(string from, string id) {
@@ -143,3 +153,8 @@ private string pull_step_already_exists(string id) {
 private string pull_step_complete(string id) {
   return @"{\"status\":\"Pull complete\",\"progressDetail\":{},\"id\":\"$id\"}";
 }
+
+private string pull_step_digest(string id) {
+  return @"{\"status\":\"Digest: sha256:5b28d6d8ebff4404143e94da7a874b86fa667f1350fbace4a636671ddb52c6f2\"}";
+}
+

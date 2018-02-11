@@ -9,6 +9,7 @@ namespace Dockery.DockerSdk.Model.Remote {
         DOWNLOAD_COMPLETE,
         VERIFYING_CHECKSUM,
         EXTRACTING,
+        DIGEST,
         UNKOWN;
 
         public string to_string() {
@@ -31,6 +32,8 @@ namespace Dockery.DockerSdk.Model.Remote {
                     return "Pull complete";
                 case DOWNLOAD_COMPLETE:
                     return "Download complete";
+                case DIGEST:
+                    return "Digest";
                 default:
                     return "Unkown";
             }
