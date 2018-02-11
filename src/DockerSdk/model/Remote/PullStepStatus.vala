@@ -3,6 +3,7 @@ namespace Dockery.DockerSdk.Model.Remote {
         PULLING_FROM,
         ALREADY_EXISTS,
         PULLING_FS_LAYER,
+        PULL_COMPLETE,
         WAITING,
         DOWNLOADING,
         DOWNLOAD_COMPLETE,
@@ -26,6 +27,8 @@ namespace Dockery.DockerSdk.Model.Remote {
                     return "Pulling fs layer";
                 case ALREADY_EXISTS:
                     return "Already exists";
+                case PULL_COMPLETE:
+                    return "Pull complete";
                 case DOWNLOAD_COMPLETE:
                     return "Download complete";
                 default:

@@ -91,7 +91,17 @@ private void register_dockersdk_serializer_pull_step_deserializer_test() {
         assert(step.status == Model.Remote.PullStepStatus.ALREADY_EXISTS);
         assert(step.id == "b6f892c0043b");
         assert(step.progress == null);
-    });     
+    });
+
+    Test.add_func("/Dockery/DockerSdk/Serializer/PullStepDeserializer/Deserialize#Step:PULL_COMPLETE", () => {
+
+        var deserializer = new Serializer.PullStepDeserializer();
+        var step = deserializer.deserialize(pull_step_complete("b6f892c0043b"));
+
+        assert(step.status == Model.Remote.PullStepStatus.PULL_COMPLETE);
+        assert(step.id == "b6f892c0043b");
+        assert(step.progress == null);
+    });         
 }
 
 private string pull_step_pulling_from(string from, string id) {
@@ -128,4 +138,8 @@ private string pull_step_unkown(string id) {
 
 private string pull_step_already_exists(string id) {
   return @"{\"status\":\"Already exists\",\"progressDetail\":{},\"id\":\"$id\"}";
+}
+
+private string pull_step_complete(string id) {
+  return @"{\"status\":\"Pull complete\",\"progressDetail\":{},\"id\":\"$id\"}";
 }

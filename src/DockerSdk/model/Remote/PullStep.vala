@@ -23,6 +23,8 @@ namespace Dockery.DockerSdk.Model.Remote {
             if(raw_status.index_of("Pulling fs layer") == 0) return PullStepStatus.PULLING_FS_LAYER;
             if(raw_status.index_of("Download complete") == 0) return PullStepStatus.DOWNLOAD_COMPLETE;
             if(raw_status.index_of("Already exists") == 0) return PullStepStatus.ALREADY_EXISTS;
+            if(raw_status.index_of("Already exists") == 0) return PullStepStatus.ALREADY_EXISTS;
+            if(raw_status.index_of("Pull complete") == 0) return PullStepStatus.PULL_COMPLETE;
 
             return PullStepStatus.UNKOWN;
          }
