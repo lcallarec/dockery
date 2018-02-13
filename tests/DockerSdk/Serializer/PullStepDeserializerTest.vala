@@ -109,9 +109,19 @@ private void register_dockersdk_serializer_pull_step_deserializer_test() {
         var step = deserializer.deserialize(pull_step_digest("b6f892c0043b"));
 
         assert(step.status == Model.Remote.PullStepStatus.DIGEST);
-        assert(step.id == "NA");
+        assert(step.id == "");
         assert(step.progress == null);
-    });      
+    });
+
+    Test.add_func("/Dockery/DockerSdk/Serializer/PullStepDeserializer/Deserialize#Step:DOWNLOADED_NEWER_IMAGE_FOR", () => {
+
+        var deserializer = new Serializer.PullStepDeserializer();
+        var step = deserializer.deserialize(pull_step_downloaded_newer_image("dockery/dockery"));
+
+         assert(step.status == Model.Remote.PullStepStatus.DOWNLOADED_NEWER_IMAGE_FOR);
+        assert(step.id == "");
+        assert(step.progress == null);
+    });    
 }
 
 private string pull_step_pulling_from(string from, string id) {
@@ -158,3 +168,6 @@ private string pull_step_digest(string id) {
   return @"{\"status\":\"Digest: sha256:5b28d6d8ebff4404143e94da7a874b86fa667f1350fbace4a636671ddb52c6f2\"}";
 }
 
+private string pull_step_downloaded_newer_image(string name) {
+  return @"{\"status\":\"Status: Downloaded newer image for $name\"}";
+}

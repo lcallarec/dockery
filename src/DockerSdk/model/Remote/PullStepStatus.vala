@@ -10,6 +10,7 @@ namespace Dockery.DockerSdk.Model.Remote {
         VERIFYING_CHECKSUM,
         EXTRACTING,
         DIGEST,
+        DOWNLOADED_NEWER_IMAGE_FOR,
         UNKOWN;
 
         public string to_string() {
@@ -34,6 +35,8 @@ namespace Dockery.DockerSdk.Model.Remote {
                     return "Download complete";
                 case DIGEST:
                     return "Digest";
+                case DOWNLOADED_NEWER_IMAGE_FOR:
+                    return "Downloaded newer image for";
                 default:
                     return "Unkown";
             }

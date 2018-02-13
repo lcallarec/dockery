@@ -26,6 +26,7 @@ namespace Dockery.DockerSdk.Model.Remote {
             if(raw_status.index_of("Already exists") == 0) return PullStepStatus.ALREADY_EXISTS;
             if(raw_status.index_of("Pull complete") == 0) return PullStepStatus.PULL_COMPLETE;
             if(raw_status.index_of("Digest") == 0) return PullStepStatus.DIGEST;
+            if(raw_status.index_of("Status: Downloaded newer image for") == 0) return PullStepStatus.DOWNLOADED_NEWER_IMAGE_FOR;
 
             return PullStepStatus.UNKOWN;
          }

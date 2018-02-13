@@ -5,9 +5,7 @@ namespace Dockery.DockerSdk.Serializer {
 
     public class PullStepDeserializer : Object {
 
-        public Model.Remote.PullStep? deserialize(string json) throws DeserializationError {
-
-            Model.Remote.PullStep pull_step;
+        public Model.Remote.PullStep deserialize(string json) throws DeserializationError {
 
             try {
                 var parser = new Json.Parser();
@@ -21,8 +19,8 @@ namespace Dockery.DockerSdk.Serializer {
                 if (node.get_object().has_member("id")) {
                     id = node.get_object().get_string_member("id");
                 } else {
-                    //Digest status case
-                    id = "NA";
+                    //For DIGEST and DOWNLOADED_NEWER_IMAGE_FOR statuses
+                    id = "";
                 }
                 
                 string status = node.get_object().get_string_member("status");
