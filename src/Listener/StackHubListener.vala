@@ -59,12 +59,13 @@ namespace Dockery.Listener {
 
                 dialog.pull_image_from_docker_hub.connect((target, image) => {
 
-                    var decorator = new global::View.Docker.Decorator.CreateImageDecorator(target.message_box_label);
+                    var decorator = new Hub.PullImageFeedbackDecorator(target.message_box_label);
 
                     try {
 
                         var future_response = repository.images().future_pull(image);
                         future_response.on_payload_line_received.connect((line) => {
+
                             if (null != line) {
                                 try {
                                     decorator.update(line);
@@ -75,11 +76,8 @@ namespace Dockery.Listener {
                         });
 
                         future_response.on_finished.connect(() => {
-                            try {
-                                decorator.update(null);
-                            } catch (Error e) {
-                                feedback(Gtk.MessageType.ERROR, (string) e.message);
-                            }
+                            decorator = null;
+                            feedback(Gtk.MessageType.INFO, "Image %s pulled".printf(image.name));
                         });
 
                     } catch (Error e) {
