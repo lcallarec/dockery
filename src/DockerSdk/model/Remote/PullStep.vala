@@ -5,9 +5,9 @@ namespace Dockery.DockerSdk.Model.Remote {
     public class PullStep : BaseModel {
 
         public PullStepStatus status {get; construct set;}
-        public PullStepProgress? progress {get; construct set;}
+        public Progress? progress {get; construct set;}
 
-        public PullStep.from(PullStepStatus status, string id, PullStepProgress? progress) {
+        public PullStep.from(PullStepStatus status, string id, Progress? progress) {
             this.full_id = id;
             this.status = status;
             this.progress = progress;

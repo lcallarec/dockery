@@ -25,14 +25,14 @@ namespace Dockery.DockerSdk.Serializer {
                 
                 string status = node.get_object().get_string_member("status");
                 
-                Remote.PullStepProgress? progress = null;
+                Remote.Progress? progress = null;
 
                 if (node.get_object().has_member("progressDetail")) {
                     var progress_details = node.get_object().get_object_member("progressDetail");
                     if (progress_details.has_member("current") && progress_details.has_member("total")) {
-                        progress = new Remote.PullStepProgress(
-                            progress_details.get_int_member("current"),
-                            progress_details.get_int_member("total")
+                        progress = new Remote.Progress(
+                            (int) progress_details.get_int_member("current"),
+                            (int) progress_details.get_int_member("total")
                         );
                     }
                 }
