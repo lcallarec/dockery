@@ -2,7 +2,7 @@ namespace Dockery.DockerSdk.Model.Remote {
 
     public class Progress : ProgressAware, GLib.Object {
 
-        public int current {get; construct set;}
+        public int current {get; set;}
         public int total {get; construct set;}
 
         public Progress(int current, int total) {

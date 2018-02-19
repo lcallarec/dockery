@@ -17,7 +17,7 @@ void main (string[] args) {
     //DockerSdk/Model
     //DockerSdk/Model/Remote
     register_dockersdk_serializer_pull_step_deserializer_test();
-
+    register_docekrsdk_remote_processor_pulling_image_progress_processor_test();
     //View/Menu/
     register_view_menu_search_hub_menu_test();
 

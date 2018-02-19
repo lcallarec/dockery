@@ -4,7 +4,7 @@ namespace Dockery.DockerSdk.Model {
     
     public class Collection<T> : Gee.ArrayList<T> {
 
-        private Gee.HashMap<string, T> id_idx = new  Gee.HashMap<string, T>();
+        private Gee.HashMap<string, T> id_idx = new Gee.HashMap<string, T>();
 
         public new void add(BaseModel item) {
             id_idx.set(item.id, item);
