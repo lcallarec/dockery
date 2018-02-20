@@ -2,7 +2,7 @@ void main (string[] args) {
     Test.init (ref args);
     
     Gtk.init(ref args);
-
+register_view_child_widget_finder_test();
     //DockerSdk/Deserializer
     register_image_deserializer_test();
     register_container_deserializer_test();
@@ -18,9 +18,11 @@ void main (string[] args) {
     //DockerSdk/Model/Remote
     register_dockersdk_serializer_pull_step_deserializer_test();
     register_docekrsdk_remote_processor_pulling_image_progress_processor_test();
+    
     //View/Menu/
     register_view_menu_search_hub_menu_test();
-
+    register_dockery_view_objectlist_volumes_test();
+    
     //
     Test.run();
 }

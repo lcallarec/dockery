@@ -48,6 +48,7 @@ namespace View.Docker {
         public static Gtk.Box create_icon_message_box(string message, string icon_name) {
 
             var image = new Gtk.Image.from_icon_name(icon_name, Gtk.IconSize.DIALOG);
+            image.set_name("icon-image-box");
 
             image.pixel_size = 164;
             image.opacity = 0.2;
@@ -56,7 +57,8 @@ namespace View.Docker {
             label.attributes = Dockery.View.Fonts.get_panel_empty_major();
 
             var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
-
+            box.set_name("empty-box");
+            
             box.valign = Gtk.Align.CENTER;
             box.pack_start(image, true, false, 0);
             box.pack_start(label, false, false, 0);
@@ -78,6 +80,5 @@ namespace View.Docker {
 
             return box;
         }
-
     }
 }

@@ -38,6 +38,7 @@ namespace Dockery.View.ObjectList {
         private Gtk.TreeView get_treeview(Gtk.ListStore liststore) {
 
             var treeview = new Gtk.TreeView();
+            treeview.set_name("volumes-treeview");
             treeview.set_model(liststore);
 
             treeview.vexpand = true;
