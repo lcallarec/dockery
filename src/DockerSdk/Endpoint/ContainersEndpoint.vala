@@ -18,11 +18,11 @@ namespace Dockery.DockerSdk.Endpoint {
      * - Attach to a container
      * - Create a container
      * - Inspect a container
-     *
+     * - Get container stats based on resource usage
+
      * Missing features :
      * - List processes running inside a container
      * - Export a container
-     * - Get container stats based on resource usage
      * - Resize a container TTY
      * - Attach to a container (WS)
      * - Wait a container
@@ -325,6 +325,27 @@ namespace Dockery.DockerSdk.Endpoint {
 
             } catch (Io.RequestError e) {
                 throw new Io.RequestError.FATAL("Error while inspecting container %s".printf(container.id));
+            }
+        }
+
+        /**
+         * Inspect a container
+         * See [[https://docs.docker.com/engine/api/v1.29/#operation/ContainerStats]]
+         */
+        public string stats(Model.Container container) throws Io.RequestError {
+
+            try {
+                var response = this.client.send("GET", "/containers/%s/stats".printf(container.id));
+
+                var error_messages = create_error_messages();
+                error_messages.set(404, "No such container");
+
+                this.throw_error_from_status_code(200, response, error_messages);
+
+                return response.payload;
+
+            } catch (Io.RequestError e) {
+                throw new Io.RequestError.FATAL("Error while getting stats of container %s".printf(container.id));
             }
         }
 
