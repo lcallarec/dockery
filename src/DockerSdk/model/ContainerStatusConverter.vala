@@ -35,9 +35,9 @@ namespace Dockery.DockerSdk.Model {
         /**
          * Convert a container status from string to enum (according to remote docker api)
          */
-        public static ContainerStatus convert_to_enum(string s_status) {
+        public static ContainerStatus convert_to_enum(string state) {
             ContainerStatus status;
-            switch(s_status) {
+            switch(state.down()) {
                 case "running":
                     status = ContainerStatus.RUNNING;
                     break;

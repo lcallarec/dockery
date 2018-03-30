@@ -32,11 +32,14 @@ namespace Dockery.DockerSdk.Endpoint {
      * - Extract an archive of files or folders to a directory in a container
      */
     public class ContainerEndpoint : Endpoint {
-        private ContainerDeserializerInterface container_deserializer;
-        public ContainerEndpoint(Client.Client client, ContainerDeserializerInterface container_deserializer) {
+
+        protected DeserializerInterface<Model.ContainerCollection> deserializer;
+        
+        public ContainerEndpoint(Client.Client client, DeserializerInterface<Model.ContainerCollection> deserializer) {
             base(client);
-            this.container_deserializer = container_deserializer;
+            this.deserializer = deserializer;
         }
+
 
         /**
          * Retrieve a list of containers
@@ -58,7 +61,7 @@ namespace Dockery.DockerSdk.Endpoint {
 
                 var message_builder = new StringBuilder("/containers/json");
                 message_builder.append(filter_builder.build());
-                return deserializeContainers(this.client.send("GET", message_builder.str).payload, status);
+                return deserializeContainers(this.client.send("GET", message_builder.str).payload);
 
             } catch (Io.RequestError e) {
                 throw new Io.RequestError.FATAL("Error while fetching container list from docker daemon : %s".printf(e.message));
@@ -352,9 +355,9 @@ namespace Dockery.DockerSdk.Endpoint {
         /**
          * Parse containers payload
          */
-        private Model.ContainerCollection deserializeContainers(string payload, Model.ContainerStatus status) {
+        private Model.ContainerCollection deserializeContainers(string payload) {
             try {
-                return this.container_deserializer.deserializeList(payload, status);
+                return this.deserializer.deserializeList(payload);
             } catch (Error e) {
                 return new Model.ContainerCollection();
             }

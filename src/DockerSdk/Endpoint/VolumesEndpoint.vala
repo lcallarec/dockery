@@ -4,12 +4,12 @@ namespace Dockery.DockerSdk.Endpoint {
 
     public class VolumeEndpoint : Endpoint {
 
-        private VolumeDeserializerInterface volume_deserializer;
+        protected DeserializerInterface<Model.VolumeCollection> deserializer;
 
-         public VolumeEndpoint(Client.Client client, VolumeDeserializerInterface volume_deserializer) {
-             base(client);
-             this.volume_deserializer = volume_deserializer;
-         }
+        public VolumeEndpoint(Client.Client client, DeserializerInterface<Model.VolumeCollection> deserializer) {
+            base(client);
+            this.deserializer = deserializer;
+        }
 
          /**
           * Get a list of all images
@@ -29,7 +29,7 @@ namespace Dockery.DockerSdk.Endpoint {
          */
         private Model.VolumeCollection parse_volume_list_payload(string payload) {
             try {
-                return this.volume_deserializer.deserializeList(payload);
+                return this.deserializer.deserializeList(payload);
             } catch (Error e) {
                 return new Model.VolumeCollection();
             }

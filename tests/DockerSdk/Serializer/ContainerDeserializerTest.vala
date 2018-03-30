@@ -4,7 +4,7 @@ private void register_container_deserializer_test() {
     Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/DeserializeList#OneContainerWellFormattedPayload", () => {
 
         var deserializer = new Serializer.ContainerDeserializer();
-        var containers = deserializer.deserializeList(one_complete_json_container(), Model.ContainerStatus.EXITED);
+        var containers = deserializer.deserializeList(one_complete_json_container());
 
         var firstContainer = containers.get(0);
 
@@ -26,7 +26,7 @@ private void register_container_deserializer_test() {
     Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/DeserializeList#ManyContainersWellFormattedPayload", () => {
 
         var deserializer = new Serializer.ContainerDeserializer();
-        var containers = deserializer.deserializeList(many_complete_json_container(), Model.ContainerStatus.EXITED);
+        var containers = deserializer.deserializeList(many_complete_json_container());
 
         assert(containers.size == 2);
         assert(containers.get(0).id == "8dfafdbc3a40");
@@ -40,7 +40,7 @@ private void register_container_deserializer_test() {
         var deserializer = new Serializer.ContainerDeserializer();
 
         try {
-          deserializer.deserializeList(container_malformatted_json(), Model.ContainerStatus.EXITED);
+          deserializer.deserializeList(container_malformatted_json());
           assert_not_reached();
         } catch(Error e) {
           assert(e is Serializer.DeserializationError.CONTAINER);

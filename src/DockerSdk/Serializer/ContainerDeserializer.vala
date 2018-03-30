@@ -2,9 +2,9 @@ namespace Dockery.DockerSdk.Serializer {
     
     using global::Dockery.DockerSdk;
 
-    public class ContainerDeserializer : ContainerDeserializerInterface, Object {
+    public class ContainerDeserializer : DeserializerInterface<Model.ContainerCollection>, Object {
 
-        public Model.ContainerCollection deserializeList(string json, Model.ContainerStatus status) throws DeserializationError {
+        public Model.ContainerCollection deserializeList(string json) throws DeserializationError {
 
             var containers = new Model.ContainerCollection();
 
@@ -30,7 +30,7 @@ namespace Dockery.DockerSdk.Serializer {
                         node.get_object().get_string_member("Command"),
                         node.get_object().get_string_member("ImageID"),
                         names,
-                        status
+                        Model.ContainerStatusConverter.convert_to_enum(node.get_object().get_string_member("State"))
                     ));
                 }
             } catch (Error e) {

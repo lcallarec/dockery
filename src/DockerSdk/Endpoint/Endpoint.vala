@@ -1,5 +1,7 @@
 namespace Dockery.DockerSdk.Endpoint {
 
+    using global::Dockery.DockerSdk.Serializer;
+
     /**
      * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21
      */

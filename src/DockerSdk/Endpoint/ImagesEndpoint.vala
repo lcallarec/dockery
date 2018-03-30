@@ -21,11 +21,11 @@ namespace Dockery.DockerSdk.Endpoint {
      */
     public class ImageEndpoint : Endpoint {
 
-        private ImageDeserializerInterface image_deserializer;
+        protected DeserializerInterface<Model.ImageCollection> deserializer;
 
-        public ImageEndpoint(Client.Client client, ImageDeserializerInterface image_deserializer) {
+        public ImageEndpoint(Client.Client client, DeserializerInterface<Model.ImageCollection> deserializer) {
             base(client);
-            this.image_deserializer = image_deserializer;
+            this.deserializer = deserializer;
         }
 
          /**
@@ -132,7 +132,7 @@ namespace Dockery.DockerSdk.Endpoint {
          */
         private Model.ImageCollection deserializeImages(string payload) {
             try {
-                return this.image_deserializer.deserializeList(payload);
+                return this.deserializer.deserializeList(payload);
             } catch (Error e) {
                 return new Model.ImageCollection();
             }

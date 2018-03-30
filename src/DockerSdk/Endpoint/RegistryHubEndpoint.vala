@@ -4,11 +4,11 @@ namespace Dockery.DockerSdk.Endpoint {
 
     public class RegistryHubEndpoint : Endpoint {
 
-        private ImageTagDeserializerInterface image_tag_deserializer;
+        protected DeserializerInterface<Model.ImageTagCollection> deserializer;
 
-        public RegistryHubEndpoint(Client.HttpClient client, ImageTagDeserializerInterface image_tag_deserializer) {
+        public RegistryHubEndpoint(Client.Client client, DeserializerInterface<Model.ImageTagCollection> deserializer) {
             base(client);
-            this.image_tag_deserializer = image_tag_deserializer;
+            this.deserializer = deserializer;
         }
 
         public Model.ImageTagCollection list(string image_name) throws Io.RequestError {
@@ -22,7 +22,7 @@ namespace Dockery.DockerSdk.Endpoint {
 
         private Model.ImageTagCollection deserializeImageTags(string payload) {
             try {
-                return this.image_tag_deserializer.deserializeList(payload);
+                return this.deserializer.deserializeList(payload);
             } catch (Error e) {
                 return new Model.ImageTagCollection();
             }

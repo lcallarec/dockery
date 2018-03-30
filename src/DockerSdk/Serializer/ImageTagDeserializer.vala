@@ -2,7 +2,7 @@ namespace Dockery.DockerSdk.Serializer {
     
     using global::Dockery.DockerSdk;
 
-    public class ImageTagDeserializer : ImageTagDeserializerInterface, Object {
+    public class ImageTagDeserializer : DeserializerInterface<Model.ImageTagCollection>, Object {
 
         public Model.ImageTagCollection deserializeList(string json) throws DeserializationError {
 

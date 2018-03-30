@@ -1,8 +1,8 @@
 namespace Dockery.DockerSdk.Serializer {
     
     using global::Dockery.DockerSdk;
-
-    public class VolumeDeserializer : VolumeDeserializerInterface, Object {
+    
+    public class VolumeDeserializer : DeserializerInterface<Model.VolumeCollection>, Object {
 
         public Model.VolumeCollection deserializeList(string json) throws DeserializationError {
 

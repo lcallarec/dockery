@@ -1,7 +1,7 @@
 using global::Dockery.DockerSdk;
 using global::Dockery.DockerSdk.Model.Remote;
 
-private void register_docekrsdk_remote_processor_pulling_image_progress_processor_test() {
+private void register_dockersdk_remote_processor_pulling_image_progress_processor_test() {
 
     Test.add_func("/Dockery/DockerSdk/Remote/Processor#OneTag,OneLayer", () => {
 
