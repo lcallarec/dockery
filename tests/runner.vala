@@ -7,6 +7,7 @@ register_view_child_widget_finder_test();
     register_image_deserializer_test();
     register_container_deserializer_test();
     register_image_tag_deserializer_test();
+    register_container_stat_deserializer_test();
 
     //DockerSdk/Io
     register_http_response_factory_test();
