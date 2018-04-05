@@ -38,7 +38,7 @@ public class DockerManager : Gtk.Window {
 
         Object(window_position: Gtk.WindowPosition.CENTER);
 
-        this.set_default_size(700, 600);
+        this.set_default_size(1000, 650);
         this.destroy.connect(Gtk.main_quit);
 
         //Css provider
