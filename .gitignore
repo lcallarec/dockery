@@ -4,3 +4,4 @@ dockery
 build
 .idea
 .cache
+.buildconfig
