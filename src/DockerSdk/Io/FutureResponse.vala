@@ -6,20 +6,14 @@ namespace Dockery.DockerSdk.Io {
      */
     public class FutureResponse<T> : Response {
         
-        protected DeserializerInterface<T> stat_deserializer;
-        
-        public DeserializerInterface<T> deserializer { 
-            get {
-                return this.stat_deserializer;
-            }
-
-            construct set {
-                this.stat_deserializer = value;
-            }
-        }
+        protected DeserializerInterface<T> deserializer;
 
         public FutureResponse(DeserializerInterface deserializer) {
             this.deserializer = deserializer;
+        }
+
+        public T deserialize(string json) {
+            return deserializer.deserialize(json);
         }
     }
 }

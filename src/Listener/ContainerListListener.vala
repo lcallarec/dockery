@@ -215,13 +215,9 @@ namespace Dockery.Listener {
 
                         try {
                             if (null != line) {
-                                //var deserializer_stats = new global::Dockery.DockerSdk.Serializer.ContainerStatDeserializer();
-                                if (future_response.deserializer != null) {
-                                    DockerSdk.Model.ContainerStat stats = future_response.deserializer.deserialize(line);
-                                    string message = "MEMORY USAGE :  %s".printf(stats.memory_stats.usage.to_string());
-                                    feedback(Gtk.MessageType.INFO, message);
-                                }
-                                
+                                DockerSdk.Model.ContainerStat stats = future_response.deserialize(line);
+                                string message = "MEMORY USAGE :  %s".printf(stats.memory_stats.usage.to_string());
+                                feedback(Gtk.MessageType.INFO, message);
                             }
                         } catch (Error e) {
                             feedback(Gtk.MessageType.ERROR, (string) e.message);

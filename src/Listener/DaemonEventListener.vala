@@ -18,7 +18,7 @@ namespace Dockery.Listener {
             
             this.future_response.on_payload_line_received.connect((event) => {
                 try {
-                    Dto.Events.Event eventDTO = future_response.deserializer.deserialize(event);
+                    Dto.Events.Event eventDTO = future_response.deserialize(event);
                     if (eventDTO != null) {
                         this.live_stream_component.append(eventDTO);
                     }
