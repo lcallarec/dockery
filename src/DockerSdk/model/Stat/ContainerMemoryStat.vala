@@ -12,6 +12,7 @@ namespace Dockery.DockerSdk.Model.Stat {
             this.max_usage = max_usage;
             this.usage = usage;
             this.limit = limit;
+
         }
     }
 }

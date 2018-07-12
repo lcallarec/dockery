@@ -5,7 +5,6 @@ namespace Dockery.DockerSdk.Serializer {
     public class ContainerStatDeserializer : DeserializerInterface<Model.ContainerStat>, Object {
 
         public Model.ContainerStat deserializeList(string json) throws DeserializationError {
-
              try {
                 var parser = new Json.Parser();
                 parser.load_from_data(json);
@@ -14,7 +13,7 @@ namespace Dockery.DockerSdk.Serializer {
                 var memory_stats_object = node_object.get_object_member("memory_stats");
 
                 return new Model.ContainerStat.from(
-                    node_object.get_string_member("read"),
+                    new DateTime.from_iso8601(node_object.get_string_member("read"), new TimeZone.utc()),
                     new Model.Stat.ContainerMemoryStat.from(
                         memory_stats_object.get_int_member("max_usage"),
                         memory_stats_object.get_int_member("usage"),
