@@ -1,10 +1,10 @@
 using global::Dockery.DockerSdk;
 
 private void register_volume_deserializer_test() {
-    Test.add_func ("/Dockery/DockerSdk/Serializer/VolumeDeserializer/DeserializeList#OneVolumeWellFormattedPayload", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/VolumeDeserializer/Deserialize#OneVolumeWellFormattedPayload", () => {
 
         var deserializer = new Serializer.VolumeDeserializer();
-        var volumes = deserializer.deserializeList(one_complete_json_volume());
+        var volumes = deserializer.deserialize(one_complete_json_volume());
 
         var firstVolume = volumes.get(0);
 
@@ -29,9 +29,9 @@ private void register_volume_deserializer_test() {
         assert(firstVolume.options.get("type") == "tmpfs");
     });
 
-    Test.add_func ("/Dockery/DockerSdk/Serializer/VolumeDeserializer/DeserializeList#ShortName#ManyVolumesWellFormattedPayload", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/VolumeDeserializer/Deserialize#ShortName#ManyVolumesWellFormattedPayload", () => {
         var deserializer = new Serializer.VolumeDeserializer();
-        var volumes = deserializer.deserializeList(one_complete_json_volume());
+        var volumes = deserializer.deserialize(one_complete_json_volume());
 
         var firstVolume = volumes.get(0);
 
@@ -39,9 +39,9 @@ private void register_volume_deserializer_test() {
         assert(firstVolume.short_name == "thisisaverylongvolumename,");
     });
 
-    Test.add_func ("/Dockery/DockerSdk/Serializer/VolumeDeserializer/DeserializeList#ManyVolumesWellFormattedPayload", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/VolumeDeserializer/Deserialize#ManyVolumesWellFormattedPayload", () => {
         var deserializer = new Serializer.VolumeDeserializer();
-        var volumes = deserializer.deserializeList(many_complete_json_volumes());
+        var volumes = deserializer.deserialize(many_complete_json_volumes());
 
         assert(volumes.size == 2);
         assert(volumes.get(0).name == "tardis");
@@ -49,12 +49,12 @@ private void register_volume_deserializer_test() {
 
     });
 
-    Test.add_func ("/Dockery/DockerSdk/Serializer/VolumeDeserializer/DeserializeList#BadFormattedPayload", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/VolumeDeserializer/Deserialize#BadFormattedPayload", () => {
 
         var deserializer = new Serializer.VolumeDeserializer();
 
         try {
-          deserializer.deserializeList(volume_malformatted_json());
+          deserializer.deserialize(volume_malformatted_json());
           assert_not_reached();
         } catch(Error e) {
           assert(e is Serializer.DeserializationError.VOLUME);

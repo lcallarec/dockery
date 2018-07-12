@@ -6,8 +6,7 @@ namespace Dockery.Listener {
     
         private Repository repository;
         private View.EventStream.LiveStreamComponent live_stream_component;
-        private Io.FutureResponse future_response;
-        private Serializer.EventDeserializer builder = new Serializer.EventDeserializer();
+        private Io.FutureResponse<Dto.Events.Event> future_response;
 
         public DaemonEventListener(Repository repository, View.EventStream.LiveStreamComponent live_stream_component) {
             this.repository = repository;
@@ -19,7 +18,7 @@ namespace Dockery.Listener {
             
             this.future_response.on_payload_line_received.connect((event) => {
                 try {
-                    var eventDTO = builder.deserialize(event);
+                    Dto.Events.Event eventDTO = future_response.deserializer.deserialize(event);
                     if (eventDTO != null) {
                         this.live_stream_component.append(eventDTO);
                     }

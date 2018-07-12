@@ -4,7 +4,7 @@ namespace Dockery.DockerSdk.Serializer {
 
     public class ContainerStatDeserializer : DeserializerInterface<Model.ContainerStat>, Object {
 
-        public Model.ContainerStat deserializeList(string json) throws DeserializationError {
+        public Model.ContainerStat deserialize(string json) throws DeserializationError {
              try {
                 var parser = new Json.Parser();
                 parser.load_from_data(json);

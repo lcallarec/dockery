@@ -1,10 +1,10 @@
 using global::Dockery.DockerSdk;
 
 private void register_image_tag_deserializer_test() {
-    Test.add_func ("/Dockery/DockerSdk/Serializer/ImageTagDeserializer/DeserializeList#ManyTags", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ImageTagDeserializer/deserialize#ManyTags", () => {
 
         var deserializer = new Serializer.ImageTagDeserializer();
-        var tags = deserializer.deserializeList(many_complete_json_image_tag());
+        var tags = deserializer.deserialize(many_complete_json_image_tag());
 
         assert(tags.size == 2);
         assert(tags.get(0).name == "latest");
@@ -13,12 +13,12 @@ private void register_image_tag_deserializer_test() {
         assert(tags.get(1).layer == "e");
     });
 
-    Test.add_func ("/Dockery/DockerSdk/Serializer/ImageTagsDeserializer/DeserializeList#BadFormattedPayload", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ImageTagsDeserializer/deserialize#BadFormattedPayload", () => {
 
         var deserializer = new Serializer.ImageTagDeserializer();
 
         try {
-          deserializer.deserializeList(image_tag_malformatted_json());
+          deserializer.deserialize(image_tag_malformatted_json());
           assert_not_reached();
         } catch(Error e) {
           assert(e is Serializer.DeserializationError.IMAGE_TAG);

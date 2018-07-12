@@ -4,7 +4,7 @@ namespace Dockery.DockerSdk.Serializer {
 
     public class ImageTagDeserializer : DeserializerInterface<Model.ImageTagCollection>, Object {
 
-        public Model.ImageTagCollection deserializeList(string json) throws DeserializationError {
+        public Model.ImageTagCollection deserialize(string json) throws DeserializationError {
 
             var tags = new Model.ImageTagCollection();
             try {

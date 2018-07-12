@@ -63,7 +63,7 @@ namespace Dockery.DockerSdk.Client {
         /**
          * Send a message to docker daemon and return the response
          */
-        public override Io.FutureResponse future_send(string method, string endpoint, string? body = null) {
+         public override Io.FutureResponse future_send(Io.FutureResponse future_response, string method, string endpoint, string? body = null) {
 
             StringBuilder request_builder = new StringBuilder("%s %s".printf(method, endpoint));
             
@@ -82,8 +82,6 @@ namespace Dockery.DockerSdk.Client {
 
             string query = request_builder.str;
 
-            Io.FutureResponse future_response = new Io.FutureResponse();
-            
             new GLib.Thread<int>("future_send", () => {
 
                 try {

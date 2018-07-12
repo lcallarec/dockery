@@ -112,6 +112,13 @@ namespace View.Docker.Menu {
                 this.container_inspect_request(container);
             });
         }
+
+        protected void append_stats_menu_item() {
+            this.append_menu_item("Stats", null, () => {
+                stdout.printf("Menu clicked source\n");
+                this.container_stats_request(container);
+            });
+        }
     }
 
     internal class RunningContainerMenu : ContainerMenu {
@@ -132,7 +139,9 @@ namespace View.Docker.Menu {
             this.append_separator_menu_item();
             this.append_remove_menu_item();
             this.append_separator_menu_item();
-            this.append_inspect_menu_item();            
+            this.append_inspect_menu_item();
+            this.append_separator_menu_item();
+            this.append_stats_menu_item();  
         }
     }
 

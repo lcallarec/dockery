@@ -167,6 +167,11 @@ namespace View.Docker.List {
                             menu.container_inspect_request.connect(() => {
                                 this.container_inspect_request(container);
                             });
+                            
+                            menu.container_stats_request.connect(() => {
+                                stdout.printf("Menu clicked panel\n");
+                                this.container_stats_request(container);
+                            });
 
                         }
                     }

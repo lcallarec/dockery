@@ -2,7 +2,7 @@ namespace Dockery.DockerSdk.Serializer {
     
     using global::Dockery.DockerSdk;
 
-    public class EventDeserializer {
+    public class EventDeserializer : DeserializerInterface<Dto.Events.Event>, Object { 
 
         public Dto.Events.Event deserialize(string event) throws DeserializationError {
 

@@ -7,7 +7,7 @@ private void register_container_stat_deserializer_test() {
       var deserializer = new Serializer.ContainerStatDeserializer();
       
       //When
-      var stat = deserializer.deserializeList(one_stat());
+      var stat = deserializer.deserialize(one_stat());
 
       //Then
       assert(stat.read_at.compare(new DateTime.from_iso8601("2015-01-08T22:57:31.547920715Z", new TimeZone.utc())) == 0);

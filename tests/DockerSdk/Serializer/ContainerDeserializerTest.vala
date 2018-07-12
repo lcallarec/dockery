@@ -1,10 +1,10 @@
 using global::Dockery.DockerSdk;
 
 private void register_container_deserializer_test() {
-    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/DeserializeList#OneContainerWellFormattedPayload", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/deserialize#OneContainerWellFormattedPayload", () => {
 
         var deserializer = new Serializer.ContainerDeserializer();
-        var containers = deserializer.deserializeList(one_complete_json_container());
+        var containers = deserializer.deserialize(one_complete_json_container());
 
         var firstContainer = containers.get(0);
 
@@ -23,10 +23,10 @@ private void register_container_deserializer_test() {
         assert(firstContainer.get_status_string() == "exited");
     });
 
-    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/DeserializeList#ManyContainersWellFormattedPayload", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/deserialize#ManyContainersWellFormattedPayload", () => {
 
         var deserializer = new Serializer.ContainerDeserializer();
-        var containers = deserializer.deserializeList(many_complete_json_container());
+        var containers = deserializer.deserialize(many_complete_json_container());
 
         assert(containers.size == 2);
         assert(containers.get(0).id == "8dfafdbc3a40");
@@ -35,12 +35,12 @@ private void register_container_deserializer_test() {
         assert(containers.get(1).image_id == "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82");
     });
 
-    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/DeserializeList#BadFormattedPayload", () => {
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/deserialize#BadFormattedPayload", () => {
 
         var deserializer = new Serializer.ContainerDeserializer();
 
         try {
-          deserializer.deserializeList(container_malformatted_json());
+          deserializer.deserialize(container_malformatted_json());
           assert_not_reached();
         } catch(Error e) {
           assert(e is Serializer.DeserializationError.CONTAINER);

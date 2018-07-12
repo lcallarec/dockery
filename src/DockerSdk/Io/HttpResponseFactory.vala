@@ -9,9 +9,6 @@ namespace Dockery.DockerSdk.Io {
             return HttpResponseFactory.buildResponseFrom(message, new Response());
         }
 
-        /**
-         * SocketResponse that
-         */ 
         public static FutureResponse future_create(Soup.Message message, FutureResponse response) {
             return (HttpResponseFactory.buildResponseFrom(message, response) as FutureResponse);
         }

@@ -4,7 +4,7 @@ namespace Dockery.DockerSdk.Serializer {
     
     public class VolumeDeserializer : DeserializerInterface<Model.VolumeCollection>, Object {
 
-        public Model.VolumeCollection deserializeList(string json) throws DeserializationError {
+        public Model.VolumeCollection deserialize(string json) throws DeserializationError {
 
             var volumes = new Model.VolumeCollection();
             try {

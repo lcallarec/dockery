@@ -4,7 +4,7 @@ namespace Dockery.DockerSdk.Serializer {
 
     public class ImageDeserializer : DeserializerInterface<Model.ImageCollection>, Object {
 
-        public Model.ImageCollection deserializeList(string json) throws DeserializationError {
+        public Model.ImageCollection deserialize(string json) throws DeserializationError {
             var images = new Model.ImageCollection();
             try {
                 var parser = new Json.Parser();

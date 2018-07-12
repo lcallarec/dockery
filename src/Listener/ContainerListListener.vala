@@ -2,7 +2,7 @@ namespace Dockery.Listener {
     
     using global::View;
     using global::Dockery;
-    
+ 
     class ContainerListListener : GLib.Object {
 
         public signal void container_states_changed();
@@ -28,6 +28,7 @@ namespace Dockery.Listener {
             this.container_restart_request();
             this.container_rename_request();
             this.container_inspect_request();
+            this.container_stats_request();
         }
         
         private void container_status_change_request() {
@@ -205,6 +206,34 @@ namespace Dockery.Listener {
             });
         }       
         
+        private void container_stats_request() {
+            this.container_list.container_stats_request.connect((container) => {
+                try {
+                    stdout.printf("Listener\n");    
+                    var future_response = repository.containers().stats(container);
+                    future_response.on_payload_line_received.connect((line) => {
+
+                        try {
+                            if (null != line) {
+                                //var deserializer_stats = new global::Dockery.DockerSdk.Serializer.ContainerStatDeserializer();
+                                if (future_response.deserializer != null) {
+                                    DockerSdk.Model.ContainerStat stats = future_response.deserializer.deserialize(line);
+                                    string message = "MEMORY USAGE :  %s".printf(stats.memory_stats.usage.to_string());
+                                    feedback(Gtk.MessageType.INFO, message);
+                                }
+                                
+                            }
+                        } catch (Error e) {
+                            feedback(Gtk.MessageType.ERROR, (string) e.message);
+                        }
+                    });
+
+                } catch (Error e) {
+                    feedback(Gtk.MessageType.ERROR, (string) e.message);
+                }
+            });
+        }       
+
         private void container_rename_request() {
             this.container_list.container_rename_request.connect((container, relative_to, pointing_to) => {
                 

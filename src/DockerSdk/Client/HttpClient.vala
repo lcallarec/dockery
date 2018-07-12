@@ -33,15 +33,13 @@ namespace Dockery.DockerSdk.Client {
         /**
          * Send a message to docker daemon and return the future response
          */
-        public override Io.FutureResponse future_send(string method, string endpoint, string? body = null) {
+        public override Io.FutureResponse future_send(Io.FutureResponse future_response, string method, string endpoint, string? body = null) {
             var message = new Soup.Message(method, this.uri + endpoint);
 
             if (body != null) {
                 var request_body = new Soup.MessageBody();
                 request_body.append_take(body.data);
             }
-
-            Io.FutureResponse future_response = new Io.FutureResponse();
 
             new GLib.Thread<int>("future_send", () => {
 

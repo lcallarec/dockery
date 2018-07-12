@@ -3,7 +3,7 @@ using Dockery.DockerSdk.Model;
 
 namespace Dockery.DockerSdk.Serializer {
 
-    public class PullStepDeserializer : Object {
+    public class PullStepDeserializer : DeserializerInterface<Model.Remote.PullStep>, Object { 
 
         public Model.Remote.PullStep deserialize(string json) throws DeserializationError {
 

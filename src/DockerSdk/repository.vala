@@ -49,7 +49,7 @@ namespace Dockery.DockerSdk {
             this.docker_client = docker_client;
             this.http_client = http_client;
             this._images     = new Endpoint.ImageEndpoint(docker_client, new ImageDeserializer());
-            this._containers = new Endpoint.ContainerEndpoint(docker_client, new ContainerDeserializer());
+            this._containers = new Endpoint.ContainerEndpoint(docker_client, new ContainerDeserializer(), new ContainerStatDeserializer());
             this._server     = new Endpoint.ServerEndpoint(docker_client);
             this._volumes    = new Endpoint.VolumeEndpoint(docker_client, new VolumeDeserializer());
             this._registry   = new Endpoint.RegistryHubEndpoint(http_client, new ImageTagDeserializer());

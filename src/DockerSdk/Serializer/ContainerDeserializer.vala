@@ -4,7 +4,7 @@ namespace Dockery.DockerSdk.Serializer {
 
     public class ContainerDeserializer : DeserializerInterface<Model.ContainerCollection>, Object {
 
-        public Model.ContainerCollection deserializeList(string json) throws DeserializationError {
+        public Model.ContainerCollection deserialize(string json) throws DeserializationError {
 
             var containers = new Model.ContainerCollection();
 

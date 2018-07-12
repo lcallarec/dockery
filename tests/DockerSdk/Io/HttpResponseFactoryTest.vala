@@ -40,7 +40,7 @@ private void register_http_response_factory_test() {
         body.data = "This is a response body".data;
         msg.response_body = body;
 
-        var response = Io.HttpResponseFactory.future_create(msg, new Io.FutureResponse());
+        Io.FutureResponse<string> response = Io.HttpResponseFactory.future_create(msg, new Io.FutureResponse<string>(new MockDeserializer()));
 
         assert(response is Io.FutureResponse);
          

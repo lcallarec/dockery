@@ -18,7 +18,7 @@ namespace Dockery.DockerSdk.Endpoint {
      * - Attach to a container
      * - Create a container
      * - Inspect a container
-     * - Get container stats based on resource usage
+     * - Get container stats based on resource usage (partial)
 
      * Missing features :
      * - List processes running inside a container
@@ -33,11 +33,13 @@ namespace Dockery.DockerSdk.Endpoint {
      */
     public class ContainerEndpoint : Endpoint {
 
-        protected DeserializerInterface<Model.ContainerCollection> deserializer;
+        protected DeserializerInterface<Model.ContainerCollection> container_deserializer;
+        protected DeserializerInterface<Model.ContainerStat> stat_deserializer;
         
-        public ContainerEndpoint(Client.Client client, DeserializerInterface<Model.ContainerCollection> deserializer) {
+        public ContainerEndpoint(Client.Client client, DeserializerInterface<Model.ContainerCollection> container_deserializer, DeserializerInterface<Model.ContainerStat> stat_deserializer) {
             base(client);
-            this.deserializer = deserializer;
+            this.container_deserializer = container_deserializer;
+            this.stat_deserializer = stat_deserializer;
         }
 
 
@@ -335,29 +337,19 @@ namespace Dockery.DockerSdk.Endpoint {
          * Inspect a container
          * See [[https://docs.docker.com/engine/api/v1.29/#operation/ContainerStats]]
          */
-        public string stats(Model.Container container) throws Io.RequestError {
+        public Io.FutureResponse<Model.ContainerStat> stats(Model.Container container) throws Io.RequestError {
 
             try {
-                var response = this.client.send("GET", "/containers/%s/stats".printf(container.id));
-
-                var error_messages = create_error_messages();
-                error_messages.set(404, "No such container");
-
-                this.throw_error_from_status_code(200, response, error_messages);
-
-                return response.payload;
-
+                var future_response = new Io.FutureResponse<Model.ContainerStat>(this.stat_deserializer);
+                return this.client.future_send(future_response, "GET", "/containers/%s/stats?stream=false".printf(container.id));
             } catch (Io.RequestError e) {
                 throw new Io.RequestError.FATAL("Error while getting stats of container %s".printf(container.id));
             }
         }
 
-        /**
-         * Parse containers payload
-         */
         private Model.ContainerCollection deserializeContainers(string payload) {
             try {
-                return this.deserializer.deserializeList(payload);
+                return this.container_deserializer.deserialize(payload);
             } catch (Error e) {
                 return new Model.ContainerCollection();
             }

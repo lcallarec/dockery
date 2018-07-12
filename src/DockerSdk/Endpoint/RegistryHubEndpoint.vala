@@ -22,7 +22,7 @@ namespace Dockery.DockerSdk.Endpoint {
 
         private Model.ImageTagCollection deserializeImageTags(string payload) {
             try {
-                return this.deserializer.deserializeList(payload);
+                return this.deserializer.deserialize(payload);
             } catch (Error e) {
                 return new Model.ImageTagCollection();
             }

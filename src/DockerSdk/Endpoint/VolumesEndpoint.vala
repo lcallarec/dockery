@@ -29,7 +29,7 @@ namespace Dockery.DockerSdk.Endpoint {
          */
         private Model.VolumeCollection parse_volume_list_payload(string payload) {
             try {
-                return this.deserializer.deserializeList(payload);
+                return this.deserializer.deserialize(payload);
             } catch (Error e) {
                 return new Model.VolumeCollection();
             }

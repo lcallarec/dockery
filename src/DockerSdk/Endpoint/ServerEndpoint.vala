@@ -1,5 +1,7 @@
 namespace Dockery.DockerSdk.Endpoint {
 
+    using global::Dockery.DockerSdk.Serializer;
+
     /**
      * Docker service endpoint
      *
@@ -40,7 +42,8 @@ namespace Dockery.DockerSdk.Endpoint {
         public Io.FutureResponse events() throws Io.RequestError {
 
             try {
-                return this.client.future_send("GET", "/events");
+                var future_response = new Io.FutureResponse<Model.ContainerStat>(new EventDeserializer());
+                return this.client.future_send(future_response, "GET", "/events");
             } catch (Error e) {
                 throw new Io.RequestError.FATAL("Error while streaming Docker events");
             }
