@@ -1,7 +1,7 @@
 language: c
 compiler: gcc
 sudo: required
-dist: xenial
+dist: bionic
 before_install:
   - sudo add-apt-repository ppa:vala-team/ppa -y
   - sudo apt-get update -y
