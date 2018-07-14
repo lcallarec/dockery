@@ -4,11 +4,12 @@ services:
   - docker
 
 install:
-  - docker build -t dockery .
+  - docker pull lcallarec/dockery
 
 script:
-  - chmod +x ci/make-test-coverage.sh 
-  - docker run --privileged --volume=$(pwd):/dockery dockery "ci/make-test-coverage.sh"
+  - chmod +x ci/make.sh
+  - chmod +x ci/make-test-coverage.sh
+  - docker run --privileged --volume=$(pwd):/dockery lcallarec/dockery "ci/make-test-coverage.sh"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
