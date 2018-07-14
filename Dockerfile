@@ -8,7 +8,5 @@ RUN mkdir /dockery
 
 WORKDIR /dockery
 
-COPY . .
-
 ENV NO_AT_BRIDGE=1
 ENV TRAVIS=true

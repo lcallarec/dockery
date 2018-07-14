@@ -7,8 +7,7 @@ install:
   - docker build -t dockery .
 
 script:
-  - docker run dockery "cd ci && ls -lrt"
-  - docker run dockery ci/make-test-coverage.sh
+  - docker run --volume=$(pwd):/dockery dockery "ci/make-test-coverage.sh"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
