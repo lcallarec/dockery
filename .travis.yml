@@ -5,7 +5,6 @@ services:
 
 install:
   - docker pull lcallarec/dockery
-  - docker build -t dockery .
 
 script:
   - docker run dockery ci/make-test.sh
