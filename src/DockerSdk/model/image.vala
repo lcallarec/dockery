@@ -1,3 +1,5 @@
+using Dockery.Common;
+
 namespace Dockery.DockerSdk.Model {
 
     /**
@@ -31,7 +33,7 @@ namespace Dockery.DockerSdk.Model {
 
         public string size {
             get { return _size; }
-            set { _size = SizeFormatter.string_bytes_to_human(value); }
+            set { _size = HumanUnitFormatter.string_bytes_to_human(value); }
         }
 
     }
