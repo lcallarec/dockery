@@ -115,7 +115,6 @@ namespace View.Docker.Menu {
 
         protected void append_stats_menu_item() {
             this.append_menu_item("Stats", null, () => {
-                stdout.printf("Menu clicked source\n");
                 this.container_stats_request(container);
             });
         }

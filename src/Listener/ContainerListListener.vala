@@ -1,7 +1,10 @@
-namespace Dockery.Listener {
     
-    using global::View;
-    using global::Dockery;
+using Dockery.View;
+using Dockery.View.Stat;
+using View;
+using Dockery;
+
+namespace Dockery.Listener {
  
     class ContainerListListener : GLib.Object {
 
@@ -9,10 +12,10 @@ namespace Dockery.Listener {
         public signal void feedback(Gtk.MessageType type, string message);
         
         private Gtk.Window parent_window;
-        private Docker.List.Containers container_list;
+        private global::View.Docker.List.Containers container_list;
         private global::Dockery.DockerSdk.Repository repository;
 
-        public ContainerListListener(Gtk.Window parent_window, global::Dockery.DockerSdk.Repository repository, Docker.List.Containers container_list) {
+        public ContainerListListener(Gtk.Window parent_window, global::Dockery.DockerSdk.Repository repository, global::View.Docker.List.Containers container_list) {
             this.parent_window = parent_window;
             this.repository = repository;
             this.container_list = container_list;
@@ -209,15 +212,18 @@ namespace Dockery.Listener {
         private void container_stats_request() {
             this.container_list.container_stats_request.connect((container) => {
                 try {
-                    stdout.printf("Listener\n");    
+                    var dialog = new StatDialog(parent_window);
+                    dialog.show_all();
+                    
                     var future_response = repository.containers().stats(container);
                     future_response.on_payload_line_received.connect((line) => {
-
                         try {
                             if (null != line) {
                                 DockerSdk.Model.ContainerStat stats = future_response.deserialize(line);
-                                string message = "MEMORY USAGE :  %s".printf(stats.memory_stats.usage.to_string());
-                                feedback(Gtk.MessageType.INFO, message);
+                                 GLib.Idle.add(() => {
+                                    dialog.ready(stats);    
+                                    return false;
+                                });
                             }
                         } catch (Error e) {
                             feedback(Gtk.MessageType.ERROR, (string) e.message);
