@@ -1,9 +1,6 @@
 namespace Dockery.DockerSdk.Io {
 
-    /**
-     * Response from an http request to a docker remote api
-     */
-    public class HttpResponseFactory : GLib.Object {
+    public class HttpResponseFactory: GLib.Object {
 
         public static Response create(Soup.Message message) {
             return HttpResponseFactory.buildResponseFrom(message, new Response());
@@ -13,7 +10,7 @@ namespace Dockery.DockerSdk.Io {
             return (HttpResponseFactory.buildResponseFrom(message, response) as FutureResponse);
         }
 
-        public static Response buildResponseFrom(Soup.Message message, Response response) {
+        private static Response buildResponseFrom(Soup.Message message, Response response) {
             
             response.status = (int) message.status_code;
 

@@ -216,15 +216,12 @@ namespace Dockery.Listener {
                     dialog.show_all();
                     
                     var future_response = repository.containers().stats(container);
-                    future_response.on_payload_line_received.connect((line) => {
+                    future_response.on_response_ready.connect((stats) => {
                         try {
-                            if (null != line) {
-                                DockerSdk.Model.ContainerStat stats = future_response.deserialize(line);
-                                 GLib.Idle.add(() => {
-                                    dialog.ready(stats);    
-                                    return false;
-                                });
-                            }
+                            GLib.Idle.add(() => {
+                                dialog.ready(stats);    
+                                return false;
+                            });
                         } catch (Error e) {
                             feedback(Gtk.MessageType.ERROR, (string) e.message);
                         }

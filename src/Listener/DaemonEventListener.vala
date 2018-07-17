@@ -16,12 +16,9 @@ namespace Dockery.Listener {
 
         public void listen() {
             
-            this.future_response.on_payload_line_received.connect((event) => {
+            this.future_response.on_response_ready.connect((event) => {
                 try {
-                    Dto.Events.Event eventDTO = future_response.deserialize(event);
-                    if (eventDTO != null) {
-                        this.live_stream_component.append(eventDTO);
-                    }
+                    this.live_stream_component.append(event);
                 } catch (Serializer.DeserializationError e) {
                     GLib.warning(e.message);
                 }
