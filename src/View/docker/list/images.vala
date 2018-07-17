@@ -97,7 +97,7 @@ namespace View.Docker.List {
                     Gtk.TreeModel model;
                     
                     GLib.List<Gtk.TreePath> rows = selection.get_selected_rows(out model);
-;
+
                     if (rows.length() == 1) {
                         
                         Image? image = get_image_from_row(model, rows.nth_data(0));
@@ -135,7 +135,7 @@ namespace View.Docker.List {
                         View.Docker.Menu.ImageMenu menu = View.Docker.Menu.ImageMenuFactory.create_multi(selected_images);
                         menu.show_all();
 
-                        menu.popup(null, null, null, e.button, e.time);
+                        menu.popup_at_pointer(e);
                         
                         menu.images_remove_request.connect(() => {
                             this.images_remove_request(selected_images);
