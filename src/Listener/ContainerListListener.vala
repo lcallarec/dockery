@@ -213,18 +213,34 @@ namespace Dockery.Listener {
             this.container_list.container_stats_request.connect((container) => {
                 try {
                     var dialog = new StatDialog(parent_window);
+                    uint source_timeout = 0;
+                    dialog.container_auto_refresh_toggle_request.connect((active) => {
+                        if (active) {
+                            source_timeout = GLib.Timeout.add(5000, () => {
+                                var future_response = repository.containers().stats(container);
+                                future_response.on_response_ready.connect((stats) => {
+                                      
+                                      GLib.Idle.add(() => {
+                                        dialog.getset();    
+                                        dialog.ready(stats);    
+                                          return false;
+                                      });
+                                });
+                                return true;
+                            });
+                        } else if (source_timeout != 0) {
+                           GLib.Source.remove(source_timeout); 
+                        }
+                    });
+
                     dialog.show_all();
                     
                     var future_response = repository.containers().stats(container);
                     future_response.on_response_ready.connect((stats) => {
-                        try {
-                            GLib.Idle.add(() => {
-                                dialog.ready(stats);    
-                                return false;
-                            });
-                        } catch (Error e) {
-                            feedback(Gtk.MessageType.ERROR, (string) e.message);
-                        }
+                        GLib.Idle.add(() => {
+                            dialog.ready(stats);    
+                            return false;
+                        });
                     });
 
                 } catch (Error e) {

@@ -14,6 +14,7 @@ namespace Signals {
         public signal void container_bash_in_request(Container container);
         public signal void container_inspect_request(Container container);
         public signal void container_stats_request(Container container);
+        public signal void container_auto_refresh_toggle_request(bool active);
     }
 
     /** Signals emitted on image request actions */

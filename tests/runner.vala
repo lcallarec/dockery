@@ -24,6 +24,9 @@ register_view_child_widget_finder_test();
     //View/Menu/
     register_view_menu_search_hub_menu_test();
     register_dockery_view_objectlist_volumes_test();
+
+    //View/Buttons
+    register_view_buttons_test();
     
     //
     Test.run();

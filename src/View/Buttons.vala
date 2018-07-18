@@ -10,12 +10,15 @@ namespace Dockery.View {
      */ 
     public class IconToggleButton : Gtk.ToggleButton {
  
-        protected string active_icon_name    {get; protected set; default = ""; }
-        protected string inactive_icon_name  {get; protected set; default = ""; }
+        public string active_icon_name    {get; construct set; default = ""; }
+        public string inactive_icon_name  {get; construct set; default = ""; }
         protected Gtk.IconSize icon_size  = Gtk.IconSize.BUTTON;
         protected Gtk.Image icon_image    = new Gtk.Image();
-                       
-        public IconToggleButton() {
+        
+        public IconToggleButton(string inactive_icon_name, string active_icon_name) {
+            this.inactive_icon_name = inactive_icon_name;
+            this.active_icon_name = active_icon_name;
+            
             this.image = icon_image;
             this.set_new_icon_by_name(guess_icon_from_state(active));
             this.notify["active"].connect(() => {
@@ -42,32 +45,36 @@ namespace Dockery.View {
 
     public class PauseButton : IconToggleButton {
         
-        construct {
-            active_icon_name    = "media-playback-start-symbolic";
-            inactive_icon_name  = "media-playback-pause-symbolic";
-        }
-        
         public PauseButton() {
-            base();
+            base("media-playback-start-symbolic", "media-playback-start-symbolic");
         }
         
         public PauseButton.from_active_rule(ActiveRule rule) {
+            base("media-playback-start-symbolic", "media-playback-start-symbolic");
             this.set_active_from_rule(rule);
         }
     }
     
     public class StartStopButton : IconToggleButton {
-        
-        construct {
-            active_icon_name    = "media-playback-stop-symbolic";
-            inactive_icon_name  = "media-playback-start-symbolic";
-        }
-        
+
         public StartStopButton() {
-            base();
+            base("media-playback-stop-symbolic", "media-playback-start-symbolic");
         }
         
         public StartStopButton.from_active_rule(ActiveRule rule) {
+            base("media-playback-stop-symbolic", "media-playback-start-symbolic");            
+            this.set_active_from_rule(rule);
+        }
+    }
+
+    public class AutoRefreshButton : IconToggleButton {
+        
+        public AutoRefreshButton() {
+            base("view-refresh-symbolic", "view-refresh-symbolic");
+        }
+        
+        public AutoRefreshButton.from_active_rule(ActiveRule rule) {
+            base("view-refresh-symbolic", "view-refresh-symbolic");            
             this.set_active_from_rule(rule);
         }
     }
