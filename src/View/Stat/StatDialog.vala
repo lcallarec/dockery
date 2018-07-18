@@ -55,11 +55,10 @@ namespace Dockery.View.Stat {
             }
         }
 
-        private Gtk.Box build_loader() {
-            return IconMessageBoxBuilder.create_icon_message_box(
-                "Please wait while fetching stats...",
-                "view-refresh-symbolic"
-            );
+        private Gtk.Spinner build_loader() {
+            Gtk.Spinner spinner = new Gtk.Spinner();
+            spinner.active = true;
+            return spinner;
         }
     }
 }
