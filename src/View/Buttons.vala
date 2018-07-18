@@ -66,16 +66,4 @@ namespace Dockery.View {
             this.set_active_from_rule(rule);
         }
     }
-
-    public class AutoRefreshButton : IconToggleButton {
-        
-        public AutoRefreshButton() {
-            base("view-refresh-symbolic", "view-refresh-symbolic");
-        }
-        
-        public AutoRefreshButton.from_active_rule(ActiveRule rule) {
-            base("view-refresh-symbolic", "view-refresh-symbolic");            
-            this.set_active_from_rule(rule);
-        }
-    }
 }

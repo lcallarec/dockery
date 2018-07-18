@@ -14,12 +14,12 @@ namespace Dockery.View.Stat {
         construct {
             this.view = this.build_loader();
             
-            var auto_refresh_button = new AutoRefreshButton();
-            auto_refresh_button.set_mode(true);
-            auto_refresh_button.clicked.connect(() => {
-				this.container_auto_refresh_toggle_request(auto_refresh_button.active);
+            var auto_refresh_button = new Gtk.Switch();
+            auto_refresh_button.notify["active"].connect(() => {
+				this.container_auto_refresh_toggle_request(auto_refresh_button.state);
             });
             action_box.pack_end(auto_refresh_button, false, false, 0);
+            action_box.pack_end(new Gtk.Label("auto-refresh"), false, false, 0);
         }
 
         public StatDialog(Gtk.Window parent_window) {
