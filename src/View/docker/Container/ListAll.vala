@@ -1,31 +1,30 @@
-namespace View.Docker.List {
+using Dockery.DockerSdk;
+using Dockery.View;
 
-    using global::Dockery.DockerSdk.Model;
-    using Dockery.View;
+namespace Dockery.View.Container {
 
-
-    public class Containers : Flushable, ContainerViewable, Signals.ContainerRequestAction, Gtk.Box {
+    public class ListAll : global::View.Docker.Flushable, global::View.Docker.ContainerViewable, Signals.ContainerRequestAction, Gtk.Box {
 
         private Gtk.Notebook notebook;
         private Gtk.Box empty_box;
         
         private UserActions user_actions = UserActions.get_instance();
 
-        public Containers() {
+        public ListAll() {
             user_actions.if_hasnt_feature_set(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE, "0");
         }
 
         /**
-         * Init the container view from a given collection of containers and return it
+         * Init the container list view from a given collection of containers and return it
          */
-        public Containers init(ContainerCollection containers, bool show_after_refresh = true) {
+        public ListAll init(Model.ContainerCollection containers, bool show_after_refresh = true) {
 
             this.flush();
 
             if (containers.is_empty) {
 
                 this.notebook = null;
-                this.empty_box = IconMessageBoxBuilder.create_icon_message_box("No container found", "docker-symbolic")    ;            
+                this.empty_box = global::View.Docker.IconMessageBoxBuilder.create_icon_message_box("No container found", "docker-symbolic");            
                 
                 this.pack_start(this.empty_box, true, true, 0);
 
@@ -41,7 +40,7 @@ namespace View.Docker.List {
                 this.pack_start(this.notebook, true, true, 0);
 
                 int page_count = 0;
-                foreach(ContainerStatus status in ContainerStatus.all()) {
+                foreach(Model.ContainerStatus status in Model.ContainerStatus.all()) {
                     var c = containers.get_by_status(status);
                     if (c.is_empty == false) {
                         page_count++;
@@ -82,7 +81,7 @@ namespace View.Docker.List {
         /**
          * Add new rows from containers array list
          */
-        private int hydrate(ContainerStatus current_status, ContainerCollection containers) {
+        private int hydrate(Model.ContainerStatus current_status, Model.ContainerCollection containers) {
 
             int containers_count = 0;
 
@@ -91,7 +90,7 @@ namespace View.Docker.List {
             Gtk.ListStore liststore = new Gtk.ListStore(4, typeof (string),  typeof (string), typeof (string), typeof (string));
             liststore.clear();
 
-            foreach(Container container in containers) {
+            foreach(Model.Container container in containers) {
                 containers_count++;
                 liststore.append(out iter);
                 liststore.set(iter, 0, container.name, 1, container.id, 2, container.command, 3, container.created_at.to_string());
@@ -120,9 +119,9 @@ namespace View.Docker.List {
 
                     if (containers.has_id(id)) {
 
-                        Container container = containers.get_by_id(id);
+                        Model.Container container = containers.get_by_id(id);
 
-                        View.Docker.Menu.ContainerMenu? menu = View.Docker.Menu.ContainerMenuFactory.create(container);
+                        var menu = global::View.Docker.Menu.ContainerMenuFactory.create(container);
                         if (null != menu) {
 
                             menu.show_all();
@@ -181,7 +180,7 @@ namespace View.Docker.List {
                 return false;
             });
 
-            notebook.append_page(tv, new Gtk.Label(ContainerStatusConverter.convert_from_enum(current_status)));
+            notebook.append_page(tv, new Gtk.Label(Model.ContainerStatusConverter.convert_from_enum(current_status)));
 
             return containers_count;
         }

@@ -9,7 +9,7 @@ namespace Dockery.View {
         public Gtk.InfoBar infobar = new Gtk.InfoBar();
         public Gtk.Box local_docker_perspective = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         public SideBar sidebar;
-        public global::View.Docker.List.Containers containers;
+        public global::Dockery.View.Container.ListAll containers;
         public global::View.Docker.List.Images images;
         public global::Dockery.View.ObjectList.Volumes volumes;
         public Gtk.StackSwitcher perspective_switcher = new Gtk.StackSwitcher();
@@ -150,8 +150,8 @@ namespace Dockery.View {
             return new global::View.Docker.List.Images();
         }
 
-        public global::View.Docker.List.Containers create_containers_view() {
-            return new global::View.Docker.List.Containers();
+        public global::Dockery.View.Container.ListAll create_containers_view() {
+            return new global::Dockery.View.Container.ListAll();
         }
 
          public global::Dockery.View.ObjectList.Volumes create_volumes_view() {

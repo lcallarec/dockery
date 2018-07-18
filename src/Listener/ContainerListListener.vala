@@ -12,10 +12,10 @@ namespace Dockery.Listener {
         public signal void feedback(Gtk.MessageType type, string message);
         
         private Gtk.Window parent_window;
-        private global::View.Docker.List.Containers container_list;
+        private global::Dockery.View.Container.ListAll container_list;
         private global::Dockery.DockerSdk.Repository repository;
 
-        public ContainerListListener(Gtk.Window parent_window, global::Dockery.DockerSdk.Repository repository, global::View.Docker.List.Containers container_list) {
+        public ContainerListListener(Gtk.Window parent_window, global::Dockery.DockerSdk.Repository repository, global::Dockery.View.Container.ListAll container_list) {
             this.parent_window = parent_window;
             this.repository = repository;
             this.container_list = container_list;

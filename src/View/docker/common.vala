@@ -37,7 +37,7 @@ namespace View.Docker {
         /**
          * Init the container view from a given collection of containers and return it
          */
-        public abstract View.Docker.List.Containers init(ContainerCollection containers, bool show_after_refresh = true);
+        public abstract Dockery.View.Container.ListAll init(ContainerCollection containers, bool show_after_refresh = true);
     }
 
     /**
