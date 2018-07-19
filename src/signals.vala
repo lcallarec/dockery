@@ -42,13 +42,11 @@ namespace Signals {
 
     public interface DockerServiceAware : GLib.Object {
 
-        public signal void on_docker_service_connect_request(string docker_entrypoint);
-        public signal void on_docker_service_discover_request();
-        public signal void on_docker_service_discover_success();
-        public signal void on_docker_service_discover_failure();
-        public signal void on_docker_service_disconnect_request();
-        public signal void on_docker_service_disconnected();
-        public signal void on_docker_service_connect_success(string docker_entrypoint);
-        public signal void on_docker_service_connect_failure(string docker_entrypoint);
+        public signal void on_docker_daemon_connect_request(string docker_entrypoint);
+        public signal void on_docker_daemon_disconnect_request();
+        public signal void on_docker_daemon_discover_request();
+        public signal void on_docker_daemon_disconnected();
+        public signal void on_docker_daemon_connect_success(string docker_entrypoint);
+        public signal void on_docker_daemon_connect_failure(string docker_entrypoint);
     }
 }

@@ -1,12 +1,12 @@
 namespace Dockery.View {
-    
-    using global::Dockery.DockerSdk;
+
     using global::Dockery.View;
+    using global::Dockery.DockerSdk;
 
     public class MainContainer : Gtk.Box, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
 
         public Gtk.HeaderBar headerbar =  new HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
-        public Gtk.InfoBar infobar = new Gtk.InfoBar();
+        public Gtk.InfoBar infobar = new Controls.MainInfoBar();
         public Gtk.Box local_docker_perspective = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         public SideBar sidebar;
         public global::Dockery.View.Container.ListAll containers;
@@ -15,15 +15,7 @@ namespace Dockery.View {
         public Gtk.StackSwitcher perspective_switcher = new Gtk.StackSwitcher();
         public EventStream.LiveStreamComponent live_stream_component = new EventStream.LiveStreamComponent();
         private Gtk.Paned local_perspective_paned = new Gtk.Paned(Gtk.Orientation.VERTICAL);
-        
-        construct {
-            this.infobar.set_no_show_all(true);
-            this.infobar.show_close_button = true;
-            this.infobar.response.connect((id) => {
-                infobar.hide();
-            });
-        }
-        
+      
         public MainContainer() {
 
             Object(orientation: Gtk.Orientation.VERTICAL, spacing: 0);
@@ -32,23 +24,14 @@ namespace Dockery.View {
             var perspectives = new Gtk.Stack();
 
             //Perspective switcher
-            this.perspective_switcher = new Gtk.StackSwitcher();
-            this.perspective_switcher.set_halign(Gtk.Align.CENTER);
-            this.perspective_switcher.set_stack(perspectives);
+            this.perspective_switcher = new Controls.PerspectiveSwitcher(perspectives);
 
             this.headerbar.pack_start(this.perspective_switcher);
 
             //Perspective : Local Docker
-            var docker_view = new ListBuilder();
-
-            this.containers = docker_view.create_containers_view();
-            this.containers.init(new Model.ContainerCollection());
-            
-            this.images = docker_view.create_images_view();
-            this.images.init(new Model.ImageCollection());
-
-            this.volumes = docker_view.create_volumes_view();
-            this.volumes.init(new Model.VolumeCollection());
+            this.containers = new global::Dockery.View.Container.ListAll().init(new Model.ContainerCollection());
+            this.images = new global::View.Docker.List.Images().init(new Model.ImageCollection());
+            this.volumes = new global::Dockery.View.ObjectList.Volumes().init(new Model.VolumeCollection());
 
             Gtk.Stack stack = new Gtk.Stack();
             stack.expand = true;
@@ -67,46 +50,9 @@ namespace Dockery.View {
 
         private void setup_local_docker_perspective(Gtk.Stack stack) {
 
-            var settings = new View.Stacks.SettingsComponent();
-
-            //Start connect signals
-            settings.on_docker_service_connect_request.connect((docker_entrypoint) => {
-                this.on_docker_service_connect_request(docker_entrypoint);
-            });
-
-            settings.on_docker_service_disconnect_request.connect(() => {
-                this.on_docker_service_disconnect_request();
-            });
-
-            settings.on_docker_service_discover_request.connect(() => {
-                this.on_docker_service_discover_request();
-            });
-
-            settings.on_docker_public_registry_open_request.connect(() => {
-                this.on_docker_public_registry_open_request();
-            });
-
-            this.on_docker_service_discover_success.connect(() => {
-                settings.on_docker_service_discover_success();
-            });
-
-            this.on_docker_service_discover_failure.connect(() => {
-                settings.on_docker_service_discover_failure();
-            });
-
-            this.on_docker_service_connect_success.connect((docker_entrypoint) => {
-                settings.on_docker_service_connect_success(docker_entrypoint);
-            });
-
-            this.on_docker_service_connect_failure.connect((docker_entrypoint) => {
-                settings.on_docker_service_connect_failure(docker_entrypoint);
-            });
-
-            this.on_docker_service_disconnected.connect(() => {
-                settings.on_docker_service_disconnected();
-            });
-
-            //End connect signals
+            var settings = new View.Controls.SettingsComponent();
+            settings.connect_docker_daemon_signals(this);
+            settings.connect_docker_hub_signals(this);
 
             stack.add_named(containers, "containers");
             stack.add_named(images, "images");
@@ -130,21 +76,6 @@ namespace Dockery.View {
                 this.local_perspective_paned.position = pos;
             });
 
-        }
-   }
-
-   public class ListBuilder : GLib.Object {
-
-        public global::View.Docker.List.Images create_images_view() {
-            return new global::View.Docker.List.Images();
-        }
-
-        public global::Dockery.View.Container.ListAll create_containers_view() {
-            return new global::Dockery.View.Container.ListAll();
-        }
-
-         public global::Dockery.View.ObjectList.Volumes create_volumes_view() {
-            return new global::Dockery.View.ObjectList.Volumes();
         }
    }
 }

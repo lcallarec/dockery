@@ -1,6 +1,6 @@
-namespace View.Docker.Stacks {
+namespace Dockery.View.Controls {
 
-    class HubButton : Gtk.Button, Signals.DockerServiceAware {
+    class HubButton : Gtk.Button, Signals.DockerHubImageRequestAction {
 
         public HubButton() {
             Object(label: "hub");

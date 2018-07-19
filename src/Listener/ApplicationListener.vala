@@ -73,7 +73,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
 
     private void listen_headerbar() {
 
-        this.view.on_docker_service_connect_request.connect((docker_entrypoint) => {
+        this.view.on_docker_daemon_connect_request.connect((docker_entrypoint) => {
             try {
                 __connect(docker_entrypoint);
             } catch (Error e) {
@@ -81,19 +81,19 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
             }
         });
 
-        this.view.on_docker_service_disconnect_request.connect(() => {
+        this.view.on_docker_daemon_disconnect_request.connect(() => {
             __disconnect();
         });
 
-        this.on_docker_service_connect_success.connect((docker_entrypoint) => {
-            this.view.on_docker_service_connect_success(docker_entrypoint);
+        this.on_docker_daemon_connect_success.connect((docker_entrypoint) => {
+            this.view.on_docker_daemon_connect_success(docker_entrypoint);
         });
 
-        this.on_docker_service_connect_failure.connect((docker_entrypoint) => {
-            this.view.on_docker_service_connect_failure(docker_entrypoint);
+        this.on_docker_daemon_connect_failure.connect((docker_entrypoint) => {
+            this.view.on_docker_daemon_connect_failure(docker_entrypoint);
         });
 
-        this.view.on_docker_service_discover_request.connect(() => {
+        this.view.on_docker_daemon_discover_request.connect(() => {
             string? docker_endpoint = discover_connection();
             if (null != docker_endpoint) {
                 try {
@@ -162,7 +162,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
 
      protected bool __disconnect() {
 
-        this.view.on_docker_service_disconnected();
+        this.view.on_docker_daemon_disconnected();
 
         repository = null;
 
@@ -197,7 +197,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
     }
 
     protected void docker_daemon_post_connect(string docker_entrypoint) {
-        this.view.on_docker_service_connect_success(docker_entrypoint);
+        this.view.on_docker_daemon_connect_success(docker_entrypoint);
         this.init_image_list();
         this.init_container_list();
         this.init_volume_list();
