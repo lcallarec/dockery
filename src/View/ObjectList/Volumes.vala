@@ -1,8 +1,10 @@
+using Dockery.DockerSdk;
+using View.Docker;
+
 namespace Dockery.View.ObjectList {
 
-    using global::Dockery.DockerSdk;
 
-    public class Volumes : global::View.Docker.Flushable, global::View.Docker.VolumeViewable, Gtk.Box {
+    public class Volumes : Flushable, VolumeViewable, Gtk.Box {
 
         protected Gtk.Box empty_box;
 
