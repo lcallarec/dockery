@@ -51,6 +51,7 @@ namespace Dockery.View {
             this.volumes.init(new Model.VolumeCollection());
 
             Gtk.Stack stack = new Gtk.Stack();
+            stack.expand = true;
             stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE);
 
             this.sidebar = new SideBar(stack);
