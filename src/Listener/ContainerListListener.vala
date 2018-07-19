@@ -217,14 +217,15 @@ namespace Dockery.Listener {
                     dialog.container_auto_refresh_toggle_request.connect((active) => {
                         if (active) {
                             source_timeout = GLib.Timeout.add(5000, () => {
+                                dialog.set_message("Stats refreshing...");
                                 var future_response = repository.containers().stats(container);
                                 future_response.on_response_ready.connect((stats) => {
-                                      
-                                      GLib.Idle.add(() => {
-                                        dialog.getset();    
-                                        dialog.ready(stats);    
-                                          return false;
-                                      });
+                                    GLib.Idle.add(() => {
+                                        dialog.getset();
+                                        dialog.ready(stats);
+                                        dialog.set_message("Stats loaded");
+                                        return false;
+                                    });
                                 });
                                 return true;
                             });
@@ -234,11 +235,11 @@ namespace Dockery.Listener {
                     });
 
                     dialog.show_all();
-                    
                     var future_response = repository.containers().stats(container);
                     future_response.on_response_ready.connect((stats) => {
                         GLib.Idle.add(() => {
                             dialog.ready(stats);    
+                            dialog.set_message("Stats loaded");
                             return false;
                         });
                     });

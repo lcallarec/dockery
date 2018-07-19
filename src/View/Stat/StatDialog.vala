@@ -6,14 +6,16 @@ namespace Dockery.View.Stat {
 
     public class StatDialog : View.Dialog, Signals.ContainerRequestAction {
 
-        Gtk.Box body = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
-        Gtk.Box action_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
-        Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(null, null);
-        Gtk.Widget view;
+        private Gtk.Box body = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+        private Gtk.Box action_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+        private Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(null, null);
+        private Gtk.Widget view;
+        private Gtk.Label refresh_status = new Gtk.Label("");
 
         construct {
             this.view = this.build_loader();
-            
+            action_box.pack_start(refresh_status, false, false, 5);
+            refresh_status.label = "Loading...";
             var auto_refresh_button = new Gtk.Switch();
             auto_refresh_button.notify["active"].connect(() => {
 				this.container_auto_refresh_toggle_request(auto_refresh_button.state);
@@ -32,6 +34,10 @@ namespace Dockery.View.Stat {
             body.pack_start(new Gtk.Separator(Gtk.Orientation.HORIZONTAL), false, false, 0);
             body.pack_start(scrolled, true, true, 0);
             this.add_body(body);
+        }
+
+        public void set_message(string message) {
+            refresh_status.label = message;
         }
 
         public void getset() {
