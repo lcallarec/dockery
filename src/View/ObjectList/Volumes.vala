@@ -72,7 +72,11 @@ namespace Dockery.View.ObjectList {
 
             var tv = get_treeview(liststore);
 
-            this.pack_start(tv, true, true, 0);
+            Gtk.ScrolledWindow volumes_scrolled = new Gtk.ScrolledWindow(null, null);
+            volumes_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+            volumes_scrolled.add(tv);
+
+            this.pack_start(volumes_scrolled, true, true, 0);
 
             return volumes_count;
         }

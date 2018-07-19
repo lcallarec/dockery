@@ -180,7 +180,12 @@ namespace Dockery.View.Container {
                 return false;
             });
 
-            notebook.append_page(tv, new Gtk.Label(Model.ContainerStatusConverter.convert_from_enum(current_status)));
+
+            Gtk.ScrolledWindow scrolled_window = new Gtk.ScrolledWindow(null, null);
+            scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+            scrolled_window.add(tv);
+
+            notebook.append_page(scrolled_window, new Gtk.Label(Model.ContainerStatusConverter.convert_from_enum(current_status)));
 
             return containers_count;
         }

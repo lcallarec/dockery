@@ -81,7 +81,11 @@ namespace View.Docker.List {
 
             register_on_row_right_click(tv);
 
-            this.pack_start(tv, true, true, 0);
+            Gtk.ScrolledWindow images_scrolled = new Gtk.ScrolledWindow(null, null);
+            images_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
+            images_scrolled.add(tv);
+
+            this.pack_start(images_scrolled, true, true, 0);
 
             return images_count;
         }

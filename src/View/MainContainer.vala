@@ -108,21 +108,9 @@ namespace Dockery.View {
 
             //End connect signals
 
-            Gtk.ScrolledWindow containers_scrolled = new Gtk.ScrolledWindow(null, null);
-            containers_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-            containers_scrolled.add(containers);
-
-            Gtk.ScrolledWindow images_scrolled = new Gtk.ScrolledWindow(null, null);
-            images_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-            images_scrolled.add(images);
-
-            Gtk.ScrolledWindow volumes_scrolled = new Gtk.ScrolledWindow(null, null);
-            volumes_scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
-            volumes_scrolled.add(volumes);
-
-            stack.add_named(containers_scrolled, "containers");
-            stack.add_named(images_scrolled, "images");
-            stack.add_named(volumes_scrolled, "volumes");
+            stack.add_named(containers, "containers");
+            stack.add_named(images, "images");
+            stack.add_named(volumes, "volumes");
             
             local_docker_perspective.pack_start(settings, false, false);
             
