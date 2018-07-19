@@ -23,10 +23,10 @@ namespace Dockery.View.Controls {
 
             //Uglish hack to avoid GTK init focus
             this.docker_entrypoint_entry.can_focus = false;
-            this.docker_entrypoint_entry.enter_notify_event .connect(() => {
+            this.docker_entrypoint_entry.enter_notify_event.connect(() => {
                 this.docker_entrypoint_entry.set_can_focus(true);
             });
-        }
+          }
 
         public SettingsComponent() {
 
@@ -68,6 +68,10 @@ namespace Dockery.View.Controls {
             
             this.discover_button.clicked.connect(() => {
                 parent.on_docker_daemon_discover_request();
+            });
+
+           this.docker_entrypoint_entry.activate.connect(() => {
+                parent.on_docker_daemon_connect_request(this.docker_entrypoint_entry.text);
             });
 
             parent.on_docker_daemon_connect_success.connect((docker_entrypoint) => {
