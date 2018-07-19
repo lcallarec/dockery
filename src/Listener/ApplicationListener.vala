@@ -1,3 +1,8 @@
+
+errordomain ConnectionError {
+    WRONG_PROTOCOL,
+    UNREACHABLE_HOST
+}
 /**
  * ApplicationListener is listening to all signals emitted by the view layer
  */
@@ -23,11 +28,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         
         string? docker_endpoint = discover_connection();
         if (null != docker_endpoint) {
-            try {
-                __connect(docker_endpoint);
-            } catch(GLib.Error e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, e.message);
-            }
+            __connect(docker_endpoint);
         } else {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't locate docker daemon");
         }
@@ -73,34 +74,30 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
 
     private void listen_headerbar() {
 
-        this.view.on_docker_daemon_connect_request.connect((docker_entrypoint) => {
-            try {
-                __connect(docker_entrypoint);
-            } catch (Error e) {
-                message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't connect docker daemon at %s. Reason: %s".printf(docker_entrypoint, e.message));
-            }
+        this.view.on_docker_daemon_connect_request.connect((docker_endpoint) => {
+            __connect(docker_endpoint);
         });
 
         this.view.on_docker_daemon_disconnect_request.connect(() => {
             __disconnect();
         });
 
-        this.on_docker_daemon_connect_success.connect((docker_entrypoint) => {
-            this.view.on_docker_daemon_connect_success(docker_entrypoint);
+        this.on_docker_daemon_connect_success.connect((docker_endpoint) => {
+            this.view.on_docker_daemon_connect_success(docker_endpoint);
         });
 
-        this.on_docker_daemon_connect_failure.connect((docker_entrypoint) => {
-            this.view.on_docker_daemon_connect_failure(docker_entrypoint);
+        this.on_docker_daemon_connect_failure.connect((docker_endpoint, e) => {
+            message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't connect docker daemon at %s. Reason: %s".printf(docker_endpoint, e.message));
+            this.view.images.init(new Dockery.DockerSdk.Model.ImageCollection());
+            this.view.containers.init(new Dockery.DockerSdk.Model.ContainerCollection());
+            this.view.volumes.init(new Dockery.DockerSdk.Model.VolumeCollection());
+            this.view.on_docker_daemon_connect_failure(docker_endpoint, e);
         });
 
         this.view.on_docker_daemon_discover_request.connect(() => {
             string? docker_endpoint = discover_connection();
             if (null != docker_endpoint) {
-                try {
-                    __connect(docker_endpoint);
-                } catch(GLib.Error e) {
-                    message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Error connecting to docker daemon at %s".printf(docker_endpoint));
-                }
+                __connect(docker_endpoint);
             } else {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't locate docker daemon");
             }
@@ -144,23 +141,27 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         }
     }
 
-    protected bool __connect(string docker_endpoint) throws Error {
+    protected void __connect(string docker_endpoint) throws Error {
 
         repository = create_repository(docker_endpoint);
-        if (repository != null) {
-            
-            repository.connected.connect((repository) => {
-                docker_daemon_post_connect(docker_endpoint);
-            });
-
-            repository.connect();
-            return true;
+        
+        if (repository == null) {
+            this.on_docker_daemon_connect_failure(docker_endpoint, new ConnectionError.WRONG_PROTOCOL("Unkown protocol in %s. Supported protocols are http:// and unix://".printf(docker_endpoint)));
+            return;
         }
 
-        return false;
+        repository.connected.connect((repository) => {
+            docker_daemon_post_connect(docker_endpoint);
+        });
+
+        try {
+            repository.connect();
+        } catch (Error e) {
+            this.on_docker_daemon_connect_failure(docker_endpoint, new ConnectionError.UNREACHABLE_HOST(e.message));
+        }
     }
 
-     protected bool __disconnect() {
+     protected void __disconnect() {
 
         this.view.on_docker_daemon_disconnected();
 
@@ -171,8 +172,6 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         this.view.images.init(new Dockery.DockerSdk.Model.ImageCollection());
         this.view.containers.init(new Dockery.DockerSdk.Model.ContainerCollection());
         this.view.volumes.init(new Dockery.DockerSdk.Model.VolumeCollection());
-
-        return true;
     }
 
     protected string? discover_connection() {
@@ -190,17 +189,15 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         if (client != null) {
             return new Dockery.DockerSdk.Repository(client, new Dockery.DockerSdk.Client.HttpClient("https://registry.hub.docker.com/v1"));
         }
-        message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) "Failed to connect to %s".printf(uri));
-        
+
         return null;
-        
     }
 
-    protected void docker_daemon_post_connect(string docker_entrypoint) {
-        this.view.on_docker_daemon_connect_success(docker_entrypoint);
+    protected void docker_daemon_post_connect(string docker_endpoint) {
+        this.view.on_docker_daemon_connect_success(docker_endpoint);
         this.init_image_list();
         this.init_container_list();
         this.init_volume_list();
-        message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon");
+        message_dispatcher.dispatch(Gtk.MessageType.INFO, "Connected to docker daemon at %s".printf(docker_endpoint));
     }
 }

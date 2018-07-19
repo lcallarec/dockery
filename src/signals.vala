@@ -47,6 +47,6 @@ namespace Signals {
         public signal void on_docker_daemon_discover_request();
         public signal void on_docker_daemon_disconnected();
         public signal void on_docker_daemon_connect_success(string docker_entrypoint);
-        public signal void on_docker_daemon_connect_failure(string docker_entrypoint);
+        public signal void on_docker_daemon_connect_failure(string docker_entrypoint, Error e);
     }
 }
