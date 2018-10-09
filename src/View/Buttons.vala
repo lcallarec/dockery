@@ -43,14 +43,14 @@ namespace Dockery.View {
         }
     }
 
-    public class PauseButton : IconToggleButton {
+    public class PlayPauseButton : IconToggleButton {
         
-        public PauseButton() {
-            base("media-playback-start-symbolic", "media-playback-start-symbolic");
+        public PlayPauseButton() {
+            base("media-playback-pause-symbolic", "media-playback-start-symbolic");
         }
         
-        public PauseButton.from_active_rule(ActiveRule rule) {
-            base("media-playback-start-symbolic", "media-playback-start-symbolic");
+        public PlayPauseButton.from_active_rule(ActiveRule rule) {
+            base("media-playback-pause-symbolic", "media-playback-start-symbolic");
             this.set_active_from_rule(rule);
         }
     }
