@@ -1,4 +1,4 @@
-namespace Notification {
+namespace Dockery.Notification {
 
     /**
      * Notification message
