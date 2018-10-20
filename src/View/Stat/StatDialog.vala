@@ -4,7 +4,7 @@ using View.Docker;
 
 namespace Dockery.View.Stat {
 
-    public class StatDialog : View.Dialog, Signals.ContainerRequestAction {
+    public class StatDialog : View.Dialog {
 
         private Gtk.Box body = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         private Gtk.Box action_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
@@ -18,7 +18,7 @@ namespace Dockery.View.Stat {
             refresh_status.label = "Loading...";
             var auto_refresh_button = new Gtk.Switch();
             auto_refresh_button.notify["active"].connect(() => {
-				this.container_auto_refresh_toggle_request(auto_refresh_button.state);
+				SignalDispatcher.dispatcher().container_auto_refresh_toggle_request(auto_refresh_button.state);
             });
             action_box.pack_end(auto_refresh_button, false, false, 0);
             action_box.pack_end(new Gtk.Label("auto-refresh"), false, false, 0);

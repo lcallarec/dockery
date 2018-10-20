@@ -3,7 +3,7 @@ using Dockery.View;
 
 namespace Dockery.View.Container {
 
-    public class ListAll : global::View.Docker.Flushable, global::View.Docker.ContainerViewable, Signals.ContainerRequestAction, Gtk.Box {
+    public class ListAll : global::View.Docker.Flushable, global::View.Docker.ContainerViewable, Gtk.Box {
 
         private Gtk.Notebook notebook;
         private Gtk.Box empty_box;
@@ -123,54 +123,14 @@ namespace Dockery.View.Container {
 
                         var menu = global::View.Docker.Menu.ContainerMenuFactory.create(container);
                         if (null != menu) {
-
                             menu.show_all();
-
                             menu.popup(null, null, null, e.button, e.time);
-
-                            menu.container_status_change_request.connect((status, container) => {
-                                this.container_status_change_request(status, container);
-                            });
-
-                            menu.container_remove_request.connect(() => {
-                                this.container_remove_request(container);
-                            });
-
                             menu.container_rename_request.connect(() => {
                                 Gdk.Rectangle rect;
                                 tv.get_cell_area (tp, tv.get_column(0), out rect);
                                 rect.y = rect.y + rect.height;
-                                this.container_rename_request(container, tv, rect);
+                                SignalDispatcher.dispatcher().container_rename_request(container, tv, rect);
                             });
-
-                            menu.container_kill_request.connect(() => {
-                                this.container_kill_request(container);
-                            });
-
-                            menu.container_start_request.connect(() => {
-                                this.container_start_request(container);
-                            });
-
-                            menu.container_stop_request.connect(() => {
-                                this.container_stop_request(container);
-                            });
-
-                            menu.container_restart_request.connect(() => {
-                                this.container_restart_request(container);
-                            });
-
-                            menu.container_bash_in_request.connect(() => {
-                                this.container_bash_in_request(container);
-                            });
-
-                            menu.container_inspect_request.connect(() => {
-                                this.container_inspect_request(container);
-                            });
-                            
-                            menu.container_stats_request.connect(() => {
-                                this.container_stats_request(container);
-                            });
-
                         }
                     }
 
@@ -179,7 +139,6 @@ namespace Dockery.View.Container {
 
                 return false;
             });
-
 
             Gtk.ScrolledWindow scrolled_window = new Gtk.ScrolledWindow(null, null);
             scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC);
@@ -206,7 +165,6 @@ namespace Dockery.View.Container {
             treeview.set_grid_lines(Gtk.TreeViewGridLines.HORIZONTAL);
 
             return treeview;
-
         }
     }
 }

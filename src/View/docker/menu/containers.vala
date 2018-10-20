@@ -1,7 +1,8 @@
+using Dockery.View;
+using Dockery.DockerSdk;
+
 namespace View.Docker.Menu {
-
-    using global::Dockery.DockerSdk.Model;
-
+ 
     /**
      * Factory to create Container list item menu
      */
@@ -10,18 +11,18 @@ namespace View.Docker.Menu {
         /**
          * Create a {@ContainerMenu} from a given {@link Dockery.DockerSdk.Model.Container} (status))
          */
-        public static ContainerMenu? create(Container container) {
+        public static ContainerMenu? create(Model.Container container) {
 
             switch(container.status) {
-                case ContainerStatus.RUNNING:
+                case Model.ContainerStatus.RUNNING:
                     return new RunningContainerMenu(container);
-                case ContainerStatus.PAUSED:
+                case Model.ContainerStatus.PAUSED:
                     return new PausedContainerMenu(container);
-                case ContainerStatus.EXITED:
+                case Model.ContainerStatus.EXITED:
                     return new ExitedContainerMenu(container);
-                case ContainerStatus.CREATED:
+                case Model.ContainerStatus.CREATED:
                     return new CreatedContainerMenu(container);
-                case ContainerStatus.RESTARTING:
+                case Model.ContainerStatus.RESTARTING:
                     return null;
                 default:
                     return null;
@@ -32,18 +33,18 @@ namespace View.Docker.Menu {
     /**
      * Base Container list item menu
      */
-    public abstract class ContainerMenu : Signals.ContainerRequestAction, Menu {
+    public abstract class ContainerMenu : ContainerSignalDispatcher, Menu {
 
-        protected Container container;
+        protected Model.Container container;
 
-        public ContainerMenu(Container container) {
+        public ContainerMenu(Model.Container container) {
             this.container = container;
         }
 
         protected void append_play_pause_menu_item() {
 
             Gtk.ImageMenuItem menu_item;
-            if (container.status == ContainerStatus.PAUSED) {
+            if (container.status == Model.ContainerStatus.PAUSED) {
                 menu_item  = new Gtk.ImageMenuItem.with_mnemonic("_Unpause container");
             } else {
                 menu_item  = new Gtk.ImageMenuItem.with_mnemonic("_Pause container");
@@ -57,22 +58,22 @@ namespace View.Docker.Menu {
         protected void append_start_menu_item() {
 
             this.append_menu_item("_Start container", null, () => {
-                this.container_start_request(container);
+                SignalDispatcher.dispatcher().container_start_request(container);
             });
         }
 
         protected void append_stop_menu_item() {
             this.append_menu_item("_Stop container", null, () => {
-                this.container_stop_request(container);
+                SignalDispatcher.dispatcher().container_stop_request(container);
             });
         }
 
-        protected void add_play_pause_menu_item_listener(Gtk.MenuItem menu_item, Container container) {
+        protected void add_play_pause_menu_item_listener(Gtk.MenuItem menu_item, Model.Container container) {
             menu_item.activate.connect(() => {
-                if (container.status == ContainerStatus.PAUSED) {
-                    this.container_status_change_request(ContainerStatus.RUNNING, container);
-                } else if (container.status == ContainerStatus.RUNNING) {
-                    this.container_status_change_request(ContainerStatus.PAUSED, container);
+                if (container.status == Model.ContainerStatus.PAUSED) {
+                    SignalDispatcher.dispatcher().container_status_change_request(Model.ContainerStatus.RUNNING, container);
+                } else if (container.status == Model.ContainerStatus.RUNNING) {
+                    SignalDispatcher.dispatcher().container_status_change_request(Model.ContainerStatus.PAUSED, container);
                 }
             });
         }
@@ -85,44 +86,44 @@ namespace View.Docker.Menu {
 
         protected void append_remove_menu_item() {
             this.append_menu_item("_Remove container", null, () => {
-                this.container_remove_request(container);
+                SignalDispatcher.dispatcher().container_remove_request(container);
             });
         }
 
         protected void append_kill_menu_item() {
             this.append_menu_item("_Kill container", null, () => {
-                this.container_kill_request(container);
+                SignalDispatcher.dispatcher().container_kill_request(container);
             });
         }
 
         protected void append_restart_menu_item() {
             this.append_menu_item("Re_start container", null, () => {
-                this.container_restart_request(container);
+                SignalDispatcher.dispatcher().container_restart_request(container);
             });
         }
 
         protected void append_bash_in_menu_item() {
             this.append_menu_item("Bash-in", null, () => {
-                this.container_bash_in_request(container);
+                SignalDispatcher.dispatcher().container_bash_in_request(container);
             });
         }
         
         protected void append_inspect_menu_item() {
             this.append_menu_item("Inspect", null, () => {
-                this.container_inspect_request(container);
+                SignalDispatcher.dispatcher().container_inspect_request(container);
             });
         }
 
         protected void append_stats_menu_item() {
             this.append_menu_item("Stats", null, () => {
-                this.container_stats_request(container);
+                SignalDispatcher.dispatcher().container_stats_request(container);
             });
         }
     }
 
     internal class RunningContainerMenu : ContainerMenu {
 
-        public RunningContainerMenu(Container container) {
+        public RunningContainerMenu(Model.Container container) {
 
             base(container);
 
@@ -146,7 +147,7 @@ namespace View.Docker.Menu {
 
     internal class PausedContainerMenu : ContainerMenu {
 
-        public PausedContainerMenu(Container container) {
+        public PausedContainerMenu(Model.Container container) {
             base(container);
 
             this.append_play_pause_menu_item();
@@ -166,7 +167,7 @@ namespace View.Docker.Menu {
      */
     internal abstract class NonRunningContainerMenu : ContainerMenu {
 
-        public NonRunningContainerMenu(Container container) {
+        public NonRunningContainerMenu(Model.Container container) {
 
             base(container);
 
@@ -185,7 +186,7 @@ namespace View.Docker.Menu {
      */
     internal class ExitedContainerMenu : NonRunningContainerMenu {
 
-        public ExitedContainerMenu(Container container) {
+        public ExitedContainerMenu(Model.Container container) {
             base(container);
         }
     }
@@ -195,7 +196,7 @@ namespace View.Docker.Menu {
      */
     internal class CreatedContainerMenu : NonRunningContainerMenu {
 
-        public CreatedContainerMenu(Container container) {
+        public CreatedContainerMenu(Model.Container container) {
             base(container);
         }
     }

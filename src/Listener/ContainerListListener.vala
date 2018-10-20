@@ -36,7 +36,7 @@ namespace Dockery.Listener {
         
         private void container_status_change_request() {
 
-            this.container_list.container_status_change_request.connect((requested_status, container) => {
+            SignalDispatcher.dispatcher().container_status_change_request.connect((requested_status, container) => {
 
                 try {
                     string message = "";
@@ -59,7 +59,7 @@ namespace Dockery.Listener {
 
         private void container_remove_request() {
             
-            this.container_list.container_remove_request.connect((container) => {
+            SignalDispatcher.dispatcher().container_remove_request.connect((container) => {
 
                 Gtk.MessageDialog msg = new Gtk.MessageDialog(
                     parent_window, Gtk.DialogFlags.MODAL,
@@ -96,7 +96,7 @@ namespace Dockery.Listener {
 
         
         private void container_start_request() {
-            this.container_list.container_start_request.connect((container) => {
+            SignalDispatcher.dispatcher().container_start_request.connect((container) => {
 
                 try {
                     repository.containers().start(container);
@@ -113,7 +113,7 @@ namespace Dockery.Listener {
 
         private void container_bash_in_request() {
             
-            this.container_list.container_bash_in_request.connect((container) => {
+            SignalDispatcher.dispatcher().container_bash_in_request.connect((container) => {
                 var term_window = new Gtk.Window();
 
                 var titlebar = new Gtk.HeaderBar();
@@ -140,7 +140,7 @@ namespace Dockery.Listener {
 
         private void container_stop_request() {
 
-            this.container_list.container_stop_request.connect((container) => {
+            SignalDispatcher.dispatcher().container_stop_request.connect((container) => {
                 try {
                     repository.containers().stop(container);
                     string message = "Container %s successfully stopped".printf(container.id);
@@ -155,7 +155,7 @@ namespace Dockery.Listener {
         
         private void container_kill_request() {
 
-            this.container_list.container_kill_request.connect((container) => {
+            SignalDispatcher.dispatcher().container_kill_request.connect((container) => {
                 try {
                     repository.containers().kill(container);
                     string message = "Container %s successfully killed".printf(container.id);
@@ -169,7 +169,7 @@ namespace Dockery.Listener {
         }
         
         private void container_restart_request() {
-            this.container_list.container_restart_request.connect((container) => {
+            SignalDispatcher.dispatcher().container_restart_request.connect((container) => {
                 try {
                     repository.containers().restart(container);
                     string message = "Container %s successfully restarted".printf(container.id);
@@ -183,7 +183,7 @@ namespace Dockery.Listener {
         }        
         
         private void container_inspect_request() {
-            this.container_list.container_inspect_request.connect((container) => {
+            SignalDispatcher.dispatcher().container_inspect_request.connect((container) => {
                 try {
 
                     var inspection_data = repository.containers().inspect(container);
@@ -210,11 +210,11 @@ namespace Dockery.Listener {
         }       
         
         private void container_stats_request() {
-            this.container_list.container_stats_request.connect((container) => {
+            SignalDispatcher.dispatcher().container_stats_request.connect((container) => {
                 try {
                     var dialog = new StatDialog(parent_window);
                     uint source_timeout = 0;
-                    dialog.container_auto_refresh_toggle_request.connect((active) => {
+                    SignalDispatcher.dispatcher().container_auto_refresh_toggle_request.connect((active) => {
                         if (active) {
                             source_timeout = GLib.Timeout.add(5000, () => {
                                 dialog.set_message("Stats refreshing...");
@@ -251,7 +251,7 @@ namespace Dockery.Listener {
         }       
 
         private void container_rename_request() {
-            this.container_list.container_rename_request.connect((container, relative_to, pointing_to) => {
+            SignalDispatcher.dispatcher().container_rename_request.connect((container, relative_to, pointing_to) => {
                 
                 #if NOT_ON_TRAVIS
                 var pop = new Gtk.Popover(relative_to);

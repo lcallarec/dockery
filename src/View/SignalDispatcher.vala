@@ -3,19 +3,19 @@ using Dockery.View;
 
 namespace Dockery.View {
 
-    //  public interface ContainerSignalDispatcher : GLib.Object {
-    //      public signal void container_status_change_request(Model.ContainerStatus status, Model.Container container);
-    //      public signal void container_remove_request(Model.Container container);
-    //      public signal void container_start_request(Model.Container container);
-    //      public signal void container_stop_request(Model.Container container);
-    //      public signal void container_rename_request(Model.Container container, Gtk.Widget? relative_to, Gdk.Rectangle? pointing_to);
-    //      public signal void container_kill_request(Model.Container container);
-    //      public signal void container_restart_request(Model.Container container);
-    //      public signal void container_bash_in_request(Model.Container container);
-    //      public signal void container_inspect_request(Model.Container container);
-    //      public signal void container_stats_request(Model.Container container);
-    //      public signal void container_auto_refresh_toggle_request(bool active);
-    //  }
+    public interface ContainerSignalDispatcher : GLib.Object {
+        public signal void container_status_change_request(Model.ContainerStatus status, Model.Container container);
+        public signal void container_remove_request(Model.Container container);
+        public signal void container_start_request(Model.Container container);
+        public signal void container_stop_request(Model.Container container);
+        public signal void container_rename_request(Model.Container container, Gtk.Widget? relative_to, Gdk.Rectangle? pointing_to);
+        public signal void container_kill_request(Model.Container container);
+        public signal void container_restart_request(Model.Container container);
+        public signal void container_bash_in_request(Model.Container container);
+        public signal void container_inspect_request(Model.Container container);
+        public signal void container_stats_request(Model.Container container);
+        public signal void container_auto_refresh_toggle_request(bool active);
+    }
 
     public interface ImageSignalDispatcher : GLib.Object {
         public signal void images_remove_request(Model.ImageCollection images);
@@ -40,7 +40,7 @@ namespace Dockery.View {
         public signal void on_docker_daemon_connect_failure(string docker_entrypoint, Error e);
     }
 
-    public class SignalDispatcher : GLib.Object, ImageSignalDispatcher, DockerServiceSignalDispatcher, DockerHubSignalDispatcher/* , ContainerSignalDispatcher, DockerHubSignalDispatcher, */ {
+    public class SignalDispatcher : GLib.Object, ImageSignalDispatcher, DockerServiceSignalDispatcher, DockerHubSignalDispatcher, ContainerSignalDispatcher {
         private static SignalDispatcher instance;
 
         public static SignalDispatcher dispatcher() {
