@@ -1,12 +1,14 @@
+using Dockery.View;
 
 errordomain ConnectionError {
     WRONG_PROTOCOL,
     UNREACHABLE_HOST
 }
+
 /**
  * ApplicationListener is listening to all signals emitted by the view layer
  */
-public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
+public class ApplicationListener : GLib.Object, Signals.DockerHubImageRequestAction {
 
     private Dockery.DockerSdk.Repository? repository;
     private DockerManager window;
@@ -74,27 +76,23 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
 
     private void listen_headerbar() {
 
-        this.view.on_docker_daemon_connect_request.connect((docker_endpoint) => {
+        SignalDispatcher.dispatcher().on_docker_daemon_connect_request.connect((docker_endpoint) => {
             __connect(docker_endpoint);
         });
 
-        this.view.on_docker_daemon_disconnect_request.connect(() => {
+        SignalDispatcher.dispatcher().on_docker_daemon_disconnect_request.connect(() => {
             __disconnect();
         });
 
-        this.on_docker_daemon_connect_success.connect((docker_endpoint) => {
-            this.view.on_docker_daemon_connect_success(docker_endpoint);
-        });
-
-        this.on_docker_daemon_connect_failure.connect((docker_endpoint, e) => {
+         SignalDispatcher.dispatcher().on_docker_daemon_connect_failure.connect((docker_endpoint, e) => {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't connect docker daemon at %s. Reason: %s".printf(docker_endpoint, e.message));
             this.view.images.init(new Dockery.DockerSdk.Model.ImageCollection());
             this.view.containers.init(new Dockery.DockerSdk.Model.ContainerCollection());
             this.view.volumes.init(new Dockery.DockerSdk.Model.VolumeCollection());
-            this.view.on_docker_daemon_connect_failure(docker_endpoint, e);
+            SignalDispatcher.dispatcher().on_docker_daemon_connect_failure(docker_endpoint, e);
         });
 
-        this.view.on_docker_daemon_discover_request.connect(() => {
+        SignalDispatcher.dispatcher().on_docker_daemon_discover_request.connect(() => {
             string? docker_endpoint = discover_connection();
             if (null != docker_endpoint) {
                 __connect(docker_endpoint);
@@ -146,7 +144,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         repository = create_repository(docker_endpoint);
         
         if (repository == null) {
-            this.on_docker_daemon_connect_failure(docker_endpoint, new ConnectionError.WRONG_PROTOCOL("Unkown protocol in %s. Supported protocols are http:// and unix://".printf(docker_endpoint)));
+            SignalDispatcher.dispatcher().on_docker_daemon_connect_failure(docker_endpoint, new ConnectionError.WRONG_PROTOCOL("Unkown protocol in %s. Supported protocols are http:// and unix://".printf(docker_endpoint)));
             return;
         }
 
@@ -157,13 +155,13 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
         try {
             repository.connect();
         } catch (Error e) {
-            this.on_docker_daemon_connect_failure(docker_endpoint, new ConnectionError.UNREACHABLE_HOST(e.message));
+            SignalDispatcher.dispatcher().on_docker_daemon_connect_failure(docker_endpoint, new ConnectionError.UNREACHABLE_HOST(e.message));
         }
     }
 
      protected void __disconnect() {
 
-        this.view.on_docker_daemon_disconnected();
+        SignalDispatcher.dispatcher().on_docker_daemon_disconnected();
 
         repository = null;
 
@@ -194,7 +192,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
     }
 
     protected void docker_daemon_post_connect(string docker_endpoint) {
-        this.view.on_docker_daemon_connect_success(docker_endpoint);
+        SignalDispatcher.dispatcher().on_docker_daemon_connect_success(docker_endpoint);
         this.init_image_list();
         this.init_container_list();
         this.init_volume_list();

@@ -1,6 +1,8 @@
+using Dockery.View;
+
 namespace Dockery.View.Controls {
 
-    class SettingsComponent : Gtk.Box, Signals.DockerServiceAware, Signals.DockerHubImageRequestAction {
+    class SettingsComponent : Gtk.Box, Signals.DockerHubImageRequestAction {
 
         private Gtk.Button connect_button = new Gtk.Button();
         private Gtk.Button disconnect_button = new Gtk.Button();
@@ -54,34 +56,36 @@ namespace Dockery.View.Controls {
             this.pack_end(this.hub_open_button, false, false, 5);
             this.pack_end(this.discover_button, false, false, 5);
             this.pack_end(entry_and_button, false, false, 0);
+
+            this.connect_docker_daemon_signals();
         }
 
-        public void connect_docker_daemon_signals(Signals.DockerServiceAware parent) {
+        private void connect_docker_daemon_signals() {
             
             this.connect_button.clicked.connect(() => {
-                parent.on_docker_daemon_connect_request(docker_entrypoint_entry.text);
+                SignalDispatcher.dispatcher().on_docker_daemon_connect_request(docker_entrypoint_entry.text);
             });
 
             this.disconnect_button.clicked.connect(() => {
-                parent.on_docker_daemon_disconnect_request();
+                SignalDispatcher.dispatcher().on_docker_daemon_disconnect_request();
             });
             
             this.discover_button.clicked.connect(() => {
-                parent.on_docker_daemon_discover_request();
+                SignalDispatcher.dispatcher().on_docker_daemon_discover_request();
             });
 
            this.docker_entrypoint_entry.activate.connect(() => {
-                parent.on_docker_daemon_connect_request(this.docker_entrypoint_entry.text);
+                SignalDispatcher.dispatcher().on_docker_daemon_connect_request(this.docker_entrypoint_entry.text);
             });
 
-            parent.on_docker_daemon_connect_success.connect((docker_entrypoint) => {
+            SignalDispatcher.dispatcher().on_docker_daemon_connect_success.connect((docker_entrypoint) => {
                 this.disconnect_button.set_sensitive(true);
                 this.disconnect_button.show();
                 this.hub_open_button.set_sensitive(true);
                 this.docker_entrypoint_entry.text = docker_entrypoint;
             });
 
-            parent.on_docker_daemon_connect_failure.connect((docker_entrypoint, e) => {
+            SignalDispatcher.dispatcher().on_docker_daemon_connect_failure.connect((docker_entrypoint, e) => {
                 stdout.printf("FAILURE connect Settings\n");
                 this.hub_open_button.set_sensitive(false);
                 this.disconnect_button.set_sensitive(false);
@@ -89,7 +93,7 @@ namespace Dockery.View.Controls {
                 this.docker_entrypoint_entry.text = docker_entrypoint;
             });
 
-            parent.on_docker_daemon_disconnected.connect(() => {
+            SignalDispatcher.dispatcher().on_docker_daemon_disconnected.connect(() => {
                 this.hub_open_button.set_sensitive(false);
                 this.disconnect_button.set_sensitive(false);
                 this.disconnect_button.hide();

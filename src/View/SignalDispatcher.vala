@@ -32,16 +32,16 @@ namespace Dockery.View {
     //  }
 
 
-    //  public interface DockerServiceSignalDispatcher : GLib.Object {
-    //      public signal void on_docker_daemon_connect_request(string docker_entrypoint);
-    //      public signal void on_docker_daemon_disconnect_request();
-    //      public signal void on_docker_daemon_discover_request();
-    //      public signal void on_docker_daemon_disconnected();
-    //      public signal void on_docker_daemon_connect_success(string docker_entrypoint);
-    //      public signal void on_docker_daemon_connect_failure(string docker_entrypoint, Error e);
-    //  }
+    public interface DockerServiceSignalDispatcher : GLib.Object {
+        public signal void on_docker_daemon_connect_request(string docker_entrypoint);
+        public signal void on_docker_daemon_disconnect_request();
+        public signal void on_docker_daemon_discover_request();
+        public signal void on_docker_daemon_disconnected();
+        public signal void on_docker_daemon_connect_success(string docker_entrypoint);
+        public signal void on_docker_daemon_connect_failure(string docker_entrypoint, Error e);
+    }
 
-    public class SignalDispatcher : GLib.Object, ImageSignalDispatcher/* , ContainerSignalDispatcher, DockerHubSignalDispatcher, DockerServiceSignalDispatcher */ {
+    public class SignalDispatcher : GLib.Object, ImageSignalDispatcher, DockerServiceSignalDispatcher/* , ContainerSignalDispatcher, DockerHubSignalDispatcher, */ {
         private static SignalDispatcher instance;
 
         public static SignalDispatcher dispatcher() {

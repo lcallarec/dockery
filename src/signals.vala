@@ -32,14 +32,4 @@ namespace Signals {
 
         public virtual void set_images(Dockery.DockerSdk.Model.HubImage[] images) {}
     }
-
-    public interface DockerServiceAware : GLib.Object {
-
-        public signal void on_docker_daemon_connect_request(string docker_entrypoint);
-        public signal void on_docker_daemon_disconnect_request();
-        public signal void on_docker_daemon_discover_request();
-        public signal void on_docker_daemon_disconnected();
-        public signal void on_docker_daemon_connect_success(string docker_entrypoint);
-        public signal void on_docker_daemon_connect_failure(string docker_entrypoint, Error e);
-    }
 }
