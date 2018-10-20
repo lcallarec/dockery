@@ -24,20 +24,21 @@ namespace Dockery.Listener {
         }
         
         private void docker_public_registry_open_request() {
-            this.main_container.on_docker_public_registry_open_request.connect(() => {
-                var dialog = new Hub.SearchDialog();
-                dialog.search_image_in_docker_hub.connect((target, term) => {
-                    try {
-                        DockerSdk.Model.HubImage[] images = repository.images().search(term);
-                        target.set_images(images);
-                    } catch (DockerSdk.Io.RequestError e) {
-                        feedback(Gtk.MessageType.ERROR, (string) e.message);
-                    }
-                });
 
+            SignalDispatcher.dispatcher().search_image_in_docker_hub.connect((target, term) => {
+                try {
+                    DockerSdk.Model.HubImage[] images = repository.images().search(term);
+                    target.set_images(images);
+                } catch (DockerSdk.Io.RequestError e) {
+                    feedback(Gtk.MessageType.ERROR, (string) e.message);
+                }
+            });
+
+            SignalDispatcher.dispatcher().on_docker_public_registry_open_request.connect(() => {
+                var dialog = new Hub.SearchDialog();
                 dialog.show_all();
                 
-                dialog.hub_display_image_menu_request.connect((event_button, image) => {
+                SignalDispatcher.dispatcher().hub_display_image_menu_request.connect((event_button, image) => {
                     
                     Model.ImageTagCollection tags;
                     try {
@@ -51,13 +52,9 @@ namespace Dockery.Listener {
 
                     menu.show_all();
                     menu.popup(null, dialog, null, event_button.button, event_button.time);
-                    
-                    menu.pull_image_from_docker_hub.connect((target, image) => {
-                        dialog.pull_image_from_docker_hub(dialog, image);
-                    });    
                 });
 
-                dialog.pull_image_from_docker_hub.connect((target, image) => {
+                SignalDispatcher.dispatcher().pull_image_from_docker_hub.connect((target, image) => {
 
                     var decorator = new Hub.PullImageFeedbackDecorator(target.message_box_label);
 

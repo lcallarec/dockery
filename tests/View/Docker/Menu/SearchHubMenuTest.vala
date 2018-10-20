@@ -1,5 +1,6 @@
-using Dockery.DockerSdk;
+using Dockery.View;
 using Dockery.View.Hub;
+using Dockery.DockerSdk;
 
 private void register_view_menu_search_hub_menu_test() {
 
@@ -11,7 +12,7 @@ private void register_view_menu_search_hub_menu_test() {
         
         bool connect_was_called = false;
         menu.foreach((widget) => {
-            menu.pull_image_from_docker_hub.connect((target, image) => {
+            SignalDispatcher.dispatcher().pull_image_from_docker_hub.connect((target, image) => {
                 connect_was_called = true;
                 assert(image.name == "dockery/dockery");
             });

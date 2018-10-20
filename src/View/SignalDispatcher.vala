@@ -23,13 +23,12 @@ namespace Dockery.View {
         public signal void image_create_container_with_request(Model.Image image);
     }
 
-    //  public interface DockerHubSignalDispatcher : GLib.Object {
-    //      public signal void on_docker_public_registry_open_request();
-    //      public signal void search_image_in_docker_hub(Hub.SearchDialog target, string term);
-    //      public signal void pull_image_from_docker_hub(Hub.SearchDialog? target, Model.HubImage image);
-    //      public signal void hub_display_image_menu_request(Gdk.EventButton event_button, Model.HubImage image);
-    //      public virtual void set_images(Model.HubImage[] images) {}
-    //  }
+    public interface DockerHubSignalDispatcher : GLib.Object {
+        public signal void on_docker_public_registry_open_request();
+        public signal void search_image_in_docker_hub(Hub.SearchDialog target, string term);
+        public signal void pull_image_from_docker_hub(Hub.SearchDialog? target, Model.HubImage image);
+        public signal void hub_display_image_menu_request(Gdk.EventButton event_button, Model.HubImage image);
+    }
 
 
     public interface DockerServiceSignalDispatcher : GLib.Object {
@@ -41,7 +40,7 @@ namespace Dockery.View {
         public signal void on_docker_daemon_connect_failure(string docker_entrypoint, Error e);
     }
 
-    public class SignalDispatcher : GLib.Object, ImageSignalDispatcher, DockerServiceSignalDispatcher/* , ContainerSignalDispatcher, DockerHubSignalDispatcher, */ {
+    public class SignalDispatcher : GLib.Object, ImageSignalDispatcher, DockerServiceSignalDispatcher, DockerHubSignalDispatcher/* , ContainerSignalDispatcher, DockerHubSignalDispatcher, */ {
         private static SignalDispatcher instance;
 
         public static SignalDispatcher dispatcher() {

@@ -1,3 +1,5 @@
+using Dockery.View;
+
 namespace Dockery.View.Hub {
 
     using global::Dockery.DockerSdk.Model;
@@ -8,7 +10,7 @@ namespace Dockery.View.Hub {
         }
     }
 
-    public class SearchHubMenu : Signals.DockerHubImageRequestAction, global::View.Docker.Menu.Menu {
+    public class SearchHubMenu : global::View.Docker.Menu.Menu {
 
         private HubImage image;
         private ImageTagCollection tags;
@@ -21,10 +23,10 @@ namespace Dockery.View.Hub {
 
         protected void append_pull_menu_item() {
             this.append_menu_item("_Pull all tags of %s image".printf(image.name), null, () => {
-                this.pull_image_from_docker_hub(null, image);
+                SignalDispatcher.dispatcher().pull_image_from_docker_hub(null, image);
             });
             this.append_menu_item("_Pull specific tags of %s image".printf(image.name), null, () => {
-                this.pull_image_from_docker_hub(null, image);
+                SignalDispatcher.dispatcher().pull_image_from_docker_hub(null, image);
             });
         }
     }

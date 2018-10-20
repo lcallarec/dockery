@@ -16,20 +16,4 @@ namespace Signals {
         public signal void container_stats_request(Container container);
         public signal void container_auto_refresh_toggle_request(bool active);
     }
-
-    /** Signals emitted on docker hub image request actions */
-    public interface DockerHubImageRequestAction : GLib.Object {
-
-        public signal void on_docker_public_registry_open_request();
-
-        /** This signal should be emitted when an image is searched in docker hub */
-        public signal void search_image_in_docker_hub(Dockery.View.Hub.SearchDialog target, string term);
-
-        /** This signal should be emitted as a request to pull an image from docker hub */
-        public signal void pull_image_from_docker_hub(Dockery.View.Hub.SearchDialog? target, HubImage image);
-
-        public signal void hub_display_image_menu_request(Gdk.EventButton event_button, HubImage image);
-
-        public virtual void set_images(Dockery.DockerSdk.Model.HubImage[] images) {}
-    }
 }

@@ -3,7 +3,7 @@ namespace Dockery.View {
     using global::Dockery.View;
     using global::Dockery.DockerSdk;
 
-    public class MainContainer : Gtk.Box, Signals.DockerHubImageRequestAction {
+    public class MainContainer : Gtk.Box {
 
         public Gtk.HeaderBar headerbar =  new HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
         public Gtk.InfoBar infobar = new Controls.MainInfoBar();
@@ -51,7 +51,6 @@ namespace Dockery.View {
         private void setup_local_docker_perspective(Gtk.Stack stack) {
 
             var settings = new View.Controls.SettingsComponent();
-            settings.connect_docker_hub_signals(this);
 
             stack.add_named(containers, "containers");
             stack.add_named(images, "images");

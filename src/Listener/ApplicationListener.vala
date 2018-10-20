@@ -8,7 +8,7 @@ errordomain ConnectionError {
 /**
  * ApplicationListener is listening to all signals emitted by the view layer
  */
-public class ApplicationListener : GLib.Object, Signals.DockerHubImageRequestAction {
+public class ApplicationListener : GLib.Object {
 
     private Dockery.DockerSdk.Repository? repository;
     private DockerManager window;

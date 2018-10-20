@@ -1,11 +1,12 @@
 using Dockery;
+using Dockery.View;
 using View.Docker.Menu;
 using Dockery.View.Hub;
 using Dockery.DockerSdk.Model;
 
 namespace Dockery.View.Hub {
     
-    public class SearchDialog : View.Dialog, Signals.DockerHubImageRequestAction {
+    public class SearchDialog : View.Dialog {
 
         private Gtk.ListStore liststore = new Gtk.ListStore(5, typeof (string),  typeof (string), typeof (string), typeof (string), typeof (string));
         private Gtk.TreeView treeview   = null;
@@ -57,12 +58,12 @@ namespace Dockery.View.Hub {
 
             entry.icon_press.connect ((pos, event) => {
                 if (pos == Gtk.EntryIconPosition.SECONDARY) {
-                    this.search_image_in_docker_hub(this, entry.text);
+                    SignalDispatcher.dispatcher().search_image_in_docker_hub(this, entry.text);
                 }
             });
 
             entry.activate.connect (() => {
-                this.search_image_in_docker_hub(this, entry.text);
+                SignalDispatcher.dispatcher().search_image_in_docker_hub(this, entry.text);
             });
         }
 
@@ -111,7 +112,7 @@ namespace Dockery.View.Hub {
 
                     HubImage image = new HubImage.from(name, true, true, name, 0);
 
-                    this.hub_display_image_menu_request(e, image);
+                    SignalDispatcher.dispatcher().hub_display_image_menu_request(e, image);
 
                     return true;
                 }

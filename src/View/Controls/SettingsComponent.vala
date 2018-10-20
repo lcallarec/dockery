@@ -2,7 +2,7 @@ using Dockery.View;
 
 namespace Dockery.View.Controls {
 
-    class SettingsComponent : Gtk.Box, Signals.DockerHubImageRequestAction {
+    class SettingsComponent : Gtk.Box {
 
         private Gtk.Button connect_button = new Gtk.Button();
         private Gtk.Button disconnect_button = new Gtk.Button();
@@ -58,6 +58,7 @@ namespace Dockery.View.Controls {
             this.pack_end(entry_and_button, false, false, 0);
 
             this.connect_docker_daemon_signals();
+            this.connect_docker_hub_signals();
         }
 
         private void connect_docker_daemon_signals() {
@@ -100,11 +101,10 @@ namespace Dockery.View.Controls {
             });
         }
         
-        public void connect_docker_hub_signals(Signals.DockerHubImageRequestAction parent) {
+        public void connect_docker_hub_signals() {
             this.hub_open_button.clicked.connect (() => {
-                parent.on_docker_public_registry_open_request();
+                SignalDispatcher.dispatcher().on_docker_public_registry_open_request();
             });
-
         }
     }
 } 
