@@ -1,8 +1,9 @@
+using Dockery.DockerSdk;
+using Dockery.View;
+using View;
+
 namespace Dockery.Listener {
-    
-    using global::View;
-    using global::Dockery.DockerSdk;
-    
+        
     class ImageListListener : GLib.Object {
 
         public signal void container_states_changed();
@@ -10,13 +11,11 @@ namespace Dockery.Listener {
         public signal void feedback(Gtk.MessageType type, string message);
         
         private Gtk.Window parent_window;
-        private Docker.List.Images image_list;
         private Repository repository;
 
-        public ImageListListener(Gtk.Window parent_window, Repository repository, Docker.List.Images image_list) {
+        public ImageListListener(Gtk.Window parent_window, Repository repository) {
             this.parent_window = parent_window;
             this.repository = repository;
-            this.image_list = image_list;
         }
         
         public void listen() {
@@ -27,13 +26,12 @@ namespace Dockery.Listener {
         
         private void images_remove_request() {
             
-            this.image_list.images_remove_request.connect((images) => {
+            SignalDispatcher.dispatcher().images_remove_request.connect((images) => {
 
                 try {
                     /** Find containers created from the images we want to remove */
                     Model.ContainerCollection containers = this.repository.containers().find_by_images(images);
-                    var dialog = new Docker.Dialog.RemoveImagesDialog(images, containers, parent_window);
-
+                    var dialog = new global::View.Docker.Dialog.RemoveImagesDialog(images, containers, parent_window);
                     dialog.response.connect((source, response_id) => {
 
                         switch (response_id) {
@@ -84,7 +82,7 @@ namespace Dockery.Listener {
         }
 
         private void image_create_container_request() {
-            this.image_list.image_create_container_request.connect((image) => {
+            SignalDispatcher.dispatcher().image_create_container_request.connect((image) => {
                 try {
                     this.repository.containers().create(new Model.ContainerCreate.from_image(image));
                     this.container_states_changed();
@@ -95,9 +93,9 @@ namespace Dockery.Listener {
         }
         
         private void image_create_container_with_request() {
-            this.image_list.image_create_container_with_request.connect((image) => {
+            SignalDispatcher.dispatcher().image_create_container_with_request.connect((image) => {
 
-                var dialog = new Docker.Dialog.CreateContainerWith(image, parent_window);
+                var dialog = new global::View.Docker.Dialog.CreateContainerWith(image, parent_window);
                 dialog.response.connect((source, response_id) => {
 
                     switch (response_id) {

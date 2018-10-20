@@ -1,3 +1,5 @@
+using Dockery.View;
+
 namespace View.Docker.Menu {
 
     using global::Dockery.DockerSdk.Model;
@@ -12,7 +14,7 @@ namespace View.Docker.Menu {
         }
     }
 
-    public class ImageMenu : Signals.ImageRequestAction, Menu {
+    public class ImageMenu : Menu {
         
     }
     
@@ -35,7 +37,7 @@ namespace View.Docker.Menu {
          */
         protected void append_remove_menu_item() {
             this.append_menu_item("_Remove image", null, () => {
-                this.images_remove_request(new ImageCollection.from_model(image));
+                SignalDispatcher.dispatcher().images_remove_request(new ImageCollection.from_model(image));
             });
         }
 
@@ -44,7 +46,7 @@ namespace View.Docker.Menu {
          */
         protected void append_create_container_menu_item() {
             this.append_menu_item("_Create container", null, () => {
-                this.image_create_container_request(image);
+                SignalDispatcher.dispatcher().image_create_container_request(image);
             });
         }
 
@@ -53,7 +55,7 @@ namespace View.Docker.Menu {
          */
         protected void append_create_container_with_menu_item() {
             this.append_menu_item("_Create container with...", null, () => {
-                this.image_create_container_with_request(image);
+                SignalDispatcher.dispatcher().image_create_container_with_request(image);
             });
         }
     }
@@ -72,7 +74,7 @@ namespace View.Docker.Menu {
          */
         protected void append_remove_menu_items() {
             this.append_menu_item("_Remove selected images", null, () => {
-                this.images_remove_request(images);
+                SignalDispatcher.dispatcher().images_remove_request(images);
             });
         }
     }

@@ -2,7 +2,7 @@ namespace View.Docker.List {
 
     using global::Dockery.DockerSdk.Model;
 
-    public class Images : Flushable, ImageViewable, Signals.ImageRequestAction, Gtk.Box {
+    public class Images : Flushable, ImageViewable, Gtk.Box {
 
         protected Gtk.Box empty_box;
 
@@ -107,27 +107,12 @@ namespace View.Docker.List {
                         Image? image = get_image_from_row(model, rows.nth_data(0));
                         
                         if (null != image) {
-                            
                             View.Docker.Menu.ImageMenu menu = View.Docker.Menu.ImageMenuFactory.create_single(image);
                             menu.show_all();
-
                             menu.popup(null, null, null, e.button, e.time);
-
-                            menu.images_remove_request.connect(() => {
-                                this.images_remove_request(new ImageCollection.from_model(image));
-                            });
-
-                            menu.image_create_container_request.connect(() => {
-                                this.image_create_container_request(image);
-                            });
-                                
-                            menu.image_create_container_with_request.connect(() => {
-                                this.image_create_container_with_request(image);
-                            });
                         }
 
                     } else {
-
                         var selected_images = new Dockery.DockerSdk.Model.ImageCollection();
                         for (int i = 0; i < rows.length(); i++) {
                             Image? selected_image = get_image_from_row(model, rows.nth_data(i));
@@ -138,12 +123,7 @@ namespace View.Docker.List {
 
                         View.Docker.Menu.ImageMenu menu = View.Docker.Menu.ImageMenuFactory.create_multi(selected_images);
                         menu.show_all();
-
                         menu.popup_at_pointer(e);
-                        
-                        menu.images_remove_request.connect(() => {
-                            this.images_remove_request(selected_images);
-                        });
                     }
 
                     return true;

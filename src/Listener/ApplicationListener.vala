@@ -60,7 +60,7 @@ public class ApplicationListener : GLib.Object, Signals.DockerServiceAware, Sign
     }
 
     private void listen_image_view() {
-        image_list_listener = new Dockery.Listener.ImageListListener(window, repository, view.images);
+        image_list_listener = new Dockery.Listener.ImageListListener(window, repository);
         image_list_listener.container_states_changed.connect(() => this.init_container_list());
         image_list_listener.image_states_changed.connect(() => this.init_image_list());
         image_list_listener.feedback.connect((type, message) =>  message_dispatcher.dispatch(type, message));
