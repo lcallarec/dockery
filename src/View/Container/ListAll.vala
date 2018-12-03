@@ -124,7 +124,7 @@ namespace Dockery.View.Container {
                         var menu = global::View.Docker.Menu.ContainerMenuFactory.create(container);
                         if (null != menu) {
                             menu.show_all();
-                            menu.popup(null, null, null, e.button, e.time);
+                            menu.popup_at_pointer(e);
                             menu.container_rename_request.connect(() => {
                                 Gdk.Rectangle rect;
                                 tv.get_cell_area (tp, tv.get_column(0), out rect);
