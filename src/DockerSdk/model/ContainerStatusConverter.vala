@@ -41,7 +41,7 @@ namespace Dockery.DockerSdk.Model {
                 case "running":
                     status = ContainerStatus.RUNNING;
                     break;
-                case "pause":
+                case "paused":
                     status = ContainerStatus.PAUSED;
                     break;
                 case "exited" :
