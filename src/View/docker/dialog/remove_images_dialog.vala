@@ -63,7 +63,7 @@ namespace View.Docker.Dialog {
 
             Gtk.TreeIter iter;
             foreach(Dockery.DockerSdk.Model.ContainerStatus status in Dockery.DockerSdk.Model.ContainerStatus.all()) {
-                foreach(Dockery.DockerSdk.Model.Container container in linked_containers.get_by_status(status)) {
+                foreach(Dockery.DockerSdk.Model.Container container in linked_containers.get_by_status(status).values) {
                     liststore.append (out iter);
                     liststore.set(iter, 0, container.name, 1, container.get_status_string());
                 }

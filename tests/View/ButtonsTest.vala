@@ -10,7 +10,6 @@ private void register_view_buttons_test() {
         //Then
         assert(button.active == false);
         Gtk.Image image = button.image as Gtk.Image;
-        stdout.printf("icon name : %s\n", image.icon_name);
         assert(image.icon_name == "view-refresh-symbolic");
 
         //when
@@ -18,7 +17,6 @@ private void register_view_buttons_test() {
         //Then
         assert(button.active == true);
         image = button.image as Gtk.Image;
-        stdout.printf("icon name : %s\n", image.icon_name);
         assert(image.icon_name == "media-playback-start-symbolic");
     });    
 }

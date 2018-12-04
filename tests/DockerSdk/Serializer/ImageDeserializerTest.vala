@@ -6,7 +6,7 @@ private void register_image_deserializer_test() {
         var deserializer = new Serializer.ImageDeserializer();
         var images = deserializer.deserialize(one_complete_json_image());
 
-        var firstImage = images.get(0);
+        var firstImage = images.get("8dbd9e392a96");
 
         assert(firstImage.full_id == "8dbd9e392a964056420e5d58ca5cc376ef18e2de93b5cc90e868a1bbc8318c1c");
         assert(firstImage.id == "8dbd9e392a96");
@@ -24,10 +24,8 @@ private void register_image_deserializer_test() {
         var images = deserializer.deserialize(many_complete_json_image());
 
         assert(images.size == 2);
-        assert(images.get(0).id == "8dbd9e392a96");
-        assert(images.get(0).name == "ubuntu:12.04");
-        assert(images.get(1).id == "bafe274aa7c0");
-        assert(images.get(1).name == "ubuntu:14.04");
+        assert(images.get("8dbd9e392a96").name == "ubuntu:12.04");
+        assert(images.get("bafe274aa7c0").name == "ubuntu:14.04");
     });
 
     Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/deserialize#BadFormattedPayload", () => {

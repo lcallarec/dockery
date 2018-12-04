@@ -90,7 +90,7 @@ namespace Dockery.View.Container {
             Gtk.ListStore liststore = new Gtk.ListStore(4, typeof (string),  typeof (string), typeof (string), typeof (string));
             liststore.clear();
 
-            foreach(Model.Container container in containers) {
+            foreach(Model.Container container in containers.values) {
                 containers_count++;
                 liststore.append(out iter);
                 liststore.set(iter, 0, container.name, 1, container.id, 2, container.command, 3, container.created_at.to_string());

@@ -6,7 +6,7 @@ private void register_volume_deserializer_test() {
         var deserializer = new Serializer.VolumeDeserializer();
         var volumes = deserializer.deserialize(one_complete_json_volume());
 
-        var firstVolume = volumes.get(0);
+        var firstVolume = volumes.get("tardis");
 
         assert(firstVolume.full_id == "tardis");
         assert(firstVolume.name == "tardis");
@@ -33,9 +33,8 @@ private void register_volume_deserializer_test() {
         var deserializer = new Serializer.VolumeDeserializer();
         var volumes = deserializer.deserialize(one_complete_json_volume());
 
-        var firstVolume = volumes.get(0);
+        var firstVolume = volumes.get("thisisaverylongvolumename, tooloongtofit");
 
-        assert(firstVolume.name == "thisisaverylongvolumename,tooloongtofit");
         assert(firstVolume.short_name == "thisisaverylongvolumename,");
     });
 
@@ -44,8 +43,7 @@ private void register_volume_deserializer_test() {
         var volumes = deserializer.deserialize(many_complete_json_volumes());
 
         assert(volumes.size == 2);
-        assert(volumes.get(0).name == "tardis");
-        assert(volumes.get(1).id == "yeepo");
+        assert(volumes.get("tardis").id == "yeepo");
 
     });
 

@@ -256,7 +256,7 @@ namespace Dockery.DockerSdk.Endpoint {
 
                     Model.ContainerCollection containers = list(status);
 
-                    foreach(Model.Container container in containers) {
+                    foreach(Model.Container container in containers.values) {
                         if (image.full_id == container.image_id) {
                             container_collection.add(container);
                         }
@@ -280,7 +280,7 @@ namespace Dockery.DockerSdk.Endpoint {
             Model.ContainerCollection containers = new Model.ContainerCollection();
             
             try {
-                foreach(Model.Image image in images) {
+                foreach(Model.Image image in images.values) {
                     containers.add_collection(this.find_by_image(image));
                 }
 

@@ -39,14 +39,14 @@ namespace Dockery.Listener {
                                 try {
                                     if (containers.size > 0) {
                                         foreach(Model.ContainerStatus status in Model.ContainerStatus.all()) {
-                                            foreach(Model.Container container in containers.get_by_status(status)) {
+                                            foreach(Model.Container container in containers.get_by_status(status).values) {
                                                 this.repository.containers().remove(container, true);
                                                 feedback(Gtk.MessageType.INFO, "Container %s successfully removed".printf(container.name));
                                             }
                                         }
                                     }
 
-                                    foreach (Model.Image image in images) {
+                                    foreach (Model.Image image in images.values) {
                                         this.repository.images().remove(image, true);
                                         feedback(Gtk.MessageType.INFO, "Image %s successfully removed".printf(image.name));
                                     }

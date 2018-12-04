@@ -64,7 +64,7 @@ namespace View.Docker.List {
 
             liststore.clear();
 
-            foreach(Image image in this.images) {
+            foreach(Image image in this.images.values) {
 
                 liststore.append(out iter);
 

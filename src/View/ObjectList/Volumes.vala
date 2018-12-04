@@ -66,7 +66,7 @@ namespace Dockery.View.ObjectList {
 
             liststore.clear();
 
-            foreach(Model.Volume volume in this.volumes) {
+            foreach(Model.Volume volume in this.volumes.values) {
                 liststore.append(out iter);
                 liststore.set(iter, 0, volume.short_name, 1, volume.driver, 2, volume.mount_point);
                 volumes_count += 1;

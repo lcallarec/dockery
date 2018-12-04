@@ -6,7 +6,9 @@ private void register_container_deserializer_test() {
         var deserializer = new Serializer.ContainerDeserializer();
         var containers = deserializer.deserialize(one_complete_json_container());
 
-        var firstContainer = containers.get(0);
+        //Remember : id is a substring 12 of full_id
+        var firstContainer = containers.get("8dfafdbcv3a4");
+
 
         assert(firstContainer.full_id == "8dfafdbcv3a40");
         assert(firstContainer.created_at.equal(new DateTime.utc(2013, 5, 6, 15, 29, 15)));
@@ -29,10 +31,8 @@ private void register_container_deserializer_test() {
         var containers = deserializer.deserialize(many_complete_json_container());
 
         assert(containers.size == 2);
-        assert(containers.get(0).id == "8dfafdbc3a40");
-        assert(containers.get(0).image_id == "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82");
-        assert(containers.get(1).id == "9cd87474be90");
-        assert(containers.get(1).image_id == "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82");
+        assert(containers.get("8dfafdbc3a40").image_id == "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82");
+        assert(containers.get("9cd87474be90").image_id == "d74508fb6632491cea586a1fd7d748dfc5274cd6fdfedee309ecdcbc2bf5cb82");
     });
 
     Test.add_func ("/Dockery/DockerSdk/Serializer/ContainerDeserializer/deserialize#BadFormattedPayload", () => {
