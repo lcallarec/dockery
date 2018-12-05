@@ -6,11 +6,12 @@ private void register_dockersdk_model_container_collection() {
         var collection = new Model.ContainerCollection();
         collection.add(create_container_from("running", "1"));
         collection.add(create_container_from("running", "2"));
+        collection.add(create_container_from("paused", "3"));
+        collection.add(create_container_from("created", "4"));
 
-        assert(collection.size == 2);
+        assert(collection.size == 4);
         assert(collection.get_by_status(Model.ContainerStatus.RUNNING).size == 2);
-        
-
+        assert(collection.get_by_status(Model.ContainerStatus.PAUSED).size == 1);
     });
 }
 
