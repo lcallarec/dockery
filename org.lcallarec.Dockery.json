@@ -1,0 +1,50 @@
+{
+    "app-id": "org.lcallarec.Dockery",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.30",
+    "sdk": "org.gnome.Sdk",
+    "command": "dockery",
+    "finish-args": [
+        "--socket=x11",
+        "--share=network"
+    ],
+    "modules": [
+        {
+            "name": "libgee",
+            "config-opts": [
+                "--disable-introspection"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/GNOME/libgee/archive/0.20.0.tar.gz",
+                    "sha256": "42fe6d651910cb8b720167f71c5255a1b7b1afc82fecd3f31e61f9602b3b1335"
+                }
+            ]
+        },
+        {
+            "name": "compile",
+            "buildsystem": "simple",
+            "build-commands": [
+                "make"
+            ],
+            "sources": [
+                {
+                    "type": "dir",
+                    "path": "."
+                }
+            ]
+        },
+        {
+          "name": "hello",
+          "buildsystem": "simple",
+          "build-commands": ["install -D dockery /app/bin/dockery"],
+          "sources": [
+            {
+              "type": "file",
+              "path": "dockery"
+            }
+          ]
+        }
+    ]
+}

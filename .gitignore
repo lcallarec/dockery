@@ -5,3 +5,5 @@ build
 .idea
 .cache
 .buildconfig
+.flatpak-builder
+flatpak/build

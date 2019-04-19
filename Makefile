@@ -123,3 +123,6 @@ generate-ccode:
 	@echo "Transpiling vala files C files..."
 	@valac $(PPSYMBOLS) -q --ccode --debug --thread $(TARGET_GLIB_FLAG) $(VALALIBS) \
         $(TSOURCES) $(T_SOURCES) 
+
+flatpak-build:
+	@flatpak-builder flatpak/build org.lcallarec.Dockery.json --force-clean
