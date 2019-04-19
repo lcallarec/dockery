@@ -19,8 +19,8 @@ private void register_sdk_http_endpoint_discovery_test() {
         string[] endpoints = {"http://127.0.0.1:2380", "http://127.0.0.1:2381", "http://127.0.0.1:2382"};
 
         //When
-        var http_discovery = new Endpoint.HttpEndpointDiscovery.from_endpoints(endpoints);
-        var uri = http_discovery.discover();
+        var http_discoverer = new Endpoint.HttpEndpointDiscovery.from_endpoints(endpoints);
+        var uri = http_discoverer.discover();
  
         //Then
         assert(uri == "http://127.0.0.1:2380");
@@ -45,8 +45,8 @@ private void register_sdk_http_endpoint_discovery_test() {
         string[] endpoints = { "http://127.0.0.1:2380", "http://127.0.0.1:2381", "http://127.0.0.1:2382" };
 
         // When
-        var http_discovery = new Endpoint.HttpEndpointDiscovery.from_endpoints(endpoints);
-        var uri = http_discovery.discover();
+        var http_discoverer = new Endpoint.HttpEndpointDiscovery.from_endpoints(endpoints);
+        var uri = http_discoverer.discover();
 
         // Then
         assert(uri == "http://127.0.0.1:2382");
@@ -58,8 +58,8 @@ private void register_sdk_http_endpoint_discovery_test() {
         string[] endpoints = { "http://127.0.0.1:2380", "http://127.0.0.1:2381", "http://127.0.0.1:2382" };
 
         // When
-        var http_discovery = new Endpoint.HttpEndpointDiscovery.from_endpoints(endpoints);
-        var uri = http_discovery.discover();
+        var http_discoverer = new Endpoint.HttpEndpointDiscovery.from_endpoints(endpoints);
+        var uri = http_discoverer.discover();
 
         // Then
         assert(uri == null);

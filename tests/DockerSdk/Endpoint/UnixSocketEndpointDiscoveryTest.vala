@@ -16,8 +16,8 @@ private void register_sdk_unix_socket_endpoint_discovery_test() {
         string[] unix_sockets = { "mock-docker.sock", "does-not-exists.sock", "does-not-exists-bis.sock" };
 
         //When
-        var http_discovery = new Endpoint.UnixSocketEndpointDiscovery.from_unix_sockets(unix_sockets);
-        var uri = http_discovery.discover();
+        var unix_discoverer = new Endpoint.UnixSocketEndpointDiscovery.from_unix_sockets(unix_sockets);
+        var uri = unix_discoverer.discover();
 
         //Then
         assert(uri == "unix://mock-docker.sock");
@@ -42,8 +42,8 @@ private void register_sdk_unix_socket_endpoint_discovery_test() {
         string[] unix_sockets = { "does-not-exists.sock", "does-not-exists-bis.sock", "mock-docker.sock" };
 
         // When
-        var http_discovery = new Endpoint.UnixSocketEndpointDiscovery.from_unix_sockets(unix_sockets);
-        var uri = http_discovery.discover();
+        var unix_discoverer = new Endpoint.UnixSocketEndpointDiscovery.from_unix_sockets(unix_sockets);
+        var uri = unix_discoverer.discover();
 
         // Then
         assert(uri == "unix://mock-docker.sock");
@@ -60,8 +60,8 @@ private void register_sdk_unix_socket_endpoint_discovery_test() {
         string[] unix_sockets = { "does-not-exists.sock", "does-not-exists-bis.sock" };
 
         // When
-        var http_discovery = new Endpoint.UnixSocketEndpointDiscovery.from_unix_sockets(unix_sockets);
-        var uri = http_discovery.discover();
+        var unix_discoverer = new Endpoint.UnixSocketEndpointDiscovery.from_unix_sockets(unix_sockets);
+        var uri = unix_discoverer.discover();
 
         // Then
         assert(uri == null);
