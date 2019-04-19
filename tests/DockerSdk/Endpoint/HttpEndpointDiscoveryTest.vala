@@ -2,7 +2,7 @@ using global::Dockery.DockerSdk;
 
 private void register_sdk_http_endpoint_discovery_test() {
 
-    Test.add_func("/Dockery/DockerSdk/Endpoint/HttpEndpointDiscovery/#EnpointIsTheFirstOfKnowEndpoints", () => {
+    Test.add_func("/Dockery/DockerSdk/Endpoint/HttpEndpointDiscovery/#EnpointIsTheFirstOfKnownEndpoints", () => {
         //Given
         var server = create_mock_server(2380);
         new GLib.Thread<int>("mock_server_start", () => {
@@ -28,7 +28,7 @@ private void register_sdk_http_endpoint_discovery_test() {
     });
 
 
-    Test.add_func("/Dockery/DockerSdk/Endpoint/HttpEndpointDiscovery/#EnpointIsTheLastOfKnowEndpoints", () => {
+    Test.add_func("/Dockery/DockerSdk/Endpoint/HttpEndpointDiscovery/#EnpointIsTheLastOfKnownEndpoints", () => {
         // Given
         var server = create_mock_server(2382);
         new GLib.Thread<int>("mock_server_start", () => {
