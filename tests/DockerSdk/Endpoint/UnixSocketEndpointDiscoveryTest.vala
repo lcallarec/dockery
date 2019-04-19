@@ -1,0 +1,74 @@
+using global::Dockery.DockerSdk;
+
+private void register_sdk_unix_socket_endpoint_discovery_test() {
+
+    Test.add_func("/Dockery/DockerSdk/Endpoint/UnixSocketEndpointDiscovery/#EnpointIsTheFirstOfKnownEndpoints", () => {
+
+        //Given
+        File file = File.new_for_path ("mock-docker.sock");
+        if(file.query_exists()) {
+            file.delete();
+        }
+
+        FileOutputStream os = file.create(FileCreateFlags.PRIVATE);
+        os.write("\n".data);
+
+        string[] unix_sockets = { "mock-docker.sock", "does-not-exists.sock", "does-not-exists-bis.sock" };
+
+        //When
+        var http_discovery = new Endpoint.UnixSocketEndpointDiscovery.from_unix_sockets(unix_sockets);
+        var uri = http_discovery.discover();
+
+        //Then
+        assert(uri == "unix://mock-docker.sock");
+
+        //Clean
+        if (file.query_exists()) {
+            file.delete ();
+        }        
+    });
+
+    Test.add_func("/Dockery/DockerSdk/Endpoint/UnixSocketEndpointDiscovery/#EnpointIsTheLastOfKnownEndpoints", () => {
+
+        // Given
+        File file = File.new_for_path ("mock-docker.sock");
+        if (file.query_exists()) {
+            file.delete ();
+        }
+
+        FileOutputStream os = file.create(FileCreateFlags.PRIVATE);
+        os.write("\n".data);
+
+        string[] unix_sockets = { "does-not-exists.sock", "does-not-exists-bis.sock", "mock-docker.sock" };
+
+        // When
+        var http_discovery = new Endpoint.UnixSocketEndpointDiscovery.from_unix_sockets(unix_sockets);
+        var uri = http_discovery.discover();
+
+        // Then
+        assert(uri == "unix://mock-docker.sock");
+
+        //Clean
+        if (file.query_exists()) {
+            file.delete();
+        }
+    });
+
+    Test.add_func("/Dockery/DockerSdk/Endpoint/UnixSocketEndpointDiscovery/#NoEndpointsExist", () => {
+
+        // Given
+        string[] unix_sockets = { "does-not-exists.sock", "does-not-exists-bis.sock" };
+
+        // When
+        var http_discovery = new Endpoint.UnixSocketEndpointDiscovery.from_unix_sockets(unix_sockets);
+        var uri = http_discovery.discover();
+
+        // Then
+        assert(uri == null);
+
+        //Clean
+        if (file.query_exists()) {
+            file.delete ();
+        }
+    });
+}

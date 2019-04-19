@@ -7,3 +7,4 @@ build
 .buildconfig
 .flatpak-builder
 flatpak/build
+mock-docker.sock
