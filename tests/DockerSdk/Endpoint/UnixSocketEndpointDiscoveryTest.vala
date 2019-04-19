@@ -65,10 +65,5 @@ private void register_sdk_unix_socket_endpoint_discovery_test() {
 
         // Then
         assert(uri == null);
-
-        //Clean
-        if (file.query_exists()) {
-            file.delete ();
-        }
     });
 }
