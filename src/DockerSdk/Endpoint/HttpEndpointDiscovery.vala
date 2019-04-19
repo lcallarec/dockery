@@ -1,23 +1,38 @@
 namespace Dockery.DockerSdk.Endpoint {
 
     public class HttpEndpointDiscovery : EndpointDiscoveryInterface, GLib.Object {
+    
+        private const string[] DEFAULT_ENDPOINTS = {
+            "http://127.0.0.1:2375",
+            "http://127.0.0.1:2376"
+        };
+        
+        private string[] endpoints;
 
-        private const string[] ENDPOINTS = {"http://localhost:2375", "http://127.0.0.1:2375"};
+        public HttpEndpointDiscovery() {
+            this.endpoints = HttpEndpointDiscovery.DEFAULT_ENDPOINTS;
+        }
+
+        public HttpEndpointDiscovery.from_endpoints(string[] endpoints) {
+            this.endpoints = endpoints;
+        }
 
         public string? discover() {
 
-            foreach (string endpoint in HttpEndpointDiscovery.ENDPOINTS) {
+            string endpoint_found = null;
+            foreach (string endpoint in this.endpoints) {
                 try {
-                    var message = new Soup.Message("GET", endpoint);
+                    var message = new Soup.Message("GET", endpoint + "/_ping");
                     var session = new Soup.Session();
                     session.send(message);
-                    return endpoint;
+                    endpoint_found = endpoint;
+                    break;
                 } catch (Error e) {
-                    return null;
+                    endpoint_found = null;
                 }
             }
 
-            return null;
+            return endpoint_found;
         }
     }
 }

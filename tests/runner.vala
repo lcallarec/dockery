@@ -1,13 +1,19 @@
 void main (string[] args) {
-    Test.init (ref args);
-    
+
+    Test.init(ref args);
     Gtk.init(ref args);
-register_view_child_widget_finder_test();
+    
+    //Gtk tools
+    register_view_child_widget_finder_test();
+
     //DockerSdk/Deserializer
     register_image_deserializer_test();
     register_container_deserializer_test();
     register_image_tag_deserializer_test();
     register_container_stat_deserializer_test();
+
+    //DockerSdk/Endpioint
+    register_sdk_http_endpoint_discovery_test();
 
     //DockerSdk/Io
     register_http_response_factory_test();
@@ -30,6 +36,5 @@ register_view_child_widget_finder_test();
     //View/Buttons
     register_view_buttons_test();
     
-    //
     Test.run();
 }
