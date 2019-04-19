@@ -36,7 +36,7 @@
             ]
         },
         {
-          "name": "hello",
+          "name": "dockery",
           "buildsystem": "simple",
           "build-commands": ["install -D dockery /app/bin/dockery"],
           "sources": [
