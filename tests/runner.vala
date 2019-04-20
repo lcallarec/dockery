@@ -38,5 +38,8 @@ void main (string[] args) {
     //View/Buttons
     register_view_buttons_test();
     
+    //Common
+    register_common_human_unit_formatter_test();
+
     Test.run();
 }
