@@ -15,6 +15,7 @@ void main (string[] args) {
     //DockerSdk/Endpioint
     register_sdk_http_endpoint_discovery_test();
     register_sdk_unix_socket_endpoint_discovery_test();
+    register_sdk_endpoint_discovery_test();
 
     //DockerSdk/Io
     register_http_response_factory_test();
