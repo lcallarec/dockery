@@ -50,22 +50,22 @@ DESKTOP_DIR_PATH := $(shell if [ -d "/usr/local/share/applications" ]; then echo
 DESKTOP_PATH :=$(DESKTOP_DIR_PATH)/dockery.desktop
 ICONS_DIR_PATH := $(shell if [ -d "/usr/local/share/icons" ]; then echo "/usr/local/share/icons"; else echo "/usr/share/icons"; fi)
 
-EXEC=compile
+EXEC=docker
 
 .PHONY: all clean compile compile-resources install install-desktop-entry debug
 
 all: $(EXEC)
 
-compile: compile-resources
+docker: resources.c
 	valac $(PPSYMBOLS) $(DEBUG) --thread -X -w -X -lm -v \
         $(TARGET_GLIB_FLAG) $(VALALIBS) \
         $(SOURCES) resources.c --gresources gresource.xml \
         -o dockery
 
-compile-and-run: compile
+compile-and-run: docker
 	./dockery
 
-compile-resources:
+resources.c:
 	glib-compile-resources gresource.xml --target=resources.c --generate-source
 
 install: install-desktop-entry
