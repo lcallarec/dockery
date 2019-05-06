@@ -39,9 +39,9 @@ Until the project move the build system from plain _Makefile_ to _autotools_, th
 | dependency | supported version range |
 |---------|--------------------|
 | valac   | *                  |
-| libgtk-3-dev   | 3.14 - 3.24                |
+| libgtk-3-dev   | 3.14 - 3.32                |
 | libgee-0.8-dev   | *                  |
-| libjson-glib-dev   | 1.2.*                   |
+| libjson-glib-dev   | 1.2 / 1.4                   |
 | libsoup2.4-dev   | *                  |
 | libvte-2.90-dev(*)   | *                  |
 | libvte-2.91-dev(*)   | *                  |
