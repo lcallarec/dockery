@@ -32,6 +32,12 @@ Until the project move the build system from plain _Makefile_ to _autotools_, th
 
 * Connect to a running container through a terminal
 
+## Run with flatpak
+
+* Install [flatpak](https://flatpak.org/)
+* Build with `make flatpak-build`
+* Run with `flatpak-builder --run flatpak/build org.lcallarec.Dockery.json ./dockery`
+
 ## Compile and install instructions
 
 ### Dependencies
