@@ -110,5 +110,3 @@ Feel free to ask any feature you'd like to have !
 | ![Main SC](docs/resources/screenshots/container-inspect.png) |
 |:---:|
 | *Container inspection* |
-
-docker run --volume=$(pwd):/dockery -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY --add-host dockerhost:`docker network inspect --format='{{range .IPAM.Config}}{{.Gateway}}{{end}}' bridge` lcallarec/dockery "./dockery"
