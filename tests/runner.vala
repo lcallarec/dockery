@@ -37,6 +37,9 @@ void main (string[] args) {
 
     //View/Buttons
     register_view_buttons_test();
+
+    //View/Controls
+    register_view_controls_container_buttons_row();
     
     //Common
     register_common_human_unit_formatter_test();

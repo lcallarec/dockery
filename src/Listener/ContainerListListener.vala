@@ -3,6 +3,7 @@ using Dockery.View;
 using Dockery.View.Stat;
 using View;
 using Dockery;
+using Dockery.View.Controls;
 
 namespace Dockery.Listener {
  
@@ -14,11 +15,13 @@ namespace Dockery.Listener {
         private Gtk.Window parent_window;
         private global::Dockery.View.Container.ListAll container_list;
         private global::Dockery.DockerSdk.Repository repository;
+        private ContainerButtonsRow container_actions;
 
         public ContainerListListener(Gtk.Window parent_window, global::Dockery.DockerSdk.Repository repository, global::Dockery.View.Container.ListAll container_list) {
             this.parent_window = parent_window;
             this.repository = repository;
             this.container_list = container_list;
+            this.container_actions = container_list.header_controls;
         }
         
         public void listen() {

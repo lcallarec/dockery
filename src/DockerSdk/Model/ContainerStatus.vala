@@ -10,12 +10,12 @@ namespace Dockery.DockerSdk.Model {
             return {RUNNING, PAUSED, EXITED, CREATED, RESTARTING};
         }
 
-        public static ContainerStatus[] active() {
+        public static ContainerStatus[] actives() {
             return {RUNNING, PAUSED};
         }
 
         public static bool is_active(ContainerStatus status) {
-            return status in ContainerStatus.active();
+            return status in ContainerStatus.actives();
         }
     }
 }

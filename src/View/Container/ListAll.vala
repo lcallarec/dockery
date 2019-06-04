@@ -1,5 +1,7 @@
 using Dockery.DockerSdk;
 using Dockery.View;
+using Dockery.Listener;
+using View.Docker.Menu;
 
 namespace Dockery.View.Container {
 
@@ -7,11 +9,15 @@ namespace Dockery.View.Container {
 
         private Gtk.Notebook notebook;
         private Gtk.Box empty_box;
-        
+        private Model.ContainerCollection containers = new Model.ContainerCollection();
+
         private UserActions user_actions = UserActions.get_instance();
+        public Controls.ContainerButtonsRow header_controls = new Controls.ContainerButtonsRow();
 
         public ListAll() {
+            Object(orientation: Gtk.Orientation.VERTICAL, spacing: 0);
             user_actions.if_hasnt_feature_set(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE, "0");
+            this.header_controls.set_margin_end(8);
         }
 
         /**
@@ -20,7 +26,7 @@ namespace Dockery.View.Container {
         public ListAll init(Model.ContainerCollection containers, bool show_after_refresh = true) {
 
             this.flush();
-
+            this.containers = containers;
             if (containers.is_empty) {
 
                 this.notebook = null;
@@ -37,30 +43,52 @@ namespace Dockery.View.Container {
                 this.empty_box = null;
                 this.notebook  = new Gtk.Notebook();
 
+                this.pack_start(this.header_controls, false, false, 5);
                 this.pack_start(this.notebook, true, true, 0);
 
-                int page_count = 0;
                 foreach(Model.ContainerStatus status in Model.ContainerStatus.all()) {
                     var c = containers.get_by_status(status);
                     if (c.is_empty == false) {
-                        page_count++;
                         this.hydrate(status, c);
                     }
                 }
 
                 notebook.switch_page.connect((page, page_num) => {
                     user_actions.set_feature(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE, page_num.to_string());
+
+                    //  Gtk.TreePath tp;
+                    //  tv.get_path_at_pos((int) e.x, (int) e.y, out tp, null, null, null);
+
+                    //  selection.select_path(tp);
+
+                    //  Gtk.TreeModel m;
+                    //  Gtk.TreeIter i;
+                    //  selection.get_selected(out m, out i);
+
+                    //  Value oid;
+                    //  m.get_value(i, 1, out oid);
+
+                    //  string id = oid as string;
+
+                    //  if (containers.has_id(id)) {
+
+                    //      Model.Container container = containers.get_by_id(id);
+
+                    //     header_controls.set_container(container);
+                    //  }
+
                 });
 
                 if (true == show_after_refresh) {
                     this.show_all();
 
                     int current_page = int.parse(user_actions.get_feature(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE));
-                    if (current_page + 1 > page_count) {
+                    if (current_page + 1 > notebook.get_n_pages()) {
                         //-1 = last page
                         current_page = -1;
                     }
-                    //This code should remain after show_all() invokation, because set_current_page will have no effets if the page is not shown yet
+                    //This code should remain after show_all() invokation
+                    //because set_current_page will have no effets if the page was not shown yet
                     notebook.set_current_page(current_page);
                 }
             }
@@ -78,8 +106,26 @@ namespace Dockery.View.Container {
             }
         }
 
+        private string get_row_id(Gtk.TreeSelection selection) {
+            Gtk.TreeModel m;
+            Gtk.TreeIter i;
+            selection.get_selected(out m, out i);
+
+            Value oid;
+            m.get_value(i, 1, out oid);
+
+            return oid as string;
+        }
+
+        private Gtk.TreePath select_path(Gdk.EventButton e, Gtk.TreeView tv, Gtk.TreeSelection selection) {
+            Gtk.TreePath tp;
+            tv.get_path_at_pos((int) e.x, (int) e.y, out tp, null, null, null);
+            selection.select_path(tp);
+
+            return tp;
+        }
+
         /**
-         * Add new rows from containers array list
          */
         private int hydrate(Model.ContainerStatus current_status, Model.ContainerCollection containers) {
 
@@ -96,35 +142,31 @@ namespace Dockery.View.Container {
                 liststore.set(iter, 0, container.name, 1, container.id, 2, container.command, 3, container.created_at.to_string());
             }
 
-            var tv = get_treeview(liststore);
+            var tv = create_treeview(liststore);
 
             var selection = tv.get_selection();
             selection.set_mode(Gtk.SelectionMode.SINGLE);
 
             tv.button_press_event.connect((e) => {
-                if (e.button == 3) {
-                    Gtk.TreePath tp;
-                    tv.get_path_at_pos((int) e.x, (int) e.y, out tp, null, null, null);
 
-                    selection.select_path(tp);
-
-                    Gtk.TreeModel m;
-                    Gtk.TreeIter i;
-                    selection.get_selected(out m, out i);
-
-                    Value oid;
-                    m.get_value(i, 1, out oid);
-
-                    string id = oid as string;
-
-                    if (containers.has_id(id)) {
-
+                var tp = this.select_path(e, tv, selection);
+                var id = this.get_row_id(selection);
+                stdout.printf("clicked : %u\n", e.button);
+                stdout.printf("stored id : %s\n", id);
+                if (containers.has_id(id)) {
+                    stdout.printf("container with id exists: %s\n", id);
+                    
+                    if (e.button == 3) {
+                        stdout.printf("Before menu created\n");
                         Model.Container container = containers.get_by_id(id);
-
                         var menu = global::View.Docker.Menu.ContainerMenuFactory.create(container);
+                        stdout.printf("Menu created\n");                        
                         if (null != menu) {
                             menu.show_all();
                             menu.popup_at_pointer(e);
+
+                            stdout.printf("shouw popup\n");
+
                             menu.container_rename_request.connect(() => {
                                 Gdk.Rectangle rect;
                                 tv.get_cell_area (tp, tv.get_column(0), out rect);
@@ -132,11 +174,13 @@ namespace Dockery.View.Container {
                                 SignalDispatcher.dispatcher().container_rename_request(container, tv, rect);
                             });
                         }
+                    } else if (e.button == 1) {
+                        Model.Container container = containers.get_by_id(id);
+                        stdout.printf("left click : %s\n", container.id);
+                        header_controls.select(container);
                     }
-
-                    return true;
                 }
-
+                    
                 return false;
             });
 
@@ -149,7 +193,7 @@ namespace Dockery.View.Container {
             return containers_count;
         }
 
-        private Gtk.TreeView get_treeview(Gtk.ListStore liststore) {
+        private Gtk.TreeView create_treeview(Gtk.ListStore liststore) {
 
             var treeview = new Gtk.TreeView();
             treeview.set_model(liststore);
