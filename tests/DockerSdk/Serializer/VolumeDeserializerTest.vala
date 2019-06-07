@@ -55,7 +55,7 @@ private void register_volume_deserializer_test() {
           deserializer.deserialize(volume_malformatted_json());
           assert_not_reached();
         } catch(Error e) {
-          assert(e is Serializer.DeserializationError.VOLUME);
+          assert(e is DeserializationError.VOLUME);
         }
     });
 }

@@ -43,7 +43,7 @@ private void register_container_deserializer_test() {
           deserializer.deserialize(container_malformatted_json());
           assert_not_reached();
         } catch(Error e) {
-          assert(e is Serializer.DeserializationError.CONTAINER);
+          assert(e is DeserializationError.CONTAINER);
         }
     });
 }

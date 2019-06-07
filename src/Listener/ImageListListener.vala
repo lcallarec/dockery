@@ -53,7 +53,7 @@ namespace Dockery.Listener {
 
                                     feedback(Gtk.MessageType.INFO, "All images and containers being used successfully removed");
 
-                                } catch (Io.RequestError e) {
+                                } catch (RequestError e) {
                                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                                 }
 
@@ -75,7 +75,7 @@ namespace Dockery.Listener {
 
                     dialog.show_all();
 
-                } catch (Io.RequestError e) {
+                } catch (RequestError e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                 }
             });
@@ -86,7 +86,7 @@ namespace Dockery.Listener {
                 try {
                     this.repository.containers().create(new Model.ContainerCreate.from_image(image));
                     this.container_states_changed();
-                } catch (Io.RequestError e) {
+                } catch (RequestError e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                 }
             });

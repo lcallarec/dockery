@@ -19,7 +19,7 @@ private void register_image_tag_deserializer_test() {
           deserializer.deserialize(image_tag_malformatted_json());
           assert_not_reached();
         } catch(Error e) {
-          assert(e is Serializer.DeserializationError.IMAGE_TAG);
+          assert(e is DeserializationError.IMAGE_TAG);
         }
     });
 }

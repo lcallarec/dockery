@@ -32,14 +32,14 @@ namespace Dockery.DockerSdk.Endpoint {
           * Get a list of all images
           * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers
           */
-        public Model.ImageCollection list() throws Io.RequestError {
+        public Model.ImageCollection list() throws RequestError {
 
             try {
 
                 return deserializeImages(this.client.send("GET", "/images/json").payload);
 
-            } catch (Io.RequestError e) {
-                 throw new Io.RequestError.FATAL("Error while fetching images list from docker daemon : %s".printf(e.message));
+            } catch (RequestError e) {
+                 throw new RequestError.FATAL("Error while fetching images list from docker daemon : %s".printf(e.message));
             }
         }
 
@@ -49,7 +49,7 @@ namespace Dockery.DockerSdk.Endpoint {
          *
          * Force option : when set to true, will force the removal
          */
-        public void remove(Model.Image image, bool force = false) throws Io.RequestError {
+        public void remove(Model.Image image, bool force = false) throws RequestError {
 
             try {
 
@@ -67,8 +67,8 @@ namespace Dockery.DockerSdk.Endpoint {
 
                 this.throw_error_from_status_code(200, response, error_messages);
 
-            } catch (Io.RequestError e) {
-                throw new Io.RequestError.FATAL("Error while removing image %s : %s".printf(image.id, e.message));
+            } catch (RequestError e) {
+                throw new RequestError.FATAL("Error while removing image %s : %s".printf(image.id, e.message));
             }
         }
 
@@ -76,7 +76,7 @@ namespace Dockery.DockerSdk.Endpoint {
          * Search an image in Docker hub
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#search-images
          */
-        public Model.HubImage[] search(string term) throws Io.RequestError {
+        public Model.HubImage[] search(string term) throws RequestError {
 
             try {
 
@@ -92,8 +92,8 @@ namespace Dockery.DockerSdk.Endpoint {
 
                 return parse_images_search_list_payload(response.payload);
 
-            } catch (Io.RequestError e) {
-                throw new Io.RequestError.FATAL("Error while searching for \"%s\" in docker hub (%s)".printf(term, e.message));
+            } catch (RequestError e) {
+                throw new RequestError.FATAL("Error while searching for \"%s\" in docker hub (%s)".printf(term, e.message));
             }
         }
 
@@ -101,7 +101,7 @@ namespace Dockery.DockerSdk.Endpoint {
          * Pull an image from Docker hub
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/create-an-image
          */
-        public void pull(Model.HubImage image) throws Io.RequestError {
+        public void pull(Model.HubImage image) throws RequestError {
 
             try {
 
@@ -109,8 +109,8 @@ namespace Dockery.DockerSdk.Endpoint {
 
                 this.throw_error_from_status_code(200, response, create_error_messages());
 
-            } catch (Io.RequestError e) {
-                throw new Io.RequestError.FATAL("Error while pull image %s from docker hub".printf(image.name));
+            } catch (RequestError e) {
+                throw new RequestError.FATAL("Error while pull image %s from docker hub".printf(image.name));
             }
         }
 
@@ -118,13 +118,13 @@ namespace Dockery.DockerSdk.Endpoint {
          * Pull an image from Docker hub
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#/create-an-image
          */
-        public Io.FutureResponse future_pull(Model.HubImage image) throws Io.RequestError {
+        public Io.FutureResponse future_pull(Model.HubImage image) throws RequestError {
 
             try {
                 var future_response = new Io.FutureResponse<Model.ContainerStat>(new PullStepDeserializer());
                 return this.client.future_send(future_response, "POST","/images/create?fromImage=%s".printf(image.name));
-            } catch (Io.RequestError e) {
-                throw new Io.RequestError.FATAL("Error while pull image %s from docker hub".printf(image.name));
+            } catch (RequestError e) {
+                throw new RequestError.FATAL("Error while pull image %s from docker hub".printf(image.name));
             }
         }
 

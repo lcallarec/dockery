@@ -106,7 +106,7 @@ public class ApplicationListener : GLib.Object {
         Dockery.DockerSdk.Model.ImageCollection images = new Dockery.DockerSdk.Model.ImageCollection();
         try {
             images = repository.images().list();
-        } catch (Dockery.DockerSdk.Io.RequestError e) {
+        } catch (RequestError e) {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
         } finally {
             this.view.images.init(images);
@@ -117,7 +117,7 @@ public class ApplicationListener : GLib.Object {
         Dockery.DockerSdk.Model.VolumeCollection volumes = new Dockery.DockerSdk.Model.VolumeCollection();
         try {
             volumes = repository.volumes().list();
-        } catch (Dockery.DockerSdk.Io.RequestError e) {
+        } catch (RequestError e) {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
         } finally {
             this.view.volumes.init(volumes);
@@ -134,7 +134,7 @@ public class ApplicationListener : GLib.Object {
             }
 
             this.view.containers.init(container_collection);
-        } catch (Dockery.DockerSdk.Io.RequestError e) {
+        } catch (RequestError e) {
             message_dispatcher.dispatch(Gtk.MessageType.ERROR, (string) e.message);
         }
     }

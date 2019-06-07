@@ -36,7 +36,7 @@ private void register_image_deserializer_test() {
           deserializer.deserialize(image_malformatted_json());
           assert_not_reached();
         } catch(Error e) {
-          assert(e is Serializer.DeserializationError.IMAGE);
+          assert(e is DeserializationError.IMAGE);
         }
     });
 }

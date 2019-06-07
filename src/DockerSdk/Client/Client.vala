@@ -1,9 +1,11 @@
+using Dockery.DockerSdk;
+
 namespace Dockery.DockerSdk.Client {
 
     public interface Client : GLib.Object {
         
-        public abstract Io.Response send(string method, string endpoint, string? body = null) throws Io.RequestError;
-        public abstract Io.FutureResponse future_send(Io.FutureResponse future_response, string method, string endpoint, string? body = null) throws Io.RequestError;
+        public abstract Io.Response send(string method, string endpoint, string? body = null) throws RequestError;
+        public abstract Io.FutureResponse future_send(Io.FutureResponse future_response, string method, string endpoint, string? body = null) throws RequestError;
         public abstract bool supportUri();
                 
         /**

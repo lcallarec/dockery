@@ -1,7 +1,5 @@
 namespace Dockery.DockerSdk.Client {
 
-    using Dockery;
-
     public class UnixSocketClient : RestClient {
 
         const string HTTP_METHOD_HEADER_SUFFIX = " HTTP/1.1\r\nHost: localhost\r\n";
@@ -19,7 +17,7 @@ namespace Dockery.DockerSdk.Client {
         /**
          * Send a message to docker daemon and return the response
          */
-        public override Io.Response send(string method, string endpoint, string? body = null) throws Io.RequestError {
+        public override Io.Response send(string method, string endpoint, string? body = null) throws RequestError {
     
             StringBuilder request_builder = new StringBuilder("%s %s".printf(method, endpoint));
             
@@ -52,11 +50,11 @@ namespace Dockery.DockerSdk.Client {
             } catch(GLib.IOError e) {
                 this.request_error(query);
                 string err_message = "IO error : %s".printf(e.message);
-                throw new Io.RequestError.FATAL(err_message);
+                throw new RequestError.FATAL(err_message);
             } catch(Error e) {
                 this.request_error(query);
                 string err_message = "Error : %s".printf(e.message);
-                throw new Io.RequestError.FATAL(err_message);
+                throw new RequestError.FATAL(err_message);
             }
         }
 
@@ -103,7 +101,7 @@ namespace Dockery.DockerSdk.Client {
         /**
          * Create the connection to docker daemon
          */
-        private SocketConnection? create_connection() throws Io.RequestError {
+        private SocketConnection? create_connection() throws RequestError {
             try {
                 
                 var url = Convert.Uri.get_url_from_uri(this.uri);
@@ -114,7 +112,7 @@ namespace Dockery.DockerSdk.Client {
             } catch (GLib.Error e) {
                 this.request_error(e.message);
                 string err_message = "%s :\n(%s)".printf(this.uri, e.message);
-                throw new Io.RequestError.FATAL(err_message);
+                throw new RequestError.FATAL(err_message);
             }
         }
     }

@@ -19,7 +19,7 @@ namespace Dockery.DockerSdk.Endpoint {
          * Ping the server
          * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.2/#ping-the-docker-server
          */
-        public void ping() throws Io.RequestError {
+        public void ping() throws RequestError {
 
             try {
                 var response = this.client.send("GET", "/_ping");
@@ -31,7 +31,7 @@ namespace Dockery.DockerSdk.Endpoint {
                 this.throw_error_from_status_code(200, response, error_messages);
 
             } catch (Error e) {
-                throw new Io.RequestError.FATAL("Error while pinging the docker service : %s".printf(e.message));
+                throw new RequestError.FATAL("Error while pinging the docker service : %s".printf(e.message));
             }
         }
         
@@ -39,13 +39,13 @@ namespace Dockery.DockerSdk.Endpoint {
          * Get docker events stream
          * https://docs.docker.com/engine/api/v1.31/#operation/SystemEvents
          */
-        public Io.FutureResponse events() throws Io.RequestError {
+        public Io.FutureResponse events() throws RequestError {
 
             try {
                 var future_response = new Io.FutureResponse<Model.ContainerStat>(new EventDeserializer());
                 return this.client.future_send(future_response, "GET", "/events");
             } catch (Error e) {
-                throw new Io.RequestError.FATAL("Error while streaming Docker events");
+                throw new RequestError.FATAL("Error while streaming Docker events");
             }
         }
     }

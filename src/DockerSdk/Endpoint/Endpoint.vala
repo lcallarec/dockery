@@ -19,7 +19,7 @@ namespace Dockery.DockerSdk.Endpoint {
             int ok_status_code,
             Io.Response response,
             Gee.HashMap<int, string> map
-        ) throws Io.RequestError {
+        ) throws RequestError {
 
             if (response.status != ok_status_code) {
                 string? message = map.get(response.status);
@@ -35,7 +35,7 @@ namespace Dockery.DockerSdk.Endpoint {
                     message = "Unkown error while requesting the docker deamon";
                 }
 
-                throw new Io.RequestError.FATAL(message);
+                throw new RequestError.FATAL(message);
             }
         }
 

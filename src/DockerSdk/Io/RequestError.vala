@@ -1,9 +1,6 @@
-namespace Dockery.DockerSdk.Io {
-
-    /**
-     * Request Error
-     */
-    public errordomain RequestError {
-        FATAL
-    }
+/**
+ * Request Error
+ */
+public errordomain RequestError {
+    FATAL
 }

@@ -30,7 +30,7 @@ private void register_sdk_endpoint_server_test() {
             endpoint.ping();
             assert_not_reached();
         } catch(Error e) {
-            assert(e is Io.RequestError.FATAL);
+            assert(e is RequestError.FATAL);
         }
     });
 
@@ -48,7 +48,7 @@ private void register_sdk_endpoint_server_test() {
             endpoint.ping();
             assert_not_reached();
         } catch(Error e) {
-            assert(e is Io.RequestError.FATAL);
+            assert(e is RequestError.FATAL);
         }
     });
 }

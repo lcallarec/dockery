@@ -51,7 +51,7 @@ namespace Dockery.Listener {
                     container_states_changed();
                     feedback(Gtk.MessageType.INFO, message);
 
-                } catch (DockerSdk.Io.RequestError e) {
+                } catch (RequestError e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                 }
             });
@@ -75,7 +75,7 @@ namespace Dockery.Listener {
                             try {
                                 repository.containers().remove(container);
                                 container_states_changed();
-                            } catch (DockerSdk.Io.RequestError e) {
+                            } catch (RequestError e) {
                                 feedback(Gtk.MessageType.ERROR, (string) e.message);
                             }
 
@@ -103,7 +103,7 @@ namespace Dockery.Listener {
                     string message = "Container %s successfully started".printf(container.id);
                     feedback(Gtk.MessageType.INFO, message);
 
-                } catch (DockerSdk.Io.RequestError e) {
+                } catch (RequestError e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                 } finally {
                     container_states_changed();
@@ -147,7 +147,7 @@ namespace Dockery.Listener {
                     container_states_changed();
                     feedback(Gtk.MessageType.INFO, message);
 
-                } catch (DockerSdk.Io.RequestError e) {
+                } catch (RequestError e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                 }
             });
@@ -162,7 +162,7 @@ namespace Dockery.Listener {
                     container_states_changed();
                     feedback(Gtk.MessageType.INFO, message);
 
-                } catch (DockerSdk.Io.RequestError e) {
+                } catch (RequestError e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                 }
             });
@@ -176,7 +176,7 @@ namespace Dockery.Listener {
                     container_states_changed();
                     feedback(Gtk.MessageType.INFO, message);
 
-                } catch (DockerSdk.Io.RequestError e) {
+                } catch (RequestError e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                 }
             });
@@ -275,7 +275,7 @@ namespace Dockery.Listener {
                         repository.containers().rename(container);
                         container_states_changed();
 
-                    } catch (DockerSdk.Io.RequestError e) {
+                    } catch (RequestError e) {
                         feedback(Gtk.MessageType.ERROR, (string) e.message);
                     }
                 });

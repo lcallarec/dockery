@@ -4,12 +4,11 @@ services:
   - docker
 
 install:
-  - docker pull lcallarec/dockery
+  - docker pull lcallarec/dockery:meson-build
 
 script:
-  - chmod +x ci/make.sh
-  - chmod +x ci/make-test-coverage.sh
-  - docker run --privileged --volume=$(pwd):/dockery lcallarec/dockery "ci/make-test-coverage.sh"
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - ci_env=`bash <(curl -s https://codecov.io/env)`
+  - docker run --volume=$(pwd):/dockery lcallarec/dockery:meson-build /bin/bash -c "/usr/bin/meson -D b_coverage=true build"
+  - docker run $ci_env --volume=$(pwd):/dockery lcallarec/dockery:meson-build /bin/bash -c "/usr/bin/meson configure -Dtravis=true -Ddebug=true build"
+  - docker run --volume=$(pwd):/dockery lcallarec/dockery:meson-build /bin/bash -c "/usr/bin/meson test -C build --wrapper=xvfb-run"
+  - docker run $ci_env --volume=$(pwd):/dockery lcallarec/dockery:meson-build /bin/bash -c "cd build/src && bash <(curl -s https://codecov.io/bash)"

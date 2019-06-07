@@ -1,0 +1,1 @@
+option('travis', type : 'boolean', value : false, description: 'Does the build is running on Travis CI ?')

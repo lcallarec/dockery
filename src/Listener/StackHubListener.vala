@@ -29,7 +29,7 @@ namespace Dockery.Listener {
                 try {
                     DockerSdk.Model.HubImage[] images = repository.images().search(term);
                     target.set_images(images);
-                } catch (DockerSdk.Io.RequestError e) {
+                } catch (RequestError e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);
                 }
             });

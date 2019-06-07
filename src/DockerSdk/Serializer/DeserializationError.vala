@@ -1,10 +1,9 @@
-namespace Dockery.DockerSdk.Serializer {
-    public errordomain DeserializationError {
-        EVENT,
-        IMAGE,
-        CONTAINER,
-        VOLUME,
-        IMAGE_TAG,
-        PULL_PROCESS_DATA
-    }
+public errordomain DeserializationError {
+    EVENT,
+    IMAGE,
+    CONTAINER,
+    VOLUME,
+    IMAGE_TAG,
+    PULL_PROCESS_DATA
 }
+

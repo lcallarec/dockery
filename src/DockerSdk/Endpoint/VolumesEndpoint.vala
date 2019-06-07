@@ -15,12 +15,12 @@ namespace Dockery.DockerSdk.Endpoint {
           * Get a list of all images
           * https://docs.docker.com/engine/reference/api/docker_remote_api_v1.21/#list-containers
           */
-         public Model.VolumeCollection list() throws Io.RequestError {
+         public Model.VolumeCollection list() throws RequestError {
 
             try {
                 return parse_volume_list_payload(this.client.send("GET", "/volumes").payload);
-            } catch (Io.RequestError e) {
-                 throw new Io.RequestError.FATAL("Error while fetching volumes list from docker daemon : %s".printf(e.message));
+            } catch (RequestError e) {
+                 throw new RequestError.FATAL("Error while fetching volumes list from docker daemon : %s".printf(e.message));
             }
         }
        
