@@ -3,9 +3,7 @@
 [![Build Status](https://travis-ci.org/lcallarec/dockery.svg?branch=master)](https://travis-ci.org/lcallarec/dockery)
 [![codecov](https://codecov.io/gh/lcallarec/dockery/branch/master/graph/badge.svg)](https://codecov.io/gh/lcallarec/dockery)
 
-**Dockery** is a _Docker_ GUI client written in *Vala*, targeted to be compiled on a GNU/Linux platform.
-
-Until the project move the build system from plain _Makefile_ to _autotools_, the basic Makefile mainly targets **ubuntu/debian** based distributions.
+**Dockery** is a _Docker_ GUI client written in *Vala*.
 
 ## Features
 
@@ -49,10 +47,7 @@ Until the project move the build system from plain _Makefile_ to _autotools_, th
 | libgee-0.8-dev   | *                  |
 | libjson-glib-dev   | 1.2 / 1.4                   |
 | libsoup2.4-dev   | *                  |
-| libvte-2.90-dev(*)   | *                  |
-| libvte-2.91-dev(*)   | *                  |
-
-*: only one of `libvte` package must be installed
+| libvte-2.9[0-1]-dev   | *                  |
 
 ### Install on debian-based environment
 
@@ -71,20 +66,20 @@ $ # (the later, the better)
 
 ### Compile and install :
 ```bash
-$ make
-$ sudo make install
+$ meson build
+$ ninja -C build
 ```
 
 ## Execute
 
 ```
-dockery
+./build/src/dockery
 ```
 
 Alternativley, you can run Dockery using the dark theme variant :
 
 ```
-dockery --dark-theme
+./build/src/dockery --dark-theme
 ```
 
 # Contribute
