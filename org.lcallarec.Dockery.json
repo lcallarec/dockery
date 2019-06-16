@@ -23,10 +23,10 @@
             ]
         },
         {
-            "name": "compile",
+            "name": "dockery",
             "buildsystem": "simple",
             "build-commands": [
-                "make"
+                "meson flatpak/build/meson && ninja -C flatpak/build/meson && mkdir -p /app/bin && cp flatpak/build/meson/src/dockery /app/bin/dockery"
             ],
             "sources": [
                 {
@@ -34,17 +34,6 @@
                     "path": "."
                 }
             ]
-        },
-        {
-          "name": "dockery",
-          "buildsystem": "simple",
-          "build-commands": ["install -D dockery /app/bin/dockery"],
-          "sources": [
-            {
-              "type": "file",
-              "path": "dockery"
-            }
-          ]
         }
     ]
 }
