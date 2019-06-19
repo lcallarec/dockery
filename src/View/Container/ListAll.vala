@@ -1,3 +1,4 @@
+using Dockery;
 using Dockery.DockerSdk;
 using Dockery.View;
 using Dockery.Listener;
@@ -43,7 +44,9 @@ namespace Dockery.View.Container {
                 this.empty_box = null;
                 this.notebook  = new Gtk.Notebook();
 
-                this.pack_start(this.header_controls, false, false, 5);
+                if (global::Dockery.Feature.CONTAINER_BUTTON_ROW) {
+                    this.pack_start(this.header_controls, false, false, 5);
+                }
                 this.pack_start(this.notebook, true, true, 0);
 
                 foreach(Model.ContainerStatus status in Model.ContainerStatus.all()) {
@@ -55,28 +58,6 @@ namespace Dockery.View.Container {
 
                 notebook.switch_page.connect((page, page_num) => {
                     user_actions.set_feature(UserActionsTarget.CURRENT_CONTAINER_NOTEBOOK_PAGE, page_num.to_string());
-
-                    //  Gtk.TreePath tp;
-                    //  tv.get_path_at_pos((int) e.x, (int) e.y, out tp, null, null, null);
-
-                    //  selection.select_path(tp);
-
-                    //  Gtk.TreeModel m;
-                    //  Gtk.TreeIter i;
-                    //  selection.get_selected(out m, out i);
-
-                    //  Value oid;
-                    //  m.get_value(i, 1, out oid);
-
-                    //  string id = oid as string;
-
-                    //  if (containers.has_id(id)) {
-
-                    //      Model.Container container = containers.get_by_id(id);
-
-                    //     header_controls.set_container(container);
-                    //  }
-
                 });
 
                 if (true == show_after_refresh) {
@@ -125,8 +106,6 @@ namespace Dockery.View.Container {
             return tp;
         }
 
-        /**
-         */
         private int hydrate(Model.ContainerStatus current_status, Model.ContainerCollection containers) {
 
             int containers_count = 0;
@@ -151,22 +130,15 @@ namespace Dockery.View.Container {
 
                 var tp = this.select_path(e, tv, selection);
                 var id = this.get_row_id(selection);
-                stdout.printf("clicked : %u\n", e.button);
-                stdout.printf("stored id : %s\n", id);
+
                 if (containers.has_id(id)) {
-                    stdout.printf("container with id exists: %s\n", id);
                     
                     if (e.button == 3) {
-                        stdout.printf("Before menu created\n");
                         Model.Container container = containers.get_by_id(id);
                         var menu = global::View.Docker.Menu.ContainerMenuFactory.create(container);
-                        stdout.printf("Menu created\n");                        
                         if (null != menu) {
                             menu.show_all();
                             menu.popup_at_pointer(e);
-
-                            stdout.printf("shouw popup\n");
-
                             menu.container_rename_request.connect(() => {
                                 Gdk.Rectangle rect;
                                 tv.get_cell_area (tp, tv.get_column(0), out rect);
@@ -176,7 +148,6 @@ namespace Dockery.View.Container {
                         }
                     } else if (e.button == 1) {
                         Model.Container container = containers.get_by_id(id);
-                        stdout.printf("left click : %s\n", container.id);
                         header_controls.select(container);
                     }
                 }

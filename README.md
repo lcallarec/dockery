@@ -76,11 +76,18 @@ $ ninja -C build
 ./build/src/dockery
 ```
 
-Alternativley, you can run Dockery using the dark theme variant :
+You can run Dockery using the dark theme variant :
 
 ```
 ./build/src/dockery --dark-theme
 ```
+
+Or run Dockery with experimental features :
+
+```
+./build/src/dockery --experimental
+```
+
 
 # Contribute
 

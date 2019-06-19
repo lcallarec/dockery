@@ -12,7 +12,7 @@ void main (string[] args) {
     register_image_tag_deserializer_test();
     register_container_stat_deserializer_test();
 
-    //DockerSdk/Endpioint
+    //DockerSdk/Endpoint
     register_sdk_http_endpoint_discovery_test();
     register_sdk_unix_socket_endpoint_discovery_test();
     register_sdk_endpoint_discovery_test();
@@ -26,6 +26,7 @@ void main (string[] args) {
     //DockerSdk/Model
     register_dockersdk_model_container_status_converter_test();
     register_dockersdk_model_container_collection();
+    register_dockersdk_model_container_allowed_actions_test();
     
     //DockerSdk/Model/Remote
     register_dockersdk_serializer_pull_step_deserializer_test();
