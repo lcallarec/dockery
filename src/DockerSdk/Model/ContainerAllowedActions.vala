@@ -48,5 +48,8 @@ namespace Dockery.DockerSdk.Model {
             return container.status == ContainerStatus.RUNNING;
         }
 
+        public bool can_be_connected() {
+            return container.status == ContainerStatus.RUNNING;
+        }
     }
 }

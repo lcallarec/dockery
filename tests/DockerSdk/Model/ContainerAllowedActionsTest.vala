@@ -16,6 +16,7 @@ private void register_dockersdk_model_container_allowed_actions_test() {
         assert(allowed_actions.can_be_removed() == true);
         assert(allowed_actions.can_be_inspected() == true);    
         assert(allowed_actions.can_be_stated() == false);
+        assert(allowed_actions.can_be_connected() == false);
     });
     
     Test.add_func ("/Dockery/DockerSdk/Model/AllowedActions#Exited", () => {
@@ -32,6 +33,7 @@ private void register_dockersdk_model_container_allowed_actions_test() {
         assert(allowed_actions.can_be_removed() == true);
         assert(allowed_actions.can_be_inspected() == true);
         assert(allowed_actions.can_be_stated() == false);
+        assert(allowed_actions.can_be_connected() == false);        
     });
 
     Test.add_func ("/Dockery/DockerSdk/Model/AllowedActions#Created", () => {
@@ -48,6 +50,7 @@ private void register_dockersdk_model_container_allowed_actions_test() {
         assert(allowed_actions.can_be_removed() == true);
         assert(allowed_actions.can_be_inspected() == true);
         assert(allowed_actions.can_be_stated() == false);
+        assert(allowed_actions.can_be_connected() == false);
     });
 
     Test.add_func ("/Dockery/DockerSdk/Model/AllowedActions#Running", () => {
@@ -65,5 +68,6 @@ private void register_dockersdk_model_container_allowed_actions_test() {
         assert(allowed_actions.can_be_killed() == true);
         assert(allowed_actions.can_be_inspected() == true);
         assert(allowed_actions.can_be_stated() == true);
+        assert(allowed_actions.can_be_connected() == true);        
     });
 }

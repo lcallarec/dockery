@@ -18,6 +18,7 @@ namespace Dockery.View.Controls {
         public Gtk.Button btn_kill = new Gtk.Button.with_label("kill");
         public Gtk.Button btn_stop = new Gtk.Button.with_label("stop");        
         public Gtk.Button btn_stats = new Gtk.Button.with_label("stats");
+        public Gtk.Button btn_shell = new Gtk.Button.with_label("shell");        
         
         public Model.Container container;
         public Model.ContainerAllowedActions allowed_actions;
@@ -36,6 +37,7 @@ namespace Dockery.View.Controls {
             actions.set_layout(Gtk.ButtonBoxStyle.EXPAND);
             actions.add(btn_inspect);
             actions.add(btn_stats);
+            actions.add(btn_shell);
 
             Gtk.ButtonBox dangerous = new Gtk.ButtonBox(Gtk.Orientation.HORIZONTAL);
             dangerous.set_layout(Gtk.ButtonBoxStyle.EXPAND);
@@ -51,8 +53,9 @@ namespace Dockery.View.Controls {
             this.pack_end(actions, false, false, 5);
             this.pack_end(dangerous, false, false, 5);
             this.pack_end(start, false, false, 5);
-            this.pack_end(btn_rename, false, false, 5);
             this.pack_end(btn_pause, false, false, 5);
+            this.pack_end(new Gtk.Separator(Gtk.Orientation.VERTICAL), false, false, 5);            
+            this.pack_end(btn_rename, false, false, 5);            
         }
 
         private void update_btn_state_from(Model.Container container) {
@@ -69,6 +72,7 @@ namespace Dockery.View.Controls {
             
             btn_inspect.set_sensitive(this.allowed_actions.can_be_inspected());
             btn_stats.set_sensitive(this.allowed_actions.can_be_stated());
+            btn_shell.set_sensitive(this.allowed_actions.can_be_connected());            
 
             btn_pause.set_sensitive(false);
             if (this.allowed_actions.can_be_paused()) {
@@ -90,7 +94,8 @@ namespace Dockery.View.Controls {
             btn_restart.set_sensitive(false);
             btn_start.set_sensitive(false);
             btn_pause.set_sensitive(false);
-            btn_stats.set_sensitive(false);                        
+            btn_stats.set_sensitive(false);
+            btn_shell.set_sensitive(false);
         }
 
         private void listen() {
@@ -114,6 +119,9 @@ namespace Dockery.View.Controls {
             });
             btn_rename.clicked.connect(() => {
                 SignalDispatcher.dispatcher().container_rename_request(container, this, null);
+            });
+            btn_shell.clicked.connect(() => {
+                SignalDispatcher.dispatcher().container_bash_in_request(container);
             });
         }
     }

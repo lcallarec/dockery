@@ -19,6 +19,7 @@ private void register_view_controls_container_buttons_row() {
         assert(controls.btn_restart.sensitive == false);
         assert(controls.btn_start.sensitive == true);
         assert(controls.btn_pause.sensitive == false);
+        assert(controls.btn_shell.sensitive == false);
     });
 
     Test.add_func("/Dockery/View/Controls/ContainerButtonsRow#ButtonsForPausedContainers", () => {
@@ -38,6 +39,7 @@ private void register_view_controls_container_buttons_row() {
         assert(controls.btn_start.sensitive == false);
         assert(controls.btn_pause.sensitive == true);
         assert(controls.btn_pause.label == "unpause");
+        assert(controls.btn_shell.sensitive == false);
     });
 
 
@@ -57,6 +59,7 @@ private void register_view_controls_container_buttons_row() {
         assert(controls.btn_restart.sensitive == false);
         assert(controls.btn_start.sensitive == true);
         assert(controls.btn_pause.sensitive == false);
+        assert(controls.btn_shell.sensitive == false);
     });
 
     Test.add_func("/Dockery/View/Controls/ContainerButtonsRow#ButtonsForRunningContainers", () => {
@@ -75,6 +78,7 @@ private void register_view_controls_container_buttons_row() {
         assert(controls.btn_restart.sensitive == true);
         assert(controls.btn_start.sensitive == false);
         assert(controls.btn_pause.sensitive == true);
-        assert(controls.btn_pause.label == "pause");        
+        assert(controls.btn_pause.label == "pause");
+        assert(controls.btn_shell.sensitive == true);
     });    
 }
