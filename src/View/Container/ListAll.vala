@@ -44,7 +44,7 @@ namespace Dockery.View.Container {
                 this.empty_box = null;
                 this.notebook  = new Gtk.Notebook();
 
-                if (global::Dockery.Feature.CONTAINER_BUTTON_ROW) {
+                if (Feature.CONTAINER_BUTTON_ROW) {
                     this.pack_start(this.header_controls, false, false, 5);
                 }
                 this.pack_start(this.notebook, true, true, 0);
