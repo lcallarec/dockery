@@ -11,6 +11,7 @@ void main (string[] args) {
     register_container_deserializer_test();
     register_image_tag_deserializer_test();
     register_container_stat_deserializer_test();
+    register_container_event_deserializer_test();
 
     //DockerSdk/Endpoint
     register_sdk_http_endpoint_discovery_test();

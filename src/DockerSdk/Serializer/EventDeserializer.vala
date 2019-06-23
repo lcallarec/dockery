@@ -1,12 +1,13 @@
+using Dockery.DockerSdk;
+using Dockery.DockerSdk.Dto.Events;
+
 namespace Dockery.DockerSdk.Serializer {
-    
-    using global::Dockery.DockerSdk;
 
-    public class EventDeserializer : DeserializerInterface<Dto.Events.Event>, Object { 
+    public class EventDeserializer : DeserializerInterface<Event>, Object { 
 
-        public Dto.Events.Event deserialize(string event) throws DeserializationError {
+        public Event deserialize(string event) throws DeserializationError {
 
-            Dto.Events.Event eventDTO;
+            Event eventDTO;
 
             try {
                 var parser = new Json.Parser();
@@ -20,18 +21,16 @@ namespace Dockery.DockerSdk.Serializer {
                 int64 timeNano = rootObject.get_int_member("timeNano");
 
                 Json.Object actorMember = rootObject.get_object_member("Actor");
-
+                
+                var actor = new EventActor(actorMember.get_string_member("ID"));
                 switch(type) {
                     case "container":
-                        return eventDTO = new Dto.Events.ContainerEvent(
+                        this.fill_attributes_if_member_exists(actorMember, actor, "image");
+                        this.fill_attributes_if_member_exists(actorMember, actor, "name");
+           
+                        return eventDTO = new ContainerEvent(
                             event,
-                            new Dto.Events.ContainerEventActor(
-                                actorMember.get_string_member("ID"),
-                                new Dto.Events.ContainerEventActorAttributes(
-                                    actorMember.get_object_member("Attributes").get_string_member("image"),
-                                    actorMember.get_object_member("Attributes").get_string_member("name")
-                                )
-                            ),
+                            actor,
                             action,
                             scope,
                             timeNano,
@@ -40,14 +39,13 @@ namespace Dockery.DockerSdk.Serializer {
                             rootObject.get_string_member("from")
                         );
                     case "image":
-                        return eventDTO = new Dto.Events.ImageEvent(
+                        if (actorMember.get_object_member("Attributes").has_member("name")) {
+                            actor.attributes.set("name", actorMember.get_object_member("Attributes").get_string_member("name"));
+                        }    
+
+                        return eventDTO = new ImageEvent(
                             event,
-                            new Dto.Events.ImageEventActor(
-                                actorMember.get_string_member("ID"),
-                                new Dto.Events.ImageEventActorAttributes(
-                                    actorMember.get_object_member("Attributes").get_string_member("name")
-                                )
-                            ),
+                            actor,
                             action,
                             scope,
                             timeNano,
@@ -55,38 +53,58 @@ namespace Dockery.DockerSdk.Serializer {
                             rootObject.get_string_member("id")
                         );
                     case "network":
-                        return eventDTO = new Dto.Events.NetworkEvent(
+                        if (actorMember.get_object_member("Attributes").has_member("container")) {
+                            actor.attributes.set("container", actorMember.get_object_member("Attributes").get_string_member("container"));
+                        }
+                        if (actorMember.get_object_member("Attributes").has_member("name")) {
+                            actor.attributes.set("name", actorMember.get_object_member("Attributes").get_string_member("name"));
+                        }    
+                        if (actorMember.get_object_member("Attributes").has_member("type")) {
+                            actor.attributes.set("type", actorMember.get_object_member("Attributes").get_string_member("type"));
+                        }    
+
+                        return eventDTO = new NetworkEvent(
                             event,
-                            new Dto.Events.NetworkEventActor(
-                                actorMember.get_string_member("ID"),
-                                new Dto.Events.NetworkEventActorAttributes(
-                                    actorMember.get_object_member("Attributes").get_string_member("container"),
-                                    actorMember.get_object_member("Attributes").get_string_member("name"),
-                                    actorMember.get_object_member("Attributes").get_string_member("type")
-                                )
-                            ),
+                            actor,
                             action,
                             scope,
                             timeNano
                         );
                     case "volume":
-                        return eventDTO = new Dto.Events.VolumeEvent(
+                        if (actorMember.get_object_member("Attributes").has_member("container")) {
+                            actor.attributes.set("container", actorMember.get_object_member("Attributes").get_string_member("container"));
+                        }
+                        if (actorMember.get_object_member("Attributes").has_member("driver")) {
+                            actor.attributes.set("driver", actorMember.get_object_member("Attributes").get_string_member("driver"));
+                        }
+                        if (actorMember.get_object_member("Attributes").has_member("destination")) {
+                            actor.attributes.set("destination", actorMember.get_object_member("Attributes").get_string_member("destination"));
+                        }                            
+                        if (actorMember.get_object_member("Attributes").has_member("propagation")) {
+                            actor.attributes.set("propagation", actorMember.get_object_member("Attributes").get_string_member("propagation"));
+                        }                            
+                        if (actorMember.get_object_member("Attributes").has_member("read/write")) {
+                            actor.attributes.set("read/write", actorMember.get_object_member("Attributes").get_string_member("read/write"));
+                        }                            
+
+                        return eventDTO = new VolumeEvent(
                             event,
-                            new Dto.Events.VolumeEventActor(
-                                actorMember.get_string_member("ID"),
-                                new Dto.Events.VolumeEventActorAttributes(
-                                    actorMember.get_object_member("Attributes").get_string_member("driver")
-                                )
-                            ),
+                            actor,
                             action,
                             scope,
                             timeNano
                         );                    
                     default:
-                        return new Dto.Events.OtherEvent(event, action, scope, timeNano);
+                        return new NotYetHandledEvent(event, action, scope, timeNano);
                 }
             } catch (Error e) {
                 throw new DeserializationError.EVENT("Unable to parse event : %s".printf(event));
+            }
+        }
+
+        private void fill_attributes_if_member_exists(Json.Object actorMember, EventActor actor, string member) {
+            if (actorMember.get_object_member("Attributes").has_member(member)) {
+                actor.attributes.set(member, actorMember.get_object_member("Attributes").get_string_member(member));
             }
         }
     }
