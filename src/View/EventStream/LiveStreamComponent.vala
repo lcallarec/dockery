@@ -1,6 +1,6 @@
-namespace Dockery.View.EventStream {
+using Dockery.DockerSdk;
 
-    using global::Dockery.DockerSdk;
+namespace Dockery.View.EventStream {
 
      /**
      * Display live stream event
@@ -9,39 +9,49 @@ namespace Dockery.View.EventStream {
 
         private Gtk.Expander expander = new Gtk.Expander("Docker events");
         private Gtk.ScrolledWindow scrolled = new Gtk.ScrolledWindow(null, null);
-        private Gtk.TextView view = new Gtk.TextView();
+        private Gtk.Box view = new Gtk.Box(Gtk.Orientation.VERTICAL, 5);
+        private Gee.ArrayList<Gtk.Widget> buffer = new Gee.ArrayList<Gtk.Widget>();
+        private int max_items;
 
         construct {
             scrolled.set_size_request(100, 200);
-            view.editable = false;
-            view.can_focus = false;
-            view.set_wrap_mode(Gtk.WrapMode.CHAR);
             view.expand = true;
         }
 
-        public LiveStreamComponent() {
+        public LiveStreamComponent(int max_items = 100) {
             Object(orientation: Gtk.Orientation.HORIZONTAL, spacing: 0);
+
+            this.max_items = max_items;
 
             this.expander.add(this.scrolled);
             this.scrolled.add(this.view);
+
             this.pack_start(this.expander, true, true, 0);
         }
 
         public void append(Dto.Events.Event event) {
+            var adjustment = scrolled.get_vadjustment();
 
-            string displayed_event = event.to_string() + "\n\n";
-            
-            Gtk.TextIter end_iter = this.get_end_iter();
-            view.get_buffer().insert(ref end_iter, displayed_event, -1);
+            var widget = EventWidgetFactory.create(event);
+            buffer.add(widget);
+            if (buffer.size > this.max_items) {
+                buffer.get(0).destroy();
+                buffer.remove_at(0);
+            }
 
-            Gtk.TextMark mark = view.get_buffer().get_insert();
-            view.scroll_mark_onscreen(mark);
+            this.view.pack_start(widget, true, true, 5);
+
+            GLib.Idle.add(() => {
+                adjustment.set_value(scrolled.get_vadjustment().get_upper() - scrolled.get_vadjustment().get_page_size());
+                scrolled.set_vadjustment(adjustment);         
+                return false;
+            });
+
+            view.show_all();
         }
 
-        private Gtk.TextIter get_end_iter() {
-            Gtk.TextIter end_iter;
-            view.get_buffer().get_end_iter(out end_iter);
-            return end_iter;
+        public  Gee.ArrayList<Gtk.Widget> get_buffer() {
+            return this.buffer;
         }
     }
 }

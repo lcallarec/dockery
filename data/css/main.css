@@ -15,3 +15,26 @@ GtkEntry {
     padding-top: 10px;
 }
 
+label.event_pill {
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 3px;
+    color: white;
+    padding: 0 2px 0 2px;
+}
+
+label.event_type {
+    background: #428ff4;
+}
+
+label.event_action {
+    background: #3bb235;
+}
+
+box.event_description {
+    font-size:12px;
+}
+
+expander.event_raw_json {
+    font-size:11px;
+}

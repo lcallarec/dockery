@@ -39,10 +39,7 @@ namespace Dockery.DockerSdk.Serializer {
                             rootObject.get_string_member("from")
                         );
                     case "image":
-                        if (actorMember.get_object_member("Attributes").has_member("name")) {
-                            actor.attributes.set("name", actorMember.get_object_member("Attributes").get_string_member("name"));
-                        }    
-
+                        this.fill_attributes_if_member_exists(actorMember, actor, "name");
                         return eventDTO = new ImageEvent(
                             event,
                             actor,
@@ -53,15 +50,9 @@ namespace Dockery.DockerSdk.Serializer {
                             rootObject.get_string_member("id")
                         );
                     case "network":
-                        if (actorMember.get_object_member("Attributes").has_member("container")) {
-                            actor.attributes.set("container", actorMember.get_object_member("Attributes").get_string_member("container"));
-                        }
-                        if (actorMember.get_object_member("Attributes").has_member("name")) {
-                            actor.attributes.set("name", actorMember.get_object_member("Attributes").get_string_member("name"));
-                        }    
-                        if (actorMember.get_object_member("Attributes").has_member("type")) {
-                            actor.attributes.set("type", actorMember.get_object_member("Attributes").get_string_member("type"));
-                        }    
+                        this.fill_attributes_if_member_exists(actorMember, actor, "container");
+                        this.fill_attributes_if_member_exists(actorMember, actor, "name");
+                        this.fill_attributes_if_member_exists(actorMember, actor, "type");
 
                         return eventDTO = new NetworkEvent(
                             event,
@@ -71,22 +62,11 @@ namespace Dockery.DockerSdk.Serializer {
                             timeNano
                         );
                     case "volume":
-                        if (actorMember.get_object_member("Attributes").has_member("container")) {
-                            actor.attributes.set("container", actorMember.get_object_member("Attributes").get_string_member("container"));
-                        }
-                        if (actorMember.get_object_member("Attributes").has_member("driver")) {
-                            actor.attributes.set("driver", actorMember.get_object_member("Attributes").get_string_member("driver"));
-                        }
-                        if (actorMember.get_object_member("Attributes").has_member("destination")) {
-                            actor.attributes.set("destination", actorMember.get_object_member("Attributes").get_string_member("destination"));
-                        }                            
-                        if (actorMember.get_object_member("Attributes").has_member("propagation")) {
-                            actor.attributes.set("propagation", actorMember.get_object_member("Attributes").get_string_member("propagation"));
-                        }                            
-                        if (actorMember.get_object_member("Attributes").has_member("read/write")) {
-                            actor.attributes.set("read/write", actorMember.get_object_member("Attributes").get_string_member("read/write"));
-                        }                            
-
+                        this.fill_attributes_if_member_exists(actorMember, actor, "container");
+                        this.fill_attributes_if_member_exists(actorMember, actor, "driver");
+                        this.fill_attributes_if_member_exists(actorMember, actor, "destination");                         
+                        this.fill_attributes_if_member_exists(actorMember, actor, "propagation");
+                        this.fill_attributes_if_member_exists(actorMember, actor, "read/write");
                         return eventDTO = new VolumeEvent(
                             event,
                             actor,
@@ -95,7 +75,7 @@ namespace Dockery.DockerSdk.Serializer {
                             timeNano
                         );                    
                     default:
-                        return new NotYetHandledEvent(event, action, scope, timeNano);
+                        return new NotYetHandledEvent(event, actor, action, scope, timeNano);
                 }
             } catch (Error e) {
                 throw new DeserializationError.EVENT("Unable to parse event : %s".printf(event));
