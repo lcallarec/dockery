@@ -19,6 +19,26 @@ private void register_container_event_deserializer_test() {
         assert(event.actor.attributes.get("name") == "musing_varahamihira");        
     });
 
+    Test.add_func ("/Dockery/DockerSdk/Serializer/EventDeserializer/Container#Rename", () => {
+
+        //Given
+        var deserializer = new Serializer.EventDeserializer();
+
+        //When
+        var event = (Dto.Events.ContainerEvent) deserializer.deserialize(one_event_container_rename());
+
+        //Then
+        assert(event.status == "rename");
+        assert(event.event_type == "container");
+        assert(event.action == "rename");
+        assert(event.scope == "local");
+        assert(event.time == 1561197749);
+        stdout.printf("fgdgfdgfd => %s", event.actor.attributes.get("image"));
+        assert(event.actor.attributes.get("image") == "dockery-build");
+        assert(event.actor.attributes.get("name") == "awesome_vala");        
+        assert(event.actor.attributes.get("oldName") == "/awesome_neumann");        
+    });
+
     Test.add_func ("/Dockery/DockerSdk/Serializer/EventDeserializer/Network#WithContainer", () => {
 
         //Given
@@ -100,6 +120,29 @@ internal string one_event_container_nominal_case() {
                 "Attributes":{
                     "image":"sha256:b6353",
                     "name":"musing_varahamihira"
+                }
+            },
+            "scope":"local",
+            "time":1561197749,
+            "timeNano":1561197749850964639
+        }
+        """;
+}
+
+internal string one_event_container_rename() {
+  return """
+        {
+            "status":"rename",
+            "id":"02f2cca84acb9c225bd78e4df9c464dcddfd8533d9c209abdcf9acc8b0491ff2",
+            "from":"sha256:b6353",
+            "Type":"container",
+            "Action":"rename",
+            "Actor":{
+                "ID":"02f2cca84acb9c225bd78e4df9c464dcddfd8533d9c209abdcf9acc8b0491ff2",
+                "Attributes":{
+                    "image":"dockery-build",
+                    "name":"awesome_vala",
+                    "oldName":"/awesome_neumann"
                 }
             },
             "scope":"local",

@@ -27,6 +27,7 @@ namespace Dockery.DockerSdk.Serializer {
                     case "container":
                         this.fill_attributes_if_member_exists(actorMember, actor, "image");
                         this.fill_attributes_if_member_exists(actorMember, actor, "name");
+                        this.fill_attributes_if_member_exists(actorMember, actor, "oldName");
            
                         return eventDTO = new ContainerEvent(
                             event,

@@ -24,6 +24,10 @@ namespace Dockery.View.EventStream {
 
             var widget = new EventWidget(event);
             EventWidgetFactory.add_event_attribute_to_title(event, widget, "name");
+
+            if (event.actor.attributes.has_key("oldName")) {
+                widget.add_to_title(new Gtk.Label("(from old name " + event.actor.attributes.get("oldName") + ")"));
+            }
                 
             return widget.pack();
         }
@@ -33,6 +37,7 @@ namespace Dockery.View.EventStream {
             var widget = new EventWidget(event);
             EventWidgetFactory.add_event_attribute_to_title(event, widget, "container");
             EventWidgetFactory.add_event_attribute_to_title(event, widget, "name");
+            EventWidgetFactory.add_event_attribute_to_title(event, widget, "name");            
 
             return widget.pack();
         }
