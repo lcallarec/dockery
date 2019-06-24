@@ -42,6 +42,9 @@ void main (string[] args) {
 
     //View/Controls
     register_view_controls_container_buttons_row();
+
+    //View/EventStream
+    register_view_event_streams_live_component_test();
     
     //Common
     register_common_human_unit_formatter_test();

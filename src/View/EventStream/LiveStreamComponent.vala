@@ -51,7 +51,7 @@ namespace Dockery.View.EventStream {
             view.show_all();
         }
 
-        public  Gee.ArrayList<Gtk.Widget> get_buffer() {
+        public Gee.ArrayList<Gtk.Widget> get_buffer() {
             return this.buffer;
         }
     }
