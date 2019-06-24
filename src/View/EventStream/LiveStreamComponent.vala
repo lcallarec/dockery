@@ -16,6 +16,7 @@ namespace Dockery.View.EventStream {
         construct {
             scrolled.set_size_request(100, 200);
             view.expand = true;
+            expander.resize_toplevel = true;
         }
 
         public LiveStreamComponent(int max_items = 100) {
