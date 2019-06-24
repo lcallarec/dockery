@@ -6,19 +6,19 @@ namespace Dockery.View.Controls {
 
     public class ContainerButtonsRow : Gtk.Box {
 
-        public Gtk.Button btn_inspect { 
-            get; default = new Gtk.Button.with_label("inspect"); 
-        }
-
         public Gtk.Button btn_remove = new Gtk.Button.with_label("remove");
         public Gtk.Button btn_rename = new Gtk.Button.with_label("rename");
         public Gtk.Button btn_restart = new Gtk.Button.with_label("restart");
         public Gtk.Button btn_start = new Gtk.Button.with_label("start");
         public Gtk.Button btn_pause = new Gtk.Button.with_label("pause");
         public Gtk.Button btn_kill = new Gtk.Button.with_label("kill");
-        public Gtk.Button btn_stop = new Gtk.Button.with_label("stop");        
-        public Gtk.Button btn_stats = new Gtk.Button.with_label("stats");
-        public Gtk.Button btn_shell = new Gtk.Button.with_label("shell");        
+        public Gtk.Button btn_stop = new Gtk.Button.with_label("stop");
+
+        // Observables
+        public Gtk.MenuButton observable_menu_button = new Gtk.MenuButton();
+        public Gtk.ModelButton btn_inspect = new Gtk.ModelButton();
+        public Gtk.ModelButton btn_stats = new Gtk.ModelButton();
+        public Gtk.ModelButton btn_shell = new Gtk.ModelButton();
         
         public Model.Container container;
         public Model.ContainerAllowedActions allowed_actions;
@@ -33,11 +33,7 @@ namespace Dockery.View.Controls {
             this.listen();
             off();
 
-            Gtk.ButtonBox actions = new Gtk.ButtonBox(Gtk.Orientation.HORIZONTAL);
-            actions.set_layout(Gtk.ButtonBoxStyle.EXPAND);
-            actions.add(btn_inspect);
-            actions.add(btn_stats);
-            actions.add(btn_shell);
+            this.observable_menu_button = this.build_observable_menu();
 
             Gtk.ButtonBox dangerous = new Gtk.ButtonBox(Gtk.Orientation.HORIZONTAL);
             dangerous.set_layout(Gtk.ButtonBoxStyle.EXPAND);
@@ -50,7 +46,7 @@ namespace Dockery.View.Controls {
             start.add(btn_start);
             start.add(btn_restart);
 
-            this.pack_end(actions, false, false, 5);
+            this.pack_end(observable_menu_button, false, false, 5);
             this.pack_end(dangerous, false, false, 5);
             this.pack_end(start, false, false, 5);
             this.pack_end(btn_pause, false, false, 5);
@@ -70,6 +66,11 @@ namespace Dockery.View.Controls {
             btn_start.set_sensitive(this.allowed_actions.can_be_started());
             btn_kill.set_sensitive(this.allowed_actions.can_be_killed());
             
+            observable_menu_button.set_sensitive(
+                this.allowed_actions.can_be_inspected() ||
+                this.allowed_actions.can_be_stated() ||
+                this.allowed_actions.can_be_connected()
+            );
             btn_inspect.set_sensitive(this.allowed_actions.can_be_inspected());
             btn_stats.set_sensitive(this.allowed_actions.can_be_stated());
             btn_shell.set_sensitive(this.allowed_actions.can_be_connected());            
@@ -87,13 +88,15 @@ namespace Dockery.View.Controls {
         }
 
         private void off() {
-            btn_inspect.set_sensitive(false);
             btn_remove.set_sensitive(false);
             btn_stop.set_sensitive(false);
             btn_rename.set_sensitive(false);
             btn_restart.set_sensitive(false);
             btn_start.set_sensitive(false);
             btn_pause.set_sensitive(false);
+            
+            observable_menu_button.set_sensitive(false);
+            btn_inspect.set_sensitive(false);
             btn_stats.set_sensitive(false);
             btn_shell.set_sensitive(false);
         }
@@ -123,6 +126,32 @@ namespace Dockery.View.Controls {
             btn_shell.clicked.connect(() => {
                 SignalDispatcher.dispatcher().container_bash_in_request(container);
             });
+        }
+
+        private Gtk.MenuButton build_observable_menu() {
+            var menu_button = new Gtk.MenuButton();
+            
+            var menu_content =  new Gtk.Box(Gtk.Orientation.VERTICAL, 2);
+            menu_content.margin = 10;
+            
+            btn_inspect.text = "Inspect";
+            btn_stats.text = "View stats";
+            btn_shell.text = "Connect";
+           
+            menu_content.pack_start(btn_inspect, false, false, 0);
+            menu_content.pack_start(btn_stats, false, false, 0);
+            menu_content.pack_start(btn_shell, false, false, 0);
+
+            var popover = new Gtk.Popover(menu_button);
+            popover.add(menu_content);
+
+
+            menu_button.popover = popover;
+            menu_button.image = new Gtk.Image.from_icon_name("open-menu-symbolic", Gtk.IconSize.BUTTON);
+
+            menu_content.show_all();
+
+            return menu_button;
         }
     }
 }
