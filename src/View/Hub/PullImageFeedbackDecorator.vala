@@ -29,7 +29,7 @@ namespace Dockery.View.Hub {
 
                 GLib.Idle.add(() => {
                     decorated.set_label(text);
-                    return true;
+                    return false;
                 });
             }
         }
