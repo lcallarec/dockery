@@ -13,9 +13,9 @@ TARGET_GLIB_FLAG=--target-glib 2.32
 
 .PHONY: install-desktop-entry clean generate-ccode test-coverage coverage-report flatpak-build
 
-VALA_SOURCES:=$(shell find src/ -name *.vala |grep -v "main.vala" |grep -v "App.vala"  |grep -v "ApplicationListener.vala" |grep -v "MainContainer.vala" |grep -v "StackHubListener.vala")
+VALA_SOURCES:=$(shell find src/ -name *.vala |grep -v "main.vala")
 VALA_TEST_SOURCES:=$(shell find tests/ -name '*.vala')
-C_TEST_SOURCES=$(shell find src/ tests/ -name '*.c' |grep -v "main.c" |grep -v "App.c" |grep -v "ApplicationListener.c" |grep -v "MainContainer.c" |grep -v "StackHubListener.c")
+C_TEST_SOURCES=$(shell find src/ tests/ -name '*.c' |grep -v "main.c")
 TOBJECTS=$(C_TEST_SOURCES:.c=.o)
 
 coverage: clean generate-ccode
@@ -25,6 +25,7 @@ coverage: clean generate-ccode
 	
 	@echo "Linking..."
 	gcc -ftest-coverage -fprofile-arcs $(TOBJECTS) -w -g -O0 -o dockery-tests $(LDLIBS)
+	@find . -type f -name '*.c' -delete
 	xvfb-run ./dockery-tests
 
 	@echo "Running GCOV..."
