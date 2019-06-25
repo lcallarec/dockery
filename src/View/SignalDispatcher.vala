@@ -40,7 +40,11 @@ namespace Dockery.View {
         public signal void on_docker_daemon_connect_failure(string docker_entrypoint, Error e);
     }
 
-    public class SignalDispatcher : GLib.Object, ImageSignalDispatcher, DockerServiceSignalDispatcher, DockerHubSignalDispatcher, ContainerSignalDispatcher {
+    public interface AppSignalDispatcher : GLib.Object {
+        public signal void on_about_dialog();
+    }
+
+    public class SignalDispatcher : GLib.Object, ImageSignalDispatcher, DockerServiceSignalDispatcher, DockerHubSignalDispatcher, ContainerSignalDispatcher, AppSignalDispatcher {
         private static SignalDispatcher instance;
 
         public static SignalDispatcher dispatcher() {

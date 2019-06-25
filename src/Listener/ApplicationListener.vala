@@ -1,3 +1,4 @@
+using Dockery;
 using Dockery.View;
 
 errordomain ConnectionError {
@@ -11,7 +12,7 @@ errordomain ConnectionError {
 public class ApplicationListener : GLib.Object {
 
     private Dockery.DockerSdk.Repository? repository;
-    private DockerManager window;
+    private AppWindow window;
     private Dockery.View.MessageDispatcher message_dispatcher;
     private Dockery.View.MainContainer view;
     private Dockery.Listener.ContainerListListener container_list_listener;
@@ -19,8 +20,9 @@ public class ApplicationListener : GLib.Object {
     private Dockery.Listener.VolumeListListener volume_list_listener;
     private Dockery.Listener.DaemonEventListener daemon_event_listener;
     private Dockery.Listener.StackHubListener stack_hub_listener;
+    private Dockery.Listener.AppWindowListener app_window_listener;    
 
-    public ApplicationListener(DockerManager window, Dockery.View.MessageDispatcher message_dispatcher) {
+    public ApplicationListener(AppWindow window, Dockery.View.MessageDispatcher message_dispatcher) {
         this.window             = window;
         this.view               = window.main_container;
         this.message_dispatcher = message_dispatcher;
@@ -41,6 +43,7 @@ public class ApplicationListener : GLib.Object {
         this.listen_container_view();
         this.listen_image_view();
         this.listen_volumes_view();
+        this.listen_app_window();
     }
 
     private void listen_daemon_events() {
@@ -100,6 +103,11 @@ public class ApplicationListener : GLib.Object {
                 message_dispatcher.dispatch(Gtk.MessageType.ERROR, "Can't locate docker daemon");
             }
         });
+    }
+
+    private void listen_app_window() {
+        app_window_listener = new Dockery.Listener.AppWindowListener(this.window);
+        app_window_listener.listen();
     }
 
     protected void init_image_list() {

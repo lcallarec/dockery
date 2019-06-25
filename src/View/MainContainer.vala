@@ -1,17 +1,17 @@
-namespace Dockery.View {
+using Dockery;
+using Dockery.DockerSdk;
 
-    using global::Dockery.View;
-    using global::Dockery.DockerSdk;
+namespace Dockery.View {
 
     public class MainContainer : Gtk.Box {
 
-        public Gtk.HeaderBar headerbar =  new HeaderBar(DockerManager.APPLICATION_NAME, DockerManager.APPLICATION_SUBNAME);
+        public Gtk.HeaderBar headerbar = new HeaderBar(AppWindow.APPLICATION_NAME, AppWindow.APPLICATION_SUBNAME);
         public Gtk.InfoBar infobar = new Controls.MainInfoBar();
         public Gtk.Box local_docker_perspective = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         public SideBar sidebar;
-        public global::Dockery.View.Container.ListAll containers;
+        public Container.ListAll containers;
         public global::View.Docker.List.Images images;
-        public global::Dockery.View.ObjectList.Volumes volumes;
+        public ObjectList.Volumes volumes;
         public Gtk.StackSwitcher perspective_switcher = new Gtk.StackSwitcher();
         public EventStream.LiveStreamComponent live_stream_component = new EventStream.LiveStreamComponent();
         private Gtk.Paned local_perspective_paned = new Gtk.Paned(Gtk.Orientation.VERTICAL);
@@ -29,9 +29,9 @@ namespace Dockery.View {
             this.headerbar.pack_start(this.perspective_switcher);
 
             //Perspective : Local Docker
-            this.containers = new global::Dockery.View.Container.ListAll().init(new Model.ContainerCollection());
+            this.containers = new Container.ListAll().init(new Model.ContainerCollection());
             this.images = new global::View.Docker.List.Images().init(new Model.ImageCollection());
-            this.volumes = new global::Dockery.View.ObjectList.Volumes().init(new Model.VolumeCollection());
+            this.volumes = new ObjectList.Volumes().init(new Model.VolumeCollection());
 
             Gtk.Stack stack = new Gtk.Stack();
             stack.expand = true;
@@ -50,7 +50,7 @@ namespace Dockery.View {
 
         private void setup_local_docker_perspective(Gtk.Stack stack) {
 
-            var settings = new View.Controls.SettingsComponent();
+            var settings = new Controls.SettingsComponent();
 
             stack.add_named(containers, "containers");
             stack.add_named(images, "images");

@@ -16,9 +16,7 @@ public static void main (string[] args) {
         Dockery.Feature.CONTAINER_BUTTON_ROW = true;
     }
 
-
-    var dm = new DockerManager();
-    dm.show_all();
+    new Dockery.AppWindow().show_all();
 
     Gtk.main();
 }
