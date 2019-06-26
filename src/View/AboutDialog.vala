@@ -14,10 +14,10 @@ namespace Dockery {
             this.documenters = null;
             this.translator_credits = null;
 
-            this.program_name = AppWindow.APPLICATION_NAME;
-            this.comments = AppWindow.APPLICATION_SUBNAME;
+            this.program_name = Config.APPLICATION_NAME;
+            this.comments = Config.APPLICATION_SUBNAME;
             this.copyright = "Copyright © 2015-2019 Laurent Callarec";
-            this.version = "0.82.0";
+            this.version = Config.APPLICATION_SUBNAME;
 
             this.license = null;
             this.wrap_license = true;

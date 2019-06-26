@@ -28,7 +28,7 @@ namespace Dockery {
             this.set_icon_theme("icons/");
 
             //Window Application name & Icon
-            this.set_wmclass(AppWindow.APPLICATION_NAME, AppWindow.APPLICATION_NAME);
+            this.set_wmclass(Config.APPLICATION_NAME, Config.APPLICATION_NAME);
             this.set_icon_name("docker-icon");
 
             //View container

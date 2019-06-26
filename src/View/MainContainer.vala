@@ -5,7 +5,7 @@ namespace Dockery.View {
 
     public class MainContainer : Gtk.Box {
 
-        public Gtk.HeaderBar headerbar = new HeaderBar(AppWindow.APPLICATION_NAME, AppWindow.APPLICATION_SUBNAME);
+        public Gtk.HeaderBar headerbar = new HeaderBar(Config.APPLICATION_NAME, Config.APPLICATION_SUBNAME);
         public Gtk.InfoBar infobar = new Controls.MainInfoBar();
         public Gtk.Box local_docker_perspective = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         public SideBar sidebar;

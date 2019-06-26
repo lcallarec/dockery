@@ -18,7 +18,7 @@ namespace Dockery.View {
             menu_content.margin = 10;
 
             var about_btn = new Gtk.ModelButton();
-            about_btn.text = "About " + AppWindow.APPLICATION_NAME;
+            about_btn.text = "About " + Config.APPLICATION_NAME;
             about_btn.clicked.connect(() => {
                 SignalDispatcher.dispatcher().on_about_dialog();
             });
