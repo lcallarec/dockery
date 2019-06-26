@@ -50,13 +50,13 @@ namespace Dockery.View {
 
         private void setup_local_docker_perspective(Gtk.Stack stack) {
 
-            var settings = new Controls.SettingsComponent();
+            var docker_connect = new Controls.DockerConnect();
 
             stack.add_named(containers, "containers");
             stack.add_named(images, "images");
             stack.add_named(volumes, "volumes");
             
-            local_docker_perspective.pack_start(settings, false, false);
+            local_docker_perspective.pack_start(docker_connect, false, false);
             
             var main_view = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
             main_view.pack_start(sidebar, false, true, 0);

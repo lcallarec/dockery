@@ -38,3 +38,7 @@ box.event_description {
 expander.event_raw_json {
     font-size:11px;
 }
+
+.no-padding {
+    padding: 0;
+}
