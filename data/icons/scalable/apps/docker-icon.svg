@@ -11,10 +11,7 @@
    viewBox="0 0 256 256"
    id="svg3432"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="docker-manager.svg"
-   inkscape:export-filename="/home/lcallarec/projets/git/gnome-docker-manager/desktop/icons/docker-managerx48png"
-   inkscape:export-xdpi="16.875"
-   inkscape:export-ydpi="16.875">
+   sodipodi:docname="docker-manager.svg">
   <metadata
      id="metadata3462">
     <rdf:RDF>
@@ -38,130 +35,83 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1513"
-     inkscape:window-height="671"
+     inkscape:window-width="1785"
+     inkscape:window-height="889"
      id="namedview3458"
      showgrid="false"
-     inkscape:zoom="1.142892"
-     inkscape:cx="37.798472"
-     inkscape:cy="127.25166"
-     inkscape:window-x="285"
-     inkscape:window-y="85"
+     inkscape:zoom="1.9590395"
+     inkscape:cx="-2.8394172"
+     inkscape:cy="114.45246"
+     inkscape:window-x="15"
+     inkscape:window-y="53"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg3432" />
+  <path
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd"
+     inkscape:connector-curvature="0"
+     id="path3438"
+     d="m 200.88242,79.774 c -7.02,8.122 -8.11,29.405 2.91,38.365 -6.15,5.47 -19.12,10.42 -32.39,10.42 l -161.5300027,0 c -1.293,13.85 1.1389997,26.61 6.6929997,37.53 l 1.838,3.36 c 1.163,1.97 2.435,3.88 3.808,5.71 6.641,0.43 12.766,0.58 18.367,0.45 l 0.002,0 c 11.009,-0.24 19.991,-1.54 26.799,-3.9 1.014,-0.35 2.118,0.19 2.469,1.2 0.35,1.01 -0.187,2.12 -1.199,2.47 -0.905,0.31 -1.848,0.61 -2.822,0.88 -0.002,0 -0.003,0.01 -0.004,0.01 -5.361,1.53 -11.109,2.56 -18.526,3.01 0.44,0.01 -0.458,0.07 -0.461,0.07 -0.252,0.01 -0.569,0.05 -0.822,0.07 -2.919,0.16 -6.07,0.19 -9.291,0.19 -3.523,0 -6.992,-0.06 -10.871,-0.26 l -0.1,0.07 c 13.46,15.12 34.505,24.2 60.885,24.2 55.835003,0 103.180003,-24.75 124.160003,-80.32 14.87,1.53 29.17,-2.26 35.67,-14.96 -10.36,-5.98 -23.68,-4.07 -31.35,-0.22 1.69,-13.129 -8.14,-23.446 -14.24,-28.345 z M 77.482417,158.519 c 4.179,0 7.566,3.39 7.566,7.56 0,4.18 -3.387,7.57 -7.566,7.57 -4.18,0 -7.568,-3.39 -7.568,-7.57 0,-4.17 3.388,-7.56 7.568,-7.56 z" />
   <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd"
      id="rect3440"
-     x="20.357912"
-     y="132.37845"
-     width="48.802486"
-     height="48.802486" />
+     x="107.41242"
+     y="52.381001"
+     width="21.844999"
+     height="21.844999" />
   <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd"
      id="rect3442"
-     x="76.601143"
-     y="132.69122"
-     width="48.802486"
-     height="48.802486" />
+     x="56.998421"
+     y="77.586998"
+     width="21.844999"
+     height="21.844999" />
   <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd"
      id="rect3444"
-     x="132.91446"
-     y="132.69122"
-     width="48.802486"
-     height="48.802486" />
+     x="82.205421"
+     y="77.586998"
+     width="21.844999"
+     height="21.844999" />
   <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd"
      id="rect3446"
-     x="189.22777"
-     y="132.69122"
-     width="48.802486"
-     height="48.802486" />
+     x="107.41242"
+     y="77.586998"
+     width="21.844999"
+     height="21.844999" />
   <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd"
      id="rect3448"
-     x="20.294523"
-     y="188.99336"
-     width="48.802486"
-     height="48.802486" />
+     x="31.794416"
+     y="102.789"
+     width="21.844999"
+     height="21.844999" />
   <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd"
+     id="rect3450"
+     x="132.61241"
+     y="102.789"
+     width="21.844999"
+     height="21.844999" />
+  <rect
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd"
      id="rect3452"
-     x="76.605606"
-     y="188.99336"
-     width="48.802486"
-     height="48.802486" />
+     x="57.00042"
+     y="102.789"
+     width="21.844999"
+     height="21.844999" />
   <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd"
      id="rect3454"
-     x="132.91446"
-     y="188.99336"
-     width="48.802486"
-     height="48.802486" />
+     x="82.205421"
+     y="102.789"
+     width="21.844999"
+     height="21.844999" />
   <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd"
      id="rect3456"
-     x="189.22777"
-     y="188.99336"
-     width="48.802486"
-     height="48.802486" />
-  <rect
-     style="fill:#52c6e2;fill-opacity:1;fill-rule:evenodd"
-     id="rect3440-0"
-     x="8.2634945"
-     y="16.085777"
-     width="48.802486"
-     height="48.802486"
-     transform="matrix(0.98534961,-0.17054662,0.17054662,0.98534961,0,0)"
-     inkscape:transform-center-x="6.9997868"
-     inkscape:transform-center-y="-12.249627" />
-  <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
-     id="rect3442-4"
-     x="76.05983"
-     y="18.734646"
-     width="48.802486"
-     height="48.802486" />
-  <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
-     id="rect3444-2"
-     x="132.37315"
-     y="18.734646"
-     width="48.802486"
-     height="48.802486" />
-  <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
-     id="rect3446-1"
-     x="188.68646"
-     y="18.734646"
-     width="48.802486"
-     height="48.802486" />
-  <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
-     id="rect3448-1"
-     x="19.753218"
-     y="75.036789"
-     width="48.802486"
-     height="48.802486" />
-  <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
-     id="rect3452-9"
-     x="76.064293"
-     y="75.036789"
-     width="48.802486"
-     height="48.802486" />
-  <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
-     id="rect3454-8"
-     x="132.37315"
-     y="75.036789"
-     width="48.802486"
-     height="48.802486" />
-  <rect
-     style="fill:#5294e2;fill-opacity:1;fill-rule:evenodd"
-     id="rect3456-9"
-     x="188.68646"
-     y="75.036789"
-     width="48.802486"
-     height="48.802486" />
+     x="107.41242"
+     y="102.789"
+     width="21.844999"
+     height="21.844999" />
 </svg>
