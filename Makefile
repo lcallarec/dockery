@@ -27,9 +27,6 @@ coverage: clean generate-ccode
 	gcc -ftest-coverage -fprofile-arcs $(TOBJECTS) -w -g -O0 -o dockery-tests $(LDLIBS)
 	xvfb-run ./dockery-tests
 
-	@echo "Running GCOV..."
-	for file in $(shell find src/ -name *.vala); do gcov -p $$file; done
-
 generate-ccode:
 	@echo "Transpiling vala files C files..."
 	@valac $(PPSYMBOLS) -q --ccode --debug --thread $(TARGET_GLIB_FLAG) $(VALALIBS) \
