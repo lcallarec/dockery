@@ -25,7 +25,6 @@ coverage: clean generate-ccode
 	
 	@echo "Linking..."
 	gcc -ftest-coverage -fprofile-arcs $(TOBJECTS) -w -g -O0 -o dockery-tests $(LDLIBS)
-	@find . -type f -name '*.c' -delete
 	xvfb-run ./dockery-tests
 
 	@echo "Running GCOV..."
