@@ -61,7 +61,7 @@ private void register_dockery_view_objectlist_volumes_test() {
 
         assert(ChildWidgetFinder.find_by_name(view, "volumes-treeview") == null);
         
-        var empty_box = ChildWidgetFinder.find_by_name(view, "empty-box");
+        var empty_box = ChildWidgetFinder.find_by_name(view, "empty-box-docker-symbolic");
         assert(empty_box != null);
     });
 }

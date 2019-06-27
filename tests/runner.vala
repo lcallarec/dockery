@@ -33,6 +33,9 @@ void main (string[] args) {
     register_dockersdk_serializer_pull_step_deserializer_test();
     register_dockersdk_remote_processor_pulling_image_progress_processor_test();
     
+    //View/Container
+    register_view_container_listall_test();
+
     //View/Menu/
     register_view_menu_search_hub_menu_test();
     register_dockery_view_objectlist_volumes_test();

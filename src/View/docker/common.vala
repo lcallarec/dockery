@@ -57,7 +57,7 @@ namespace View.Docker {
             label.attributes = Dockery.View.Fonts.get_panel_empty_major();
 
             var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
-            box.set_name("empty-box");
+            box.set_name(@"empty-box-$icon_name");
             
             box.valign = Gtk.Align.CENTER;
             box.pack_start(image, true, false, 0);
