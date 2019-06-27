@@ -1,10 +1,10 @@
 using Dockery.DockerSdk;
 using View.Docker;
 
-namespace Dockery.View.ObjectList {
+namespace Dockery.View.Volume {
 
 
-    public class Volumes : Flushable, VolumeViewable, Gtk.Box {
+    public class ListAll : Flushable, VolumeViewable, Gtk.Box {
 
         protected Gtk.Box empty_box;
 
@@ -15,7 +15,7 @@ namespace Dockery.View.ObjectList {
         /**
          * Init the volumes view from a given collection of volumes
          */
-        public Volumes init(Model.VolumeCollection volumes, bool show_after_refresh = true) {
+        public ListAll init(Model.VolumeCollection volumes, bool show_after_refresh = true) {
 
             liststore = new Gtk.ListStore(3, typeof (string),  typeof (string), typeof (string));
 

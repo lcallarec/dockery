@@ -26,7 +26,7 @@ namespace View.Docker {
         /**
          * Init the volumes view from a given collection of volumes
          */
-        public abstract Dockery.View.ObjectList.Volumes init(VolumeCollection volumes, bool show_after_refresh = true);
+        public abstract Dockery.View.Volume.ListAll init(VolumeCollection volumes, bool show_after_refresh = true);
     }
 
     /**

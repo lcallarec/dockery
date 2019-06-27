@@ -3,9 +3,9 @@ using Dockery.View;
 
 private void register_dockery_view_objectlist_volumes_test() {
 
-    Test.add_func("/Dockery/View/ObjectList/Volumes#WithVolumes", () => {
+    Test.add_func("/Dockery/View/Volume/ListAll#WithVolumes", () => {
 
-        var view = new ObjectList.Volumes();
+        var view = new Dockery.View.Volume.ListAll();
 
         var volumes = new Model.VolumeCollection();
 
@@ -51,9 +51,9 @@ private void register_dockery_view_objectlist_volumes_test() {
         assert(tree_model.iter_next(ref iter) == false);
     });
 
-    Test.add_func("/Dockery/View/ObjectList/Volumes#WithoutVolumes", () => {
+    Test.add_func("/Dockery/View/Volume/ListAll#WithoutVolumes", () => {
 
-        var view = new ObjectList.Volumes();
+        var view = new Dockery.View.Volume.ListAll();
 
         var volumes = new Model.VolumeCollection();
                 
