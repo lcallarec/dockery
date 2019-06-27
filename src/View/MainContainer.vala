@@ -11,7 +11,7 @@ namespace Dockery.View {
         public Gtk.Box local_docker_perspective = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         public SideBar sidebar;
         public Container.ListAll containers;
-        public global::View.Docker.List.Images images;
+        public View.Image.ListAll images;
         public View.Volume.ListAll volumes;
         public Gtk.StackSwitcher perspective_switcher = new Gtk.StackSwitcher();
         public EventStream.LiveStreamComponent live_stream_component = new EventStream.LiveStreamComponent();
@@ -33,7 +33,7 @@ namespace Dockery.View {
 
             //Perspective : Local Docker
             this.containers = new Container.ListAll().init(new Model.ContainerCollection());
-            this.images = new global::View.Docker.List.Images().init(new Model.ImageCollection());
+            this.images = new View.Image.ListAll().init(new Model.ImageCollection());
             this.volumes = new View.Volume.ListAll().init(new Model.VolumeCollection());
 
             Gtk.Stack stack = new Gtk.Stack();

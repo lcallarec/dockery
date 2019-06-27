@@ -1,19 +1,20 @@
-namespace View.Docker.List {
+using Dockery.DockerSdk;
+using global::View.Docker;
 
-    using global::Dockery.DockerSdk.Model;
+namespace Dockery.View.Image {
 
-    public class Images : Flushable, ImageViewable, Gtk.Box {
+    public class ListAll : Flushable, ImageViewable, Gtk.Box {
 
         protected Gtk.Box empty_box;
 
         protected Gtk.ListStore liststore;
 
-        protected ImageCollection images;
+        protected Model.ImageCollection images;
 
         /**
          * Init the images view from a given collection of images
          */
-        public Images init(ImageCollection images, bool show_after_refresh = true) {
+        public ListAll init(Model.ImageCollection images, bool show_after_refresh = true) {
 
             liststore = new Gtk.ListStore(4, typeof (string),  typeof (string), typeof (string), typeof (string));
 
@@ -64,7 +65,7 @@ namespace View.Docker.List {
 
             liststore.clear();
 
-            foreach(Image image in this.images.values) {
+            foreach(Model.Image image in this.images.values) {
 
                 liststore.append(out iter);
 
@@ -104,24 +105,24 @@ namespace View.Docker.List {
 
                     if (rows.length() == 1) {
                         
-                        Image? image = get_image_from_row(model, rows.nth_data(0));
+                        Model.Image? image = get_image_from_row(model, rows.nth_data(0));
                         
                         if (null != image) {
-                            View.Docker.Menu.ImageMenu menu = View.Docker.Menu.ImageMenuFactory.create_single(image);
+                            var menu = global::View.Docker.Menu.ImageMenuFactory.create_single(image);
                             menu.show_all();
                             menu.popup(null, null, null, e.button, e.time);
                         }
 
                     } else {
-                        var selected_images = new Dockery.DockerSdk.Model.ImageCollection();
+                        var selected_images = new Model.ImageCollection();
                         for (int i = 0; i < rows.length(); i++) {
-                            Image? selected_image = get_image_from_row(model, rows.nth_data(i));
+                            Model.Image? selected_image = get_image_from_row(model, rows.nth_data(i));
                             if (null != selected_image) {
                                 selected_images.add(selected_image);
                             }
                         }
 
-                        View.Docker.Menu.ImageMenu menu = View.Docker.Menu.ImageMenuFactory.create_multi(selected_images);
+                        var menu = global::View.Docker.Menu.ImageMenuFactory.create_multi(selected_images);
                         menu.show_all();
                         menu.popup_at_pointer(e);
                     }
@@ -133,7 +134,7 @@ namespace View.Docker.List {
             });
         }
         
-        private Image? get_image_from_row(Gtk.TreeModel model, Gtk.TreePath tree_path) {
+        private Model.Image? get_image_from_row(Gtk.TreeModel model, Gtk.TreePath tree_path) {
             Gtk.TreeIter iter;
             Value value;
             

@@ -1,15 +1,14 @@
 using Dockery.View;
+using Dockery.DockerSdk;
 
 namespace View.Docker.Menu {
 
-    using global::Dockery.DockerSdk.Model;
-
     public class ImageMenuFactory {
-        public static ImageMenu create_single(Image image) {
+        public static ImageMenu create_single(Model.Image image) {
             return new SingleSelectedImageMenu(image);
         }
         
-        public static ImageMenu create_multi(ImageCollection images) {
+        public static ImageMenu create_multi(Model.ImageCollection images) {
             return new MultiSelectedImageMenu(images);
         }
     }
@@ -20,9 +19,9 @@ namespace View.Docker.Menu {
     
     public class SingleSelectedImageMenu : ImageMenu {
         
-        protected Image image;
+        protected Model.Image image;
 
-        public SingleSelectedImageMenu(Image image) {
+        public SingleSelectedImageMenu(Model.Image image) {
 
             this.image = image;
 
@@ -37,7 +36,7 @@ namespace View.Docker.Menu {
          */
         protected void append_remove_menu_item() {
             this.append_menu_item("_Remove image", null, () => {
-                SignalDispatcher.dispatcher().images_remove_request(new ImageCollection.from_model(image));
+                SignalDispatcher.dispatcher().images_remove_request(new Model.ImageCollection.from_model(image));
             });
         }
 
@@ -62,9 +61,9 @@ namespace View.Docker.Menu {
     
     public class MultiSelectedImageMenu : ImageMenu {
         
-        protected ImageCollection images;
+        protected Model.ImageCollection images;
         
-        public MultiSelectedImageMenu(ImageCollection images) {
+        public MultiSelectedImageMenu(Model.ImageCollection images) {
             this.images = images;
             this.append_remove_menu_items();
         }

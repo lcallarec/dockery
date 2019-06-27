@@ -1,6 +1,6 @@
-namespace View.Docker {
+using Dockery.DockerSdk;
 
-    using global::Dockery.DockerSdk.Model;
+namespace View.Docker {
 
     public interface Flushable : Gtk.Container {
         /**
@@ -18,7 +18,7 @@ namespace View.Docker {
         /**
          * Init the images view from a given collection of images
          */
-        public abstract View.Docker.List.Images init(ImageCollection images, bool show_after_refresh = true);
+        public abstract Dockery.View.Image.ListAll init(Model.ImageCollection images, bool show_after_refresh = true);
     }
 
     public interface VolumeViewable : Gtk.Widget {
@@ -26,7 +26,7 @@ namespace View.Docker {
         /**
          * Init the volumes view from a given collection of volumes
          */
-        public abstract Dockery.View.Volume.ListAll init(VolumeCollection volumes, bool show_after_refresh = true);
+        public abstract Dockery.View.Volume.ListAll init(Model.VolumeCollection volumes, bool show_after_refresh = true);
     }
 
     /**
@@ -37,7 +37,7 @@ namespace View.Docker {
         /**
          * Init the container view from a given collection of containers and return it
          */
-        public abstract Dockery.View.Container.ListAll init(ContainerCollection containers, bool show_after_refresh = true);
+        public abstract Dockery.View.Container.ListAll init(Model.ContainerCollection containers, bool show_after_refresh = true);
     }
 
     /**
