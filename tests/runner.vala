@@ -28,6 +28,7 @@ void main (string[] args) {
     register_dockersdk_model_container_status_converter_test();
     register_dockersdk_model_container_collection();
     register_dockersdk_model_container_allowed_actions_test();
+    register_dockersdk_model_image_collection();
     
     //DockerSdk/Model/Remote
     register_dockersdk_serializer_pull_step_deserializer_test();
@@ -36,6 +37,9 @@ void main (string[] args) {
     //View/Container
     register_view_container_listall_test();
 
+    //View/Image
+    register_view_image_listall_test();
+    
     //View/Menu/
     register_view_menu_search_hub_menu_test();
     register_dockery_view_objectlist_volumes_test();
