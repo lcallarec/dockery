@@ -108,9 +108,6 @@ namespace Dockery.View.Controls {
             btn_stats.clicked.connect(() => {
                SignalDispatcher.dispatcher().container_stats_request(container);
             });
-            btn_remove.clicked.connect(() => {
-                SignalDispatcher.dispatcher().container_remove_request(container);
-            });
             btn_restart.clicked.connect(() => {
                 SignalDispatcher.dispatcher().container_restart_request(container);
             });
@@ -125,6 +122,10 @@ namespace Dockery.View.Controls {
             });
             btn_shell.clicked.connect(() => {
                 SignalDispatcher.dispatcher().container_bash_in_request(container);
+            });
+
+            btn_kill.clicked.connect(() => {
+                SignalDispatcher.dispatcher().container_kill_request(container);
             });
         }
 
