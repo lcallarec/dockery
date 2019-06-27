@@ -5,7 +5,7 @@ namespace Dockery.View {
 
     public class MainContainer : Gtk.Box {
 
-        public Gtk.HeaderBar headerbar = new HeaderBar(Config.APPLICATION_NAME, Config.APPLICATION_SUBNAME);
+        public Gtk.HeaderBar headerbar = new AppHeaderBar(Config.APPLICATION_NAME, Config.APPLICATION_SUBNAME);
         public Gtk.InfoBar infobar = new Controls.MainInfoBar();
         public Gtk.Box local_docker_perspective = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         public SideBar sidebar;
@@ -27,6 +27,8 @@ namespace Dockery.View {
             this.perspective_switcher = new Controls.PerspectiveSwitcher(perspectives);
 
             this.headerbar.pack_start(this.perspective_switcher);
+            var docker_connect = new Controls.DockerConnect();
+            this.headerbar.pack_end(docker_connect);
 
             //Perspective : Local Docker
             this.containers = new Container.ListAll().init(new Model.ContainerCollection());
@@ -50,14 +52,10 @@ namespace Dockery.View {
 
         private void setup_local_docker_perspective(Gtk.Stack stack) {
 
-            var docker_connect = new Controls.DockerConnect();
-
             stack.add_named(containers, "containers");
             stack.add_named(images, "images");
             stack.add_named(volumes, "volumes");
-            
-            local_docker_perspective.pack_start(docker_connect, false, false);
-            
+
             var main_view = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
             main_view.pack_start(sidebar, false, true, 0);
             main_view.pack_start(new Gtk.Separator(Gtk.Orientation.VERTICAL), false, true, 0);

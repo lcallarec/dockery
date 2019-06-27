@@ -1,8 +1,8 @@
 namespace Dockery.View {
 
-    public class HeaderBar : Gtk.HeaderBar {
+    public class AppHeaderBar : Gtk.HeaderBar {
 
-        public HeaderBar(string title, string subtitle) {
+        public AppHeaderBar(string title, string subtitle) {
 
             this.show_close_button = true;
             this.title = title;
