@@ -124,6 +124,9 @@ namespace Dockery.View.Controls {
                 SignalDispatcher.dispatcher().container_bash_in_request(container);
             });
 
+            btn_stop.clicked.connect(() => {
+                SignalDispatcher.dispatcher().container_stop_request(container);
+            });
             btn_kill.clicked.connect(() => {
                 SignalDispatcher.dispatcher().container_kill_request(container);
             });
