@@ -29,7 +29,7 @@ coverage: clean generate-ccode
 	xvfb-run ./dockery-tests
 
 	@echo "Running GCOV..."
-	for file in $(shell find src/ -name *.vala); do gcov $$file; done
+	for file in $(shell find src/ -name *.vala); do gcov -p $$file; done
 
 generate-ccode:
 	@echo "Transpiling vala files C files..."
