@@ -6,7 +6,7 @@ using View.Docker.Menu;
 
 namespace Dockery.View.Container {
 
-    public class ListAll : global::View.Docker.Flushable, global::View.Docker.ContainerViewable, Gtk.Box {
+    public class ListAll : Flushable, ContainerViewable, Gtk.Box {
 
         public Gtk.Notebook notebook;
         private Gtk.Box empty_box;
@@ -32,7 +32,7 @@ namespace Dockery.View.Container {
             if (containers.is_empty) {
 
                 this.notebook = null;
-                empty_box = global::View.Docker.IconMessageBoxBuilder.create_icon_message_box("No container found", "docker-symbolic");            
+                empty_box = IconMessageBoxBuilder.create_icon_message_box("No container found", "docker-symbolic");            
                 
                 this.pack_start(this.empty_box, true, true, 0);
 

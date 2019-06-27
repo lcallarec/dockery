@@ -1,6 +1,7 @@
-namespace View.Docker.Dialog {
+using Dockery.DockerSdk.Model;
+using Dockery.View;
 
-    using global::Dockery.DockerSdk.Model;
+namespace View.Docker.Dialog {
 
     /**
      * This Dialog is displayed when one or more images are being removed.
@@ -8,7 +9,7 @@ namespace View.Docker.Dialog {
     public class RemoveImagesDialog : Dockery.View.Dialog {
 
         private Gtk.ListStore liststore = new Gtk.ListStore(2, typeof (string),  typeof (string));
-        private Gtk.TreeView tv         = null;
+        private Gtk.TreeView tv = null;
         private RemoveImagesDialogMessageGenerator message_generator;
         
         /**
@@ -46,7 +47,7 @@ namespace View.Docker.Dialog {
             var body = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
             view.pack_start(body, false, false, 0);
 
-            var symbol_box = View.Docker.IconMessageBoxBuilder.create_icon_box("media-optical-symbolic");
+            var symbol_box = IconMessageBoxBuilder.create_icon_box("media-optical-symbolic");
             if (containers.size == 0) {
                 body.pack_start(symbol_box, true, false, 0);
             } else {

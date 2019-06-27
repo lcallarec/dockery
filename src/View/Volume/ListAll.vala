@@ -1,5 +1,5 @@
 using Dockery.DockerSdk;
-using View.Docker;
+using Dockery.View;
 
 namespace Dockery.View.Volume {
 
@@ -26,7 +26,7 @@ namespace Dockery.View.Volume {
             if (volumes.size > 0) {
                 this.hydrate();
             } else {
-                var empty_box = global::View.Docker.IconMessageBoxBuilder.create_icon_message_box("No volumes found", "docker-symbolic");
+                var empty_box = IconMessageBoxBuilder.create_icon_message_box("No volumes found", "docker-symbolic");
                 this.pack_start(empty_box, true, true, 0);
             }
 

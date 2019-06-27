@@ -1,6 +1,7 @@
+using Dockery;
 using Dockery.DockerSdk;
 
-namespace View.Docker {
+namespace Dockery.View {
 
     public interface Flushable : Gtk.Container {
         /**
@@ -18,7 +19,7 @@ namespace View.Docker {
         /**
          * Init the images view from a given collection of images
          */
-        public abstract Dockery.View.Image.ListAll init(Model.ImageCollection images, bool show_after_refresh = true);
+        public abstract View.Image.ListAll init(Model.ImageCollection images, bool show_after_refresh = true);
     }
 
     public interface VolumeViewable : Gtk.Widget {
@@ -26,7 +27,7 @@ namespace View.Docker {
         /**
          * Init the volumes view from a given collection of volumes
          */
-        public abstract Dockery.View.Volume.ListAll init(Model.VolumeCollection volumes, bool show_after_refresh = true);
+        public abstract View.Volume.ListAll init(Model.VolumeCollection volumes, bool show_after_refresh = true);
     }
 
     /**
@@ -37,7 +38,7 @@ namespace View.Docker {
         /**
          * Init the container view from a given collection of containers and return it
          */
-        public abstract Dockery.View.Container.ListAll init(Model.ContainerCollection containers, bool show_after_refresh = true);
+        public abstract View.Container.ListAll init(Model.ContainerCollection containers, bool show_after_refresh = true);
     }
 
     /**
@@ -54,7 +55,7 @@ namespace View.Docker {
             image.opacity = 0.2;
 
             var label = new Gtk.Label(message);
-            label.attributes = Dockery.View.Fonts.get_panel_empty_major();
+            label.attributes = View.Fonts.get_panel_empty_major();
 
             var box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
             box.set_name(@"empty-box-$icon_name");

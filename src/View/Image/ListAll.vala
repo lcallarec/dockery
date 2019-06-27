@@ -1,4 +1,5 @@
 using Dockery.DockerSdk;
+using Dockery.View;
 using global::View.Docker;
 
 namespace Dockery.View.Image {
