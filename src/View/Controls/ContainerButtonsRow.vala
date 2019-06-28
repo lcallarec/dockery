@@ -30,6 +30,7 @@ namespace Dockery.View.Controls {
         }
 
         public ContainerButtonsRow() {
+            Object();
             this.listen();
             off();
 

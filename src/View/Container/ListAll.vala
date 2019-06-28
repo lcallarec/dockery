@@ -49,7 +49,7 @@ namespace Dockery.View.Container {
                 if (Feature.CONTAINER_BUTTON_ROW) {
                     this.pack_start(this.header_controls, false, false, 5);
                 }
-
+ 
                 this.pack_start(this.notebook, true, true, 0);
 
                 foreach(Model.ContainerStatus status in Model.ContainerStatus.all()) {
@@ -75,20 +75,16 @@ namespace Dockery.View.Container {
                     //because set_current_page will have no effets if the page was not shown yet
                     notebook.set_current_page(current_page);
                 }
-            }
+             }
 
             return this;
         }
 
         public void flush() {
-            if (null != this.empty_box) {
-                this.remove(this.empty_box);
+            foreach(Gtk.Widget child in this.get_children()) {
+                 this.remove(child);
             }
-
-            if (null != this.notebook) {
-                this.remove(this.notebook);
-            }
-        }
+         }
 
         private int hydrate(Model.ContainerStatus current_status, Model.ContainerCollection containers) {
 
