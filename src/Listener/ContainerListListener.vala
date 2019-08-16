@@ -215,8 +215,8 @@ namespace Dockery.Listener {
         private void container_stats_request() {
             SignalDispatcher.dispatcher().container_stats_request.connect((container) => {
                 try {
-                    var dialog = new StatDialog(parent_window);
                     uint source_timeout = 0;
+                    var dialog = new StatDialog(parent_window);
                     SignalDispatcher.dispatcher().container_auto_refresh_toggle_request.connect((active) => {
                         if (active) {
                             source_timeout = GLib.Timeout.add(5000, () => {
@@ -233,6 +233,12 @@ namespace Dockery.Listener {
                                 return true;
                             });
                         } else if (source_timeout != 0) {
+                           GLib.Source.remove(source_timeout); 
+                        }
+                    });
+
+                    dialog.destroy.connect(() => {
+                        if (source_timeout != 0) {
                            GLib.Source.remove(source_timeout); 
                         }
                     });
