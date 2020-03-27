@@ -9,3 +9,7 @@ build
 flatpak/build
 mock-docker.sock
 .vscode
+subprojects/*
+!subprojects/.gitkeep
+!subprojects/*.wrap
+./dockery-tests

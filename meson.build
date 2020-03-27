@@ -32,6 +32,9 @@ endif
 
 vala_args += ['--target-glib=2.50']
 
+livechart_proj = subproject('livechart')
+livechart = livechart_proj.get_variable('livechart_dep')
+
 deps = [
   gtk,
   gee,
@@ -39,7 +42,8 @@ deps = [
   soup,
   vte,
   gio,
-  libm
+  libm,
+  livechart
 ]
 
 subdir('data')
