@@ -20,8 +20,6 @@ namespace Dockery.View.EventStream {
         }
 
         private static Gtk.Widget build_container_event(Dto.Events.ContainerEvent event) {
-            var name = event.actor.attributes.get("name");
-
             var widget = new EventWidget(event);
             EventWidgetFactory.add_event_attribute_to_title(event, widget, "name");
 
