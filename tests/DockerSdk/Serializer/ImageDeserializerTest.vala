@@ -14,8 +14,8 @@ private void register_image_deserializer_test() {
         assert(firstImage.created_at.equal(new DateTime.utc(2013, 4, 11, 21, 13, 15)));
         assert(firstImage.repository == "ubuntu");
         assert(firstImage.tag == "12.04");
-        assert(firstImage.raw_size == (uint) 131506275);
-        assert(firstImage.size == "132MB");
+        assert(firstImage.size.to_human() == "132MB");
+        assert(firstImage.size.value == (uint) 131506275);        
     });
 
      Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/deserialize#ManyImagesWellFormattedPayload", () => {

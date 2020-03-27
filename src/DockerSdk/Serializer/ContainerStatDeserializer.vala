@@ -1,6 +1,6 @@
+using Dockery.DockerSdk;
+
 namespace Dockery.DockerSdk.Serializer {
-    
-    using global::Dockery.DockerSdk;
 
     public class ContainerStatDeserializer : DeserializerInterface<Model.ContainerStat>, Object {
 
@@ -11,10 +11,9 @@ namespace Dockery.DockerSdk.Serializer {
 
                 var node_object = parser.get_root().get_object();
                 var memory_stats_object = node_object.get_object_member("memory_stats");
-
                 return new Model.ContainerStat.from(
                     new DateTime.from_iso8601(node_object.get_string_member("read"), new TimeZone.utc()),
-                    new Model.Stat.ContainerMemoryStat.from(
+                    new Model.Stat.ContainerMemoryStat.from_int64(
                         memory_stats_object.get_int_member("max_usage"),
                         memory_stats_object.get_int_member("usage"),
                         memory_stats_object.get_int_member("limit")

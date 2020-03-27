@@ -54,7 +54,7 @@ void main (string[] args) {
     register_view_event_streams_live_component_test();
     
     //Common
-    register_common_human_unit_formatter_test();
+    register_unit_bytes_test();
 
     Test.run();
 }

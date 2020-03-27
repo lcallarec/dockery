@@ -23,15 +23,14 @@ namespace Dockery.View.Stat {
             
             Gtk.ListStore liststore = new Gtk.ListStore(2, typeof (string),  typeof (string));
             liststore.clear();
-
-              liststore.append(out iter);
-              liststore.set(iter, 0, "Read at", 1, stats.read_at.to_string());
-              liststore.append(out iter);
-              liststore.set(iter, 0, "Memory max usage", 1, HumanUnitFormatter.string_bytes_to_human(stats.memory_stats.max_usage.to_string()));
-              liststore.append(out iter);
-              liststore.set(iter, 0, "Memory usage", 1, HumanUnitFormatter.string_bytes_to_human(stats.memory_stats.usage.to_string()));
-              liststore.append(out iter);
-              liststore.set(iter, 0, "Memory limit", 1, HumanUnitFormatter.string_bytes_to_human(stats.memory_stats.limit.to_string()));
+            liststore.append(out iter);
+            liststore.set(iter, 0, "Read at", 1, stats.read_at.to_string());
+            liststore.append(out iter);
+            liststore.set(iter, 0, "Memory max usage", 1, stats.memory_stats.max_usage.to_human());
+            liststore.append(out iter);
+            liststore.set(iter, 0, "Memory usage", 1, stats.memory_stats.usage.to_human());
+            liststore.append(out iter);
+            liststore.set(iter, 0, "Memory limit", 1, stats.memory_stats.limit.to_human());
             
             return this.get_treeview(liststore);
         }
