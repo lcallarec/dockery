@@ -4,28 +4,36 @@ private void register_image_deserializer_test() {
     Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/DeserializeList#OneImageWellFormattedPayload", () => {
 
         var deserializer = new Serializer.ImageDeserializer();
-        var images = deserializer.deserialize(one_complete_json_image());
-
-        var firstImage = images.get("8dbd9e392a96");
-
-        assert(firstImage.full_id == "8dbd9e392a964056420e5d58ca5cc376ef18e2de93b5cc90e868a1bbc8318c1c");
-        assert(firstImage.id == "8dbd9e392a96");
-        assert(firstImage.name == "ubuntu:12.04");
-        assert(firstImage.created_at.equal(new DateTime.utc(2013, 4, 11, 21, 13, 15)));
-        assert(firstImage.repository == "ubuntu");
-        assert(firstImage.tag == "12.04");
-        assert(firstImage.size.to_human() == "132MB");
-        assert(firstImage.size.value == (uint) 131506275);        
+        try {
+          var images = deserializer.deserialize(one_complete_json_image());
+  
+          var firstImage = images.get("8dbd9e392a96");
+  
+          assert(firstImage.full_id == "8dbd9e392a964056420e5d58ca5cc376ef18e2de93b5cc90e868a1bbc8318c1c");
+          assert(firstImage.id == "8dbd9e392a96");
+          assert(firstImage.name == "ubuntu:12.04");
+          assert(firstImage.created_at.equal(new DateTime.utc(2013, 4, 11, 21, 13, 15)));
+          assert(firstImage.repository == "ubuntu");
+          assert(firstImage.tag == "12.04");
+          assert(firstImage.size.to_human() == "132MB");
+          assert(firstImage.size.value == (uint) 131506275);
+        } catch (Error e) {
+          assert_not_reached();
+        }
     });
 
      Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/deserialize#ManyImagesWellFormattedPayload", () => {
 
         var deserializer = new Serializer.ImageDeserializer();
-        var images = deserializer.deserialize(many_complete_json_image());
+        try {
+          var images = deserializer.deserialize(many_complete_json_image());
 
-        assert(images.size == 2);
-        assert(images.get("8dbd9e392a96").name == "ubuntu:12.04");
-        assert(images.get("bafe274aa7c0").name == "ubuntu:14.04");
+          assert(images.size == 2);
+          assert(images.get("8dbd9e392a96").name == "ubuntu:12.04");
+          assert(images.get("bafe274aa7c0").name == "ubuntu:14.04");
+        } catch (Error e) {
+          assert_not_reached();
+        }
     });
 
     Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/deserialize#BadFormattedPayload", () => {
@@ -42,13 +50,22 @@ private void register_image_deserializer_test() {
 
     Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/deserialize#NoErrorsWhenEmptyRepoTags", () => {
         var deserializer = new Serializer.ImageDeserializer();
-        deserializer.deserialize(one_complete_json_image_with_empty_repotags());
+        try {
+          deserializer.deserialize(one_complete_json_image_with_empty_repotags());
+        } catch (Error e) {
+          assert_not_reached();
+        }
     });
 
 
     Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/deserialize#NoErrorsWhenNullRepoTags", () => {
         var deserializer = new Serializer.ImageDeserializer();
-        deserializer.deserialize(one_complete_json_image_with_null_repotags());
+
+        try {
+         deserializer.deserialize(one_complete_json_image_with_null_repotags());
+        } catch (Error e) {
+          assert_not_reached();
+        }
     });   
 }
 

@@ -8,30 +8,34 @@ private void register_view_event_streams_live_component_test() {
         // Given
         var live = new EventStream.LiveStreamComponent(5);
 
-        var event = (Dto.Events.ContainerEvent) deserializer.deserialize(one_event_container_nominal_case());
+        try {
+            var event = (Dto.Events.ContainerEvent) deserializer.deserialize(one_event_container_nominal_case());
+            
+            //Then
+            assert(live.get_buffer().size == 0);
 
-        //Then
-        assert(live.get_buffer().size == 0);
+            //When
+            live.append(event);
+        
+            //Then
+            assert(live.get_buffer().size == 1);
+            
+            //When
+            live.append(event);
+            live.append(event);
+            live.append(event);
+            live.append(event);
+            
+            //Then
+            assert(live.get_buffer().size == 5);
+            
+            //When
+            live.append(event);
 
-        //When
-        live.append(event);
-       
-        //Then
-        assert(live.get_buffer().size == 1);
-        
-        //When
-        live.append(event);
-        live.append(event);
-        live.append(event);
-        live.append(event);
-        
-        //Then
-        assert(live.get_buffer().size == 5);
-        
-        //When
-        live.append(event);
-
-        //Then
-        assert(live.get_buffer().size == 5);
+            //Then
+            assert(live.get_buffer().size == 5);
+        } catch(Error e) {
+            assert_not_reached();
+        }
     });
 }

@@ -6,11 +6,7 @@ private void register_sdk_http_endpoint_discovery_test() {
         //Given
         var server = create_mock_server(2380);
         new GLib.Thread<int>("mock_server_start", () => {
-            try {
-                server.run();
-            } catch (Error e) {
-                return 1;
-            }
+            server.run();
             return 0;
         });
 
@@ -32,11 +28,7 @@ private void register_sdk_http_endpoint_discovery_test() {
         // Given
         var server = create_mock_server(2382);
         new GLib.Thread<int>("mock_server_start", () => {
-            try {
-                server.run();
-            } catch (Error e) {
-                return 1;
-            }
+            server.run();
             return 0;
         });
 

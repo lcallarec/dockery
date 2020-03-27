@@ -4,11 +4,15 @@ private void register_image_tag_deserializer_test() {
     Test.add_func ("/Dockery/DockerSdk/Serializer/ImageTagDeserializer/deserialize#ManyTags", () => {
 
         var deserializer = new Serializer.ImageTagDeserializer();
-        var tags = deserializer.deserialize(many_complete_json_image_tag());
-
-        assert(tags.size == 2);
-        assert(tags.get("latest").layer == "a");
-        assert(tags.get("2.4.12-2").layer == "e");
+        try {
+          var tags = deserializer.deserialize(many_complete_json_image_tag());
+  
+          assert(tags.size == 2);
+          assert(tags.get("latest").layer == "a");
+          assert(tags.get("2.4.12-2").layer == "e");
+        } catch (Error e) {
+            assert_not_reached();
+        }        
     });
 
     Test.add_func ("/Dockery/DockerSdk/Serializer/ImageTagsDeserializer/deserialize#BadFormattedPayload", () => {

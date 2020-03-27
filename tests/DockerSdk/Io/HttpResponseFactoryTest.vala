@@ -83,7 +83,7 @@ private void register_http_response_factory_test() {
         response_in.on_payload_line_received("abc");
 
         //When
-        Io.FutureResponse<string> response = Io.HttpResponseFactory.future_create(msg, response_in);
+        Io.HttpResponseFactory.future_create(msg, response_in);
 
         //Then
         assert(was_called == true);

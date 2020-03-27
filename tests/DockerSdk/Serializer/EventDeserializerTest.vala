@@ -1,42 +1,50 @@
 using Dockery.DockerSdk;
 
 private void register_container_event_deserializer_test() {
-    Test.add_func ("/Dockery/DockerSdk/Serializer/EventDeserializer/Container#NominalCase", () => {
+    Test.add_func("/Dockery/DockerSdk/Serializer/EventDeserializer/Container#NominalCase", () => {
 
         //Given
         var deserializer = new Serializer.EventDeserializer();
 
-        //When
-        var event = (Dto.Events.ContainerEvent) deserializer.deserialize(one_event_container_nominal_case());
-
-        //Then
-        assert(event.status == "restart");
-        assert(event.event_type == "container");
-        assert(event.action == "restart");
-        assert(event.scope == "local");
-        assert(event.time == 1561197749);
-        assert(event.actor.attributes.get("image") == "sha256:b6353");
-        assert(event.actor.attributes.get("name") == "musing_varahamihira");        
+        try {
+            //When
+            var event = (Dto.Events.ContainerEvent) deserializer.deserialize(one_event_container_nominal_case());
+    
+            //Then
+            assert(event.status == "restart");
+            assert(event.event_type == "container");
+            assert(event.action == "restart");
+            assert(event.scope == "local");
+            assert(event.time == 1561197749);
+            assert(event.actor.attributes.get("image") == "sha256:b6353");
+            assert(event.actor.attributes.get("name") == "musing_varahamihira");
+        } catch (Error e) {
+            assert_not_reached();
+        }
     });
 
-    Test.add_func ("/Dockery/DockerSdk/Serializer/EventDeserializer/Container#Rename", () => {
+    Test.add_func("/Dockery/DockerSdk/Serializer/EventDeserializer/Container#Rename", () => {
 
         //Given
         var deserializer = new Serializer.EventDeserializer();
 
-        //When
-        var event = (Dto.Events.ContainerEvent) deserializer.deserialize(one_event_container_rename());
-
-        //Then
-        assert(event.status == "rename");
-        assert(event.event_type == "container");
-        assert(event.action == "rename");
-        assert(event.scope == "local");
-        assert(event.time == 1561197749);
-        stdout.printf("fgdgfdgfd => %s", event.actor.attributes.get("image"));
-        assert(event.actor.attributes.get("image") == "dockery-build");
-        assert(event.actor.attributes.get("name") == "awesome_vala");        
-        assert(event.actor.attributes.get("oldName") == "/awesome_neumann");        
+        try {
+            //When
+            var event = (Dto.Events.ContainerEvent) deserializer.deserialize(one_event_container_rename());
+    
+            //Then
+            assert(event.status == "rename");
+            assert(event.event_type == "container");
+            assert(event.action == "rename");
+            assert(event.scope == "local");
+            assert(event.time == 1561197749);
+            stdout.printf("fgdgfdgfd => %s", event.actor.attributes.get("image"));
+            assert(event.actor.attributes.get("image") == "dockery-build");
+            assert(event.actor.attributes.get("name") == "awesome_vala");
+            assert(event.actor.attributes.get("oldName") == "/awesome_neumann");
+        } catch (Error e) {
+            assert_not_reached();
+        }
     });
 
     Test.add_func ("/Dockery/DockerSdk/Serializer/EventDeserializer/Network#WithContainer", () => {
@@ -44,11 +52,12 @@ private void register_container_event_deserializer_test() {
         //Given
         var deserializer = new Serializer.EventDeserializer();
 
-        //When
-        var event = (Dto.Events.NetworkEvent) deserializer.deserialize(one_event_network_with_container());
-
-        //Then
-
+        try {
+            //When
+            deserializer.deserialize(one_event_network_with_container());
+        } catch (Error e) {
+            assert_not_reached();
+        }
     });
 
     Test.add_func ("/Dockery/DockerSdk/Serializer/EventDeserializer/Volume#UnmountWithContainer", () => {
@@ -56,16 +65,20 @@ private void register_container_event_deserializer_test() {
         //Given
         var deserializer = new Serializer.EventDeserializer();
 
-        //When
-        var event = (Dto.Events.VolumeEvent) deserializer.deserialize(one_event_volume_unmount_with_container());
-
-        //Then
-        assert(event.event_type == "volume");
-        assert(event.action == "unmount");
-        assert(event.scope == "local");
-        assert(event.time == 1561217240);
-        assert(event.actor.attributes.get("container") == "cc8d9a0b9a28666880eed28907f86cb07ef769b738e76a14cc610f407fa30e2e");
-        assert(event.actor.attributes.get("driver") == "local");
+        try {
+            //When
+            var event = (Dto.Events.VolumeEvent) deserializer.deserialize(one_event_volume_unmount_with_container());
+    
+            //Then
+            assert(event.event_type == "volume");
+            assert(event.action == "unmount");
+            assert(event.scope == "local");
+            assert(event.time == 1561217240);
+            assert(event.actor.attributes.get("container") == "cc8d9a0b9a28666880eed28907f86cb07ef769b738e76a14cc610f407fa30e2e");
+            assert(event.actor.attributes.get("driver") == "local");
+        } catch (Error e) {
+            assert_not_reached();
+        }
     });
 
     Test.add_func ("/Dockery/DockerSdk/Serializer/EventDeserializer/Volume#MountWithContainer", () => {
@@ -73,19 +86,23 @@ private void register_container_event_deserializer_test() {
         //Given
         var deserializer = new Serializer.EventDeserializer();
 
-        //When
-        var event = (Dto.Events.VolumeEvent) deserializer.deserialize(one_event_volume_mount_with_container());
-
-        //Then
-        assert(event.event_type == "volume");
-        assert(event.action == "mount");
-        assert(event.scope == "local");
-        assert(event.time == 1561217961);
-        assert(event.actor.attributes.get("container") == "cc8d9a0b9a28666880eed28907f86cb07ef769b738e76a14cc610f407fa30e2e");
-        assert(event.actor.attributes.get("driver") == "local");
-        assert(event.actor.attributes.get("destination") == "/data");
-        assert(event.actor.attributes.get("propagation") == "");
-        assert(event.actor.attributes.get("read/write") == "true");
+        try {
+            //When
+            var event = (Dto.Events.VolumeEvent) deserializer.deserialize(one_event_volume_mount_with_container());
+    
+            //Then
+            assert(event.event_type == "volume");
+            assert(event.action == "mount");
+            assert(event.scope == "local");
+            assert(event.time == 1561217961);
+            assert(event.actor.attributes.get("container") == "cc8d9a0b9a28666880eed28907f86cb07ef769b738e76a14cc610f407fa30e2e");
+            assert(event.actor.attributes.get("driver") == "local");
+            assert(event.actor.attributes.get("destination") == "/data");
+            assert(event.actor.attributes.get("propagation") == "");
+            assert(event.actor.attributes.get("read/write") == "true");
+        } catch (Error e) {
+            assert_not_reached();
+        }
     });
 
     Test.add_func ("/Dockery/DockerSdk/Serializer/EventDeserializer/Image#Delete", () => {
@@ -93,17 +110,21 @@ private void register_container_event_deserializer_test() {
         //Given
         var deserializer = new Serializer.EventDeserializer();
 
-        //When
-        var event = (Dto.Events.ImageEvent) deserializer.deserialize(one_event_image_delete());
-
-        //Then
-        assert(event.event_type == "image");
-        assert(event.id == "sha256:992c435ae08c77a01308054ec4d2397bdee7d29eed4a3036aab1b71e9f43fde2");
-        assert(event.action == "delete");
-        assert(event.scope == "local");
-        assert(event.time == 1561219084);
-        assert(event.actor.attributes.get("name") == "sha256:992c435ae08c77a01308054ec4d2397bdee7d29eed4a3036aab1b71e9f43fde2");
-        assert(event.actor.ID == "sha256:992c435ae08c77a01308054ec4d2397bdee7d29eed4a3036aab1b71e9f43fde2");
+        try {
+            //When
+            var event = (Dto.Events.ImageEvent) deserializer.deserialize(one_event_image_delete());
+    
+            //Then
+            assert(event.event_type == "image");
+            assert(event.id == "sha256:992c435ae08c77a01308054ec4d2397bdee7d29eed4a3036aab1b71e9f43fde2");
+            assert(event.action == "delete");
+            assert(event.scope == "local");
+            assert(event.time == 1561219084);
+            assert(event.actor.attributes.get("name") == "sha256:992c435ae08c77a01308054ec4d2397bdee7d29eed4a3036aab1b71e9f43fde2");
+            assert(event.actor.ID == "sha256:992c435ae08c77a01308054ec4d2397bdee7d29eed4a3036aab1b71e9f43fde2");
+        } catch (Error e) {
+            assert_not_reached();
+        }
     });    
 }
 

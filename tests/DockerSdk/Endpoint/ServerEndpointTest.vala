@@ -12,8 +12,11 @@ private void register_sdk_endpoint_server_test() {
  
         client.response = response;
 
-        endpoint.ping();
-
+        try {
+            endpoint.ping();
+        } catch (Error e) {
+            assert_not_reached();
+        }
     });
 
     Test.add_func("/Dockery/DockerSdk/Endpoint/ServerEndpoint/Ping#NonOkStatus", () => {
