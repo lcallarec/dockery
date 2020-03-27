@@ -39,6 +39,17 @@ private void register_image_deserializer_test() {
           assert(e is DeserializationError.IMAGE);
         }
     });
+
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/deserialize#NoErrorsWhenEmptyRepoTags", () => {
+        var deserializer = new Serializer.ImageDeserializer();
+        deserializer.deserialize(one_complete_json_image_with_empty_repotags());
+    });
+
+
+    Test.add_func ("/Dockery/DockerSdk/Serializer/ImageDeserializer/deserialize#NoErrorsWhenNullRepoTags", () => {
+        var deserializer = new Serializer.ImageDeserializer();
+        deserializer.deserialize(one_complete_json_image_with_null_repotags());
+    });   
 }
 
 internal string one_complete_json_image() {
@@ -49,6 +60,32 @@ internal string one_complete_json_image() {
             "ubuntu:precise",
             "ubuntu:latest"
           ],
+          "Id": "8dbd9e392a964056420e5d58ca5cc376ef18e2de93b5cc90e868a1bbc8318c1c",
+          "Created": 1365714795,
+          "Size": 131506275,
+          "VirtualSize": 131506275,
+          "Labels": {}
+        }]
+        """;
+}
+
+internal string one_complete_json_image_with_empty_repotags() {
+  return """
+        [{
+          "RepoTags": [],
+          "Id": "8dbd9e392a964056420e5d58ca5cc376ef18e2de93b5cc90e868a1bbc8318c1c",
+          "Created": 1365714795,
+          "Size": 131506275,
+          "VirtualSize": 131506275,
+          "Labels": {}
+        }]
+        """;
+}
+
+internal string one_complete_json_image_with_null_repotags() {
+  return """
+        [{
+          "RepoTags": null,
           "Id": "8dbd9e392a964056420e5d58ca5cc376ef18e2de93b5cc90e868a1bbc8318c1c",
           "Created": 1365714795,
           "Size": 131506275,
