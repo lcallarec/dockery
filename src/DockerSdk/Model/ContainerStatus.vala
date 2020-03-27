@@ -14,7 +14,7 @@ namespace Dockery.DockerSdk.Model {
             return {RUNNING, PAUSED};
         }
 
-        public static bool is_active(ContainerStatus status) {
+        public bool is_active(ContainerStatus status) {
             return status in ContainerStatus.actives();
         }
     }
