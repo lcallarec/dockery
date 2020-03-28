@@ -51,7 +51,7 @@ namespace Dockery.Listener {
                     var menu = Hub.SearchHubMenuFactory.create(image, tags);
 
                     menu.show_all();
-                    menu.popup(null, dialog, null, event_button.button, event_button.time);
+                    menu.popup_at_pointer(event_button);
                 });
 
                 SignalDispatcher.dispatcher().pull_image_from_docker_hub.connect((target, image) => {
