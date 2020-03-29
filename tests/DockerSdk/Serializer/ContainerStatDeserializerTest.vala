@@ -12,9 +12,9 @@ private void register_container_stat_deserializer_test() {
   
         //Then
         assert(stat.read_at.compare(new DateTime.from_iso8601("2015-01-08T22:57:31.547920715Z", new TimeZone.utc())) == 0);
-        assert(stat.memory_stats.max_usage.value == 6651904);
-        assert(stat.memory_stats.usage.value == 6537216);
-        assert(stat.memory_stats.limit.value == 67108864);
+        assert(stat.memory_stats.max_usage.bytes == 6651904);
+        assert(stat.memory_stats.usage.bytes == 6537216);
+        assert(stat.memory_stats.limit.bytes == 67108864);
       } catch (Error e) {
           assert_not_reached();
       }      
