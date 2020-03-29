@@ -11,5 +11,6 @@ script:
   - docker run --volume=$(pwd):/dockery lcallarec/dockery /bin/bash -c "/usr/bin/meson -D b_coverage=true build"
   - docker run $ci_env --volume=$(pwd):/dockery lcallarec/dockery /bin/bash -c "/usr/bin/meson configure -Dtravis=true -Ddebug=true build"
   - docker run --volume=$(pwd):/dockery lcallarec/dockery /bin/bash -c "/usr/bin/meson test -C build --wrapper=xvfb-run"
+  - docker run --volume=$(pwd):/dockery lcallarec/dockery /bin/bash -c "[ -f /dockery/build/meson-logs/testlog-xvfb-run.txt ] && cat /dockery/build/meson-logs/testlog-xvfb-run.txt"
   - docker run --volume=$(pwd):/dockery lcallarec/dockery /bin/bash -c "make coverage"  
   - docker run $ci_env --volume=$(pwd):/dockery lcallarec/dockery /bin/bash -c "bash <(curl -s https://codecov.io/bash)"
