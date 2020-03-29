@@ -15,7 +15,7 @@ private void register_image_deserializer_test() {
           assert(firstImage.created_at.equal(new DateTime.utc(2013, 4, 11, 21, 13, 15)));
           assert(firstImage.repository == "ubuntu");
           assert(firstImage.tag == "12.04");
-          assert(firstImage.size.to_human().to_string() == "131,51MB");
+          assert(firstImage.size.to_human().to_string() == "131.51MB");
           assert(firstImage.size.bytes == (uint) 131506275);
         } catch (Error e) {
           assert_not_reached();
