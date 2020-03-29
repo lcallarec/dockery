@@ -15,7 +15,7 @@ namespace Dockery.Common.Unit {
         }
 
         public string to_string() {
-            return unit_value.to_string() + unit;
+            return unit_value.to_string().replace(",", ".") + unit;
         }
 
         public Bytes to_human(int decimal_precision = 2) {
