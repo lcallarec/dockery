@@ -7,11 +7,13 @@ namespace Dockery.DockerSdk.Model.Stat {
         public Unit.Bytes max_usage {get; private set;}
         public Unit.Bytes usage {get; private set;}
         public Unit.Bytes limit {get; private set;}
+        public double percent {get; private set;}
 
         public ContainerMemoryStat.from_int64(int64 max_usage, int64 usage, int64 limit) {
             this.max_usage = Unit.Bytes(max_usage);
             this.usage = Unit.Bytes(usage);
             this.limit = Unit.Bytes(limit);
+            this.percent = Math.floor((usage / limit * 100.0) * 100.0) / 100.0;
         }
     }
 }
