@@ -18,7 +18,6 @@ private void register_unit_bytes_test() {
         var bytes = 5050000000;
         // When
         var result = Unit.Bytes(bytes);
-        stdout.printf("R %s", result.to_human(2).to_string());
         // Then
         assert(result.to_human(2).to_string()  == "5.05GB");
     });
