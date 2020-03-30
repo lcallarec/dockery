@@ -134,8 +134,7 @@ namespace Dockery.View.Image {
             foreach(Model.Image image in this.images.values) {
                 liststore.append(out iter);
                 StringBuilder sb = new StringBuilder();
-                sb.printf("%s:%s",image.repository, image.tag);
-                liststore.set(iter, 0, sb.str, 1, image.id, 2, image.size.to_human(), 3, image.created_at.to_string());
+                liststore.set(iter, 0, sb.str, 1, image.id, 2, image.size.to_human().to_string(), 3, image.created_at.to_string());
             }
 
             int[] columns = { 0, 1 };
