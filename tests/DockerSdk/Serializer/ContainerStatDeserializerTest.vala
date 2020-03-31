@@ -12,10 +12,23 @@ private void register_container_stat_deserializer_test() {
   
         //Then
         assert(stat.read_at.compare(new DateTime.from_iso8601("2015-01-08T22:57:31.547920715Z", new TimeZone.utc())) == 0);
-        assert(stat.memory_stats.max_usage.bytes == 6651904);
-        assert(stat.memory_stats.usage.bytes == 6537216);
-        assert(stat.memory_stats.limit.bytes == 67108864);
+        assert(stat.memory.max_usage.bytes == 6651904);
+        assert(stat.memory.usage.bytes == 6537216);
+        assert(stat.memory.limit.bytes == 67108864);
+
+        assert(stat.cpu.cpu.total_usage.bytes == 102000);
+        assert(stat.cpu.cpu.system_cpu_usage.bytes == 150000000);
+        assert(stat.cpu.cpu.online_cpus == 4);
+        assert(stat.cpu.cpu.percpu_usage.length == 4);
+
+        assert(stat.cpu.precpu.total_usage.bytes == 100000);
+        assert(stat.cpu.precpu.system_cpu_usage.bytes == 140000000);
+        assert(stat.cpu.precpu.online_cpus == 4);
+        assert(stat.cpu.precpu.percpu_usage.length == 4);
+        assert(stat.cpu.percent == 0.08);
+
       } catch (Error e) {
+          stdout.printf("ERROR : %s", e.message);
           assert_not_reached();
       }      
     });
@@ -29,6 +42,32 @@ internal string one_stat() {
               "max_usage": 6651904,
               "usage": 6537216,
               "limit": 67108864
+            },
+            "cpu_stats": {
+              "cpu_usage": {
+                "total_usage": 102000,
+                "percpu_usage": [
+                  57354405009,
+                  56293330622,
+                  57374307637,
+                  60718441149
+                ]
+              },
+              "system_cpu_usage": 150000000,
+              "online_cpus": 4
+            },
+            "precpu_stats": {
+              "cpu_usage": {
+                "total_usage": 100000,
+                "percpu_usage": [
+                  57353537288,
+                  56293330622,
+                  57374307637,
+                  60718441149
+                ]
+              },
+              "system_cpu_usage": 140000000,
+              "online_cpus": 4
             }
           }""";
 }

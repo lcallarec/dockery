@@ -219,42 +219,22 @@ namespace Dockery.Listener {
                     uint source_timeout = 0;
                     var window = new View.Dialog(850, 300, "Stats for container %s".printf(container.name), null, true);
                     
-                    var table = new StatSimpleTable();
-                    var serie_usage = new LiveChart.Serie("Memory usage", new LiveChart.SmoothLineArea());
-                    serie_usage.set_main_color({1.0, 0.5, 0.0, 1.0});
-
-                    var serie_limit = new LiveChart.Serie("Memory limit", new LiveChart.SmoothLine());                    
-                    serie_limit.set_main_color({1.0, 0.0, 0.0, 1.0});
-
-                    var config = new LiveChart.Config();
- 
-                    var chart = new LiveChart.Chart(config);
-                    chart.add_serie(serie_usage);
-                    chart.add_serie(serie_limit);                    
+                    var tables = new ContainerStatTables();
+                    var charts = new ContainerStatCharts();
                     
                     var future_response = repository.containers().stats(container);
                     future_response.on_response_ready.connect((stats) => {
-                        Unit.Bytes limit = stats.memory_stats.limit.to_human();
-
-                        config.y_axis.fixed_max = limit.unit_value;
-                        config.y_axis.tick_interval = (int) (limit.unit_value / 4);
-                        config.y_axis.tick_length = (int) (300 / 4);
-                        
-                        config.y_axis.unit = limit.unit.to_string();
-
-                        chart.add_value(serie_limit, limit.unit_value);
-                        chart.add_value(serie_usage, stats.memory_stats.usage.to(limit.unit).unit_value);
-
+                        charts.init(stats);
                         GLib.Idle.add(() => {
-                            table.update(stats);
+                            tables.update(stats);
                             return false;
                         });
                     });
 
                     var body = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
 
-                    body.pack_start(table.get_treeview(), false, false, 0);
-                    body.pack_start(chart, true, true, 0);
+                    body.pack_start(tables.get_widget(), false, false, 0);
+                    body.pack_start(charts.get_widget(), true, true, 0);
                     window.add_body(body);
                     window.show_all();
 
@@ -263,15 +243,9 @@ namespace Dockery.Listener {
                         if (m.trylock()) {
                             future_response = repository.containers().stats(container);
                             future_response.on_response_ready.connect((stats) => {
-                                
-                                Unit.Bytes limit = stats.memory_stats.limit.to_human();
-                                
-                                chart.add_value(serie_limit, limit.unit_value);
-                                stdout.printf("stats.memory_stats.limit.to(limit.unit).unit_value %f", stats.memory_stats.limit.to(limit.unit).unit_value);
-                                chart.add_value(serie_usage, stats.memory_stats.usage.to(limit.unit).unit_value);
-
+                                charts.update(stats);
                                 GLib.Idle.add(() => {
-                                    table.update(stats);
+                                    tables.update(stats);
                                     return false;
                                 });
                             });
