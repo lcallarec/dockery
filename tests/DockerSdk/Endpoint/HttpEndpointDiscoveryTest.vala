@@ -7,8 +7,12 @@ private void register_sdk_http_endpoint_discovery_test() {
         var server = create_mock_server();
         MainLoop loop = new MainLoop();
         new GLib.Thread<int>("mock_server_start", () => {
-            server.listen_local(2380, 0);
-            loop.run();
+            try {
+                server.listen_local(2380, 0);
+                loop.run();
+            } catch (Error e) {
+                assert_not_reached();
+            }
             return 0;
         });
 
@@ -31,8 +35,12 @@ private void register_sdk_http_endpoint_discovery_test() {
         var server = create_mock_server();
         MainLoop loop = new MainLoop();
         new GLib.Thread<int>("mock_server_start", () => {
-            server.listen_local(2382, 0);
-            loop.run();
+            try {
+                server.listen_local(2382, 0);
+                loop.run();
+            } catch (Error e) {
+                assert_not_reached();
+            }
             return 0;
         });
 
