@@ -14,7 +14,7 @@ namespace Dockery.View {
             #if NOT_ON_TRAVIS
             Object(use_header_bar: use_header_bar);
             #endif
-            this.set_default_size(width, height);
+            this.resize(width, height);
             this.title  = title;
             if (parent != null) {
                 this.set_transient_for(parent);
@@ -23,10 +23,10 @@ namespace Dockery.View {
             this.set_modal(is_modal);
         }
 
-        public void add_body(Gtk.Box widget) {
+        public void add_body(Gtk.Widget widget) {
             Gtk.Box box = this.get_content_area() as Gtk.Box;
             box.spacing = 10;
-            box.pack_start(widget, false, true, 0);
+            box.pack_start(widget, true, true, 0);
         }
 
         public void on_response(DialogResponse response) {
