@@ -8,7 +8,7 @@ private void register_sdk_http_endpoint_discovery_test() {
         MainLoop loop = new MainLoop();
         new GLib.Thread<int>("mock_server_start", () => {
             try {
-                server.listen_local(2380, 0);
+                server.listen_local(2380, Soup.ServerListenOptions.IPV4_ONLY);
                 loop.run();
             } catch (Error e) {
                 stdout.printf("ERROR : %s", e.message);
@@ -37,7 +37,7 @@ private void register_sdk_http_endpoint_discovery_test() {
         MainLoop loop = new MainLoop();
         new GLib.Thread<int>("mock_server_start", () => {
             try {
-                server.listen_local(2382, 0);
+                server.listen_local(2382, Soup.ServerListenOptions.IPV4_ONLY);
                 loop.run();
             } catch (Error e) {
                 stdout.printf("ERROR : %s", e.message);                
