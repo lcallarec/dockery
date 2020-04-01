@@ -27,8 +27,7 @@ namespace Dockery {
             //Add application icons to degault icon theme
             this.set_icon_theme("icons/");
 
-            //Window Application name & Icon
-            this.set_wmclass(Config.APPLICATION_NAME, Config.APPLICATION_NAME);
+            //Window Icon
             this.set_icon_name("docker-icon");
 
             //View container
