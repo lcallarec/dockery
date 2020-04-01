@@ -11,6 +11,7 @@ private void register_sdk_http_endpoint_discovery_test() {
                 server.listen_local(2380, 0);
                 loop.run();
             } catch (Error e) {
+                stdout.printf("ERROR : %s", e.message);
                 assert_not_reached();
             }
             return 0;
@@ -39,6 +40,7 @@ private void register_sdk_http_endpoint_discovery_test() {
                 server.listen_local(2382, 0);
                 loop.run();
             } catch (Error e) {
+                stdout.printf("ERROR : %s", e.message);                
                 assert_not_reached();
             }
             return 0;
