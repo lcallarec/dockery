@@ -1,4 +1,4 @@
-FROM ubuntu:19.04
+FROM ubuntu:19.10
 
 RUN apt-get update -y
 RUN apt-get install -y xvfb build-essential gnome-common valac libglib2.0-dev libgtk-3-dev \
