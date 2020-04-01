@@ -17,6 +17,12 @@ namespace Dockery.View.Stat {
         private LiveChart.Config cpu_chart_config = new LiveChart.Config();
         private LiveChart.Serie cpu_serie_percent = new LiveChart.Serie("CPU %", new LiveChart.SmoothLineArea());
 
+        private LiveChart.Chart network_chart;
+        private LiveChart.Config network_chart_config = new LiveChart.Config();
+        private LiveChart.Serie network_serie_rx = new LiveChart.Serie("Received", new LiveChart.SmoothLine());
+        private LiveChart.Serie network_serie_tx = new LiveChart.Serie("Sent", new LiveChart.SmoothLine());  
+
+
         public ContainerStatCharts() {
             
             mem_chart = new LiveChart.Chart(mem_chart_config);
@@ -37,8 +43,21 @@ namespace Dockery.View.Stat {
 
             cpu_chart.add_serie(cpu_serie_percent);
 
-            container.pack_start(mem_chart, true, true, 0);
-            container.pack_start(cpu_chart, true, true, 0);
+            network_chart = new LiveChart.Chart(network_chart_config);            
+            network_serie_rx.set_main_color({0.6, 0.6, 1.0, 1.0});
+            network_serie_tx.set_main_color({0.0, 0.7, 0.3, 1.0});
+
+            network_chart_config.y_axis.smart_ratio = true;
+
+            network_chart.add_serie(network_serie_rx);
+            network_chart.add_serie(network_serie_tx);
+
+            var memcpu = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
+            memcpu.pack_start(mem_chart, true, true, 0);
+            memcpu.pack_start(cpu_chart, true, true, 0);
+
+            container.pack_start(memcpu, true, true, 0);
+            container.pack_start(network_chart, true, true, 0);            
         }
 
         public void init(DockerSdk.Model.ContainerStat stats) {
@@ -47,17 +66,28 @@ namespace Dockery.View.Stat {
             mem_chart_config.y_axis.fixed_max = mem_limit.unit_value;
             mem_chart_config.y_axis.tick_interval = (int) (mem_limit.unit_value / 4);
             mem_chart_config.y_axis.unit = mem_limit.unit.to_string();
-
+            
             update(stats);
         }
 
         public void update(DockerSdk.Model.ContainerStat stats) {
             Unit.Bytes mem_limit = stats.memory.limit.to_human();
-                                
             mem_chart.add_value(mem_serie_limit, mem_limit.unit_value);
             mem_chart.add_value(mem_serie_usage, stats.memory.usage.to(mem_limit.unit).unit_value);
 
             cpu_chart.add_value(cpu_serie_percent, stats.cpu.percent);
+
+            Unit.Bytes network_rx = stats.networks.rx.to_human();
+            Unit.Bytes network_tx = stats.networks.tx.to(network_rx.unit);
+
+            var network_max = double.max(network_rx.unit_value, network_tx.unit_value);
+            network_chart_config.y_axis.unit = network_rx.unit.to_string();
+            network_chart_config.y_axis.fixed_max = (int) (network_max * 1.1);
+                        
+            network_chart_config.y_axis.tick_interval = (float) (network_max / 4.0);
+
+            network_chart.add_value(network_serie_rx, network_rx.unit_value);
+            network_chart.add_value(network_serie_tx, network_tx.unit_value);
         }
 
         public Gtk.Widget get_widget() {

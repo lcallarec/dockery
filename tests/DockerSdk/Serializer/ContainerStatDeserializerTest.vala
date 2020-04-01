@@ -27,8 +27,16 @@ private void register_container_stat_deserializer_test() {
         assert(stat.cpu.precpu.percpu_usage.length == 4);
         assert(stat.cpu.percent == 0.08);
 
+        assert(stat.networks.interfaces.get("eth0").rx.bytes == 93134);
+        assert(stat.networks.interfaces.get("eth0").tx.bytes == 785);
+        assert(stat.networks.interfaces.get("eth1").rx.bytes == 73986);
+        assert(stat.networks.interfaces.get("eth1").tx.bytes == 475);
+
+        assert(stat.networks.rx.bytes == 167120);
+        assert(stat.networks.tx.bytes == 1260);
+
       } catch (Error e) {
-          stdout.printf("ERROR : %s", e.message);
+          stdout.printf("ERROR : %s\n", e.message);
           assert_not_reached();
       }      
     });
@@ -68,6 +76,16 @@ internal string one_stat() {
               },
               "system_cpu_usage": 140000000,
               "online_cpus": 4
+            },
+            "networks": {
+              "eth0": {
+                "rx_bytes": 93134,
+                "tx_bytes": 785
+              },
+              "eth1": {
+                "rx_bytes": 73986,
+                "tx_bytes": 475
+              }
             }
           }""";
 }

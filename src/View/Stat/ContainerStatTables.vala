@@ -11,6 +11,9 @@ namespace Dockery.View.Stat {
         private Gtk.TreeView cpu_treeview = new Gtk.TreeView();
         private Gtk.ListStore cpu_liststore = new Gtk.ListStore(2, typeof (string),  typeof (string));
 
+        private Gtk.TreeView network_treeview = new Gtk.TreeView();
+        private Gtk.ListStore network_liststore = new Gtk.ListStore(2, typeof (string),  typeof (string));
+
         private Gtk.Box container = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 
         private Mutex mutex = new Mutex();
@@ -23,6 +26,7 @@ namespace Dockery.View.Stat {
             container.pack_start(mem_treeview, false, false, 0);
             container.pack_start(new Gtk.Label("CPU"), false, false, 0);
             container.pack_start(cpu_treeview, false, false, 0);
+            container.pack_start(new Gtk.Label("Network"), false, false, 0);            
         }
 
         public void update(DockerSdk.Model.ContainerStat stats) {
@@ -45,6 +49,13 @@ namespace Dockery.View.Stat {
             cpu_liststore.append(out cpu_iter);
             cpu_liststore.set(cpu_iter, 0, "CPU % (%d cores)".printf(stats.cpu.cpu.online_cpus), 1, "%.2f".printf(stats.cpu.percent) + "%");
 
+            network_liststore.clear();
+            Gtk.TreeIter network_iter;
+
+            network_liststore.append(out network_iter);
+            network_liststore.set(network_iter, 0, "Received", 1, stats.networks.rx);
+            network_liststore.set(network_iter, 0, "Sent", 1, stats.networks.tx);
+            
             mutex.unlock();            
         }
 

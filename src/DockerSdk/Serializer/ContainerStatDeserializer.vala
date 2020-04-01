@@ -34,6 +34,17 @@ namespace Dockery.DockerSdk.Serializer {
                     precpu_percpu_usage[i] = Unit.Bytes(array.get_int_element(i));
                 });
 
+                var networks_root = node_object.get_object_member("networks");
+                var network_interface_names = networks_root.get_members();
+                var interfaces = new Gee.HashMap<string, Transfers?>();
+                foreach(string name in network_interface_names) {
+                    var interface_object = networks_root.get_object_member(name);
+                    interfaces.set(
+                        name,
+                        {rx: Unit.Bytes(interface_object.get_int_member("rx_bytes")), tx: Unit.Bytes(interface_object.get_int_member("tx_bytes"))}
+                    );
+                }
+
                 return new ContainerStat.from(
                     new DateTime.from_iso8601(node_object.get_string_member("read"), new TimeZone.utc()),
                     new ContainerMemoryStat.from_int64(
@@ -54,7 +65,8 @@ namespace Dockery.DockerSdk.Serializer {
                             system_cpu_usage = Unit.Bytes(precpu_stats_root.get_int_member("system_cpu_usage")),
                             online_cpus = preonline_cpus
                         }
-                    )
+                    ),
+                    new ContainerNetworkStat.from(interfaces)
                 );
        
             } catch (Error e) {
