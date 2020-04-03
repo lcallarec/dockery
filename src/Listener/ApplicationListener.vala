@@ -1,5 +1,6 @@
 using Dockery;
 using Dockery.View;
+using Dockery.DockerSdk.Io;
 
 errordomain ConnectionError {
     WRONG_PROTOCOL,

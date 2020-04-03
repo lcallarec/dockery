@@ -35,6 +35,9 @@ vala_args += ['--target-glib=2.50']
 livechart_proj = subproject('livechart')
 livechart = livechart_proj.get_variable('livechart_dep')
 
+vala_docker_proj = subproject('vala-docker')
+vala_docker = vala_docker_proj.get_variable('vala_docker_dep')
+
 deps = [
   gtk,
   gee,
@@ -43,6 +46,7 @@ deps = [
   vte,
   gio,
   libm,
+  vala_docker,
   livechart
 ]
 

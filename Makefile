@@ -13,9 +13,9 @@ TARGET_GLIB_FLAG=--target-glib 2.32
 
 .PHONY: install-desktop-entry clean generate-ccode test-coverage coverage-report flatpak-build
 
-VALA_SOURCES:=$(shell find src/ subprojects/livechart/src -name *.vala |grep -v "main.vala")
+VALA_SOURCES:=$(shell find src/ subprojects/livechart/src/ subprojects/vala-docker/src/ -name *.vala |grep -v "main.vala")
 VALA_TEST_SOURCES:=$(shell find tests/ -name '*.vala')
-C_TEST_SOURCES=$(shell find src/ tests/ subprojects/livechart/src  -name '*.c' |grep -v "main.c")
+C_TEST_SOURCES=$(shell find src/ tests/ subprojects/livechart/src/ subprojects/vala-docker/src/ -name '*.c' |grep -v "main.c")
 TOBJECTS=$(C_TEST_SOURCES:.c=.o)
 
 coverage: clean generate-ccode

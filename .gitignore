@@ -12,4 +12,5 @@ mock-docker.sock
 subprojects/*
 !subprojects/.gitkeep
 !subprojects/*.wrap
+!subprojects/vala-docker
 ./dockery-tests
