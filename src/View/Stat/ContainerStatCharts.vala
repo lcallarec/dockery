@@ -19,8 +19,8 @@ namespace Dockery.View.Stat {
 
         private LiveChart.Chart network_chart;
         private LiveChart.Config network_chart_config = new LiveChart.Config();
-        private LiveChart.Serie network_serie_rx = new LiveChart.Serie("Received", new LiveChart.SmoothLine());
-        private LiveChart.Serie network_serie_tx = new LiveChart.Serie("Sent", new LiveChart.SmoothLine());  
+        private LiveChart.Serie network_serie_rx = new LiveChart.Serie("Read", new LiveChart.SmoothLine());
+        private LiveChart.Serie network_serie_tx = new LiveChart.Serie("Write", new LiveChart.SmoothLine());  
 
 
         public ContainerStatCharts() {
@@ -39,15 +39,12 @@ namespace Dockery.View.Stat {
 
             cpu_chart_config.y_axis.unit = "%";
             cpu_chart_config.y_axis.tick_interval = 25;
-            cpu_chart_config.y_axis.smart_ratio = true;
 
             cpu_chart.add_serie(cpu_serie_percent);
 
             network_chart = new LiveChart.Chart(network_chart_config);            
             network_serie_rx.set_main_color({0.6, 0.6, 1.0, 1.0});
             network_serie_tx.set_main_color({0.0, 0.7, 0.3, 1.0});
-
-            network_chart_config.y_axis.smart_ratio = true;
 
             network_chart.add_serie(network_serie_rx);
             network_chart.add_serie(network_serie_tx);
@@ -79,12 +76,10 @@ namespace Dockery.View.Stat {
 
             Unit.Bytes network_rx = stats.networks.rx.to_human();
             Unit.Bytes network_tx = stats.networks.tx.to(network_rx.unit);
+            stdout.printf("network_rx %f\n", network_rx.unit_value);
+            stdout.printf("network_tx %f\n", network_tx.unit_value);
 
-            var network_max = double.max(network_rx.unit_value, network_tx.unit_value);
             network_chart_config.y_axis.unit = network_rx.unit.to_string();
-            network_chart_config.y_axis.fixed_max = (int) (network_max * 1.1);
-                        
-            network_chart_config.y_axis.tick_interval = (float) (network_max / 4.0);
 
             network_chart.add_value(network_serie_rx, network_rx.unit_value);
             network_chart.add_value(network_serie_tx, network_tx.unit_value);

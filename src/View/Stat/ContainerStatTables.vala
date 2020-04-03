@@ -5,13 +5,13 @@ namespace Dockery.View.Stat {
 
 
     public class ContainerStatTables : Object {
-        private Gtk.TreeView mem_treeview = new Gtk.TreeView();
+        private Gtk.TreeView mem_treeview;
         private Gtk.ListStore mem_liststore = new Gtk.ListStore(2, typeof (string),  typeof (string));
 
-        private Gtk.TreeView cpu_treeview = new Gtk.TreeView();
+        private Gtk.TreeView cpu_treeview;
         private Gtk.ListStore cpu_liststore = new Gtk.ListStore(2, typeof (string),  typeof (string));
 
-        private Gtk.TreeView network_treeview = new Gtk.TreeView();
+        private Gtk.TreeView network_treeview;
         private Gtk.ListStore network_liststore = new Gtk.ListStore(2, typeof (string),  typeof (string));
 
         private Gtk.Box container = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
@@ -21,12 +21,14 @@ namespace Dockery.View.Stat {
         public ContainerStatTables() {
             mem_treeview = create_treeview(mem_liststore);
             cpu_treeview = create_treeview(cpu_liststore);
+            network_treeview = create_treeview(network_liststore);
 
             container.pack_start(new Gtk.Label("Memory"), false, false, 0);
             container.pack_start(mem_treeview, false, false, 0);
             container.pack_start(new Gtk.Label("CPU"), false, false, 0);
             container.pack_start(cpu_treeview, false, false, 0);
-            container.pack_start(new Gtk.Label("Network"), false, false, 0);            
+            container.pack_start(new Gtk.Label("Network"), false, false, 0);
+            container.pack_start(network_treeview, false, false, 0);
         }
 
         public void update(DockerSdk.Model.ContainerStat stats) {
@@ -53,8 +55,9 @@ namespace Dockery.View.Stat {
             Gtk.TreeIter network_iter;
 
             network_liststore.append(out network_iter);
-            network_liststore.set(network_iter, 0, "Received", 1, stats.networks.rx);
-            network_liststore.set(network_iter, 0, "Sent", 1, stats.networks.tx);
+            network_liststore.set(network_iter, 0, "Read", 1, stats.networks.rx.to_human().to_string());
+            network_liststore.append(out network_iter);            
+            network_liststore.set(network_iter, 0, "Write", 1, stats.networks.tx.to_human().to_string());
             
             mutex.unlock();            
         }
