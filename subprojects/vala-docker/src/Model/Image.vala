@@ -20,7 +20,7 @@ namespace Dockery.DockerSdk.Model {
             this.name       = repotags;
             this.created_at = new DateTime.from_unix_local(created_at);
             this.repository = _repotags[0];
-            this.tag        = _repotags[1];
+            this.tag        = _repotags.length == 2 ? _repotags[1] : "";
             this.size       = Unit.Bytes(size);
         }
     }
