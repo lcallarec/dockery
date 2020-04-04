@@ -1,3 +1,19 @@
+.PHONY: run build test
+
+run: build
+	./build/src/dockery
+
+build:
+	meson build
+	ninja -C build
+
+build-wipe:
+	meson --wipe build
+	ninja -C build
+
+test: build
+	./build/tests/dockery-test
+
 flatpak-build:
 	@flatpak-builder flatpak/build org.lcallarec.Dockery.json --force-clean
 
