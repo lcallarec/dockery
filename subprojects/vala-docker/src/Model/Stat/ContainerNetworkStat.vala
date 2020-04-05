@@ -7,9 +7,9 @@ namespace Dockery.DockerSdk.Model.Stat {
         Unit.Bytes tx;
     }
     public class ContainerNetworkStat : Object {
-        public Gee.HashMap<string, Transfers?> interfaces = new Gee.HashMap<string, Transfers?>();
-        public Unit.Bytes tx;
-        public Unit.Bytes rx;
+        public Gee.HashMap<string, Transfers?> interfaces {get; private set; default = new Gee.HashMap<string, Transfers?>();}
+        public Unit.Bytes rx {get; private set; }
+        public Unit.Bytes tx {get; private set; }
         public ContainerNetworkStat.from(Gee.HashMap<string, Transfers?> interfaces) {
             this.interfaces = interfaces;
             
