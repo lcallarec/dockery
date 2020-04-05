@@ -76,8 +76,6 @@ namespace Dockery.View.Stat {
 
             Unit.Bytes network_rx = stats.networks.rx.to_human();
             Unit.Bytes network_tx = stats.networks.tx.to(network_rx.unit);
-            stdout.printf("network_rx %f\n", network_rx.unit_value);
-            stdout.printf("network_tx %f\n", network_tx.unit_value);
 
             network_chart_config.y_axis.unit = network_rx.unit.to_string();
 
