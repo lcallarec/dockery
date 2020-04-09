@@ -10,6 +10,7 @@ namespace Dockery.View.Stat {
 
         private LiveChart.Chart mem_chart;
         private LiveChart.Config mem_chart_config = new LiveChart.Config();
+
         private LiveChart.Serie mem_serie_usage = new LiveChart.Serie("Memory usage", new LiveChart.SmoothLineArea());
         private LiveChart.Serie mem_serie_limit = new LiveChart.Serie("Memory limit", new LiveChart.SmoothLine());  
 
@@ -33,12 +34,14 @@ namespace Dockery.View.Stat {
             mem_serie_usage.set_main_color({1.0, 0.5, 0.0, 1.0});
             mem_serie_limit.set_main_color({1.0, 0.0, 0.0, 1.0});
 
-            mem_chart_config.y_axis.tick_length = (int) (300 / 4);
+            mem_chart_config.x_axis.lines.visible = false;
+            //mem_chart_config.y_axis.tick_length = (int) (300 / 4);
 
             mem_chart.add_serie(mem_serie_usage);
             mem_chart.add_serie(mem_serie_limit);
 
-            cpu_chart = new LiveChart.Chart(cpu_chart_config);            
+            cpu_chart_config.x_axis.lines.visible = false;
+            cpu_chart = new LiveChart.Chart(cpu_chart_config);        
             cpu_serie_percent.set_main_color({0.5, 0.7, 1.0, 1.0});
 
             cpu_chart_config.y_axis.unit = "%";
@@ -46,6 +49,7 @@ namespace Dockery.View.Stat {
 
             cpu_chart.add_serie(cpu_serie_percent);
 
+            network_chart_config.x_axis.lines.visible = false;
             network_chart = new LiveChart.Chart(network_chart_config);            
             network_serie_rx.set_main_color({0.6, 0.6, 1.0, 1.0});
             network_serie_tx.set_main_color({0.0, 0.7, 0.3, 1.0});
@@ -53,6 +57,7 @@ namespace Dockery.View.Stat {
             network_chart.add_serie(network_serie_rx);
             network_chart.add_serie(network_serie_tx);
 
+            blockio_chart_config.x_axis.lines.visible = false;            
             blockio_chart = new LiveChart.Chart(blockio_chart_config);            
             blockio_serie_read.set_main_color({1.0, 0.6, 1.0, 1.0});
             blockio_serie_write.set_main_color({1.0, 0.7, 0.3, 1.0});
@@ -60,7 +65,6 @@ namespace Dockery.View.Stat {
             blockio_chart.add_serie(blockio_serie_read);
             blockio_chart.add_serie(blockio_serie_write);
 
-            
 
             var memcpu = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
             memcpu.pack_start(mem_chart, true, true, 0);
@@ -77,9 +81,6 @@ namespace Dockery.View.Stat {
 
         public void init(DockerSdk.Model.ContainerStat stats) {
             Unit.Bytes mem_limit = stats.memory.limit.to_human();
-
-            mem_chart_config.y_axis.fixed_max = mem_limit.unit_value;
-            mem_chart_config.y_axis.tick_interval = (int) (mem_limit.unit_value / 4);
             mem_chart_config.y_axis.unit = mem_limit.unit.to_string();
             
             update(stats);
