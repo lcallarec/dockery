@@ -35,6 +35,9 @@ private void register_container_stat_deserializer_test() {
         assert(stat.networks.rx.bytes == 167120);
         assert(stat.networks.tx.bytes == 1260);
 
+        assert(stat.blockio.read.bytes == 4689920);
+        assert(stat.blockio.write.bytes == 512972003);
+
       } catch (Error e) {
           stdout.printf("ERROR : %s\n", e.message);
           assert_not_reached();
@@ -46,6 +49,40 @@ internal string one_stat() {
   return """
           {
             "read": "2015-01-08T22:57:31.547920715Z",
+            "blkio_stats": {
+              "io_service_bytes_recursive": [
+                {
+                  "major": 8,
+                  "minor": 0,
+                  "op": "Read",
+                  "value": 49152
+                },
+                {
+                  "major": 8,
+                  "minor": 0,
+                  "op": "Write",
+                  "value": 5347
+                },
+                {
+                  "major": 8,
+                  "minor": 0,
+                  "op": "Async",
+                  "value": 0
+                },
+                {
+                  "major": 8,
+                  "minor": 32,
+                  "op": "Read",
+                  "value": 4640768
+                },
+                {
+                  "major": 8,
+                  "minor": 32,
+                  "op": "Write",
+                  "value": 512966656
+                }
+              ]
+            },
             "memory_stats": {
               "max_usage": 6651904,
               "usage": 6537216,

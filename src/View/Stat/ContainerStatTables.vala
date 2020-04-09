@@ -14,6 +14,9 @@ namespace Dockery.View.Stat {
         private Gtk.TreeView network_treeview;
         private Gtk.ListStore network_liststore = new Gtk.ListStore(2, typeof (string),  typeof (string));
 
+        private Gtk.TreeView blockio_treeview;
+        private Gtk.ListStore blockio_liststore = new Gtk.ListStore(2, typeof (string),  typeof (string));
+
         private Gtk.Box container = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 
         private Mutex mutex = new Mutex();
@@ -22,13 +25,19 @@ namespace Dockery.View.Stat {
             mem_treeview = create_treeview(mem_liststore);
             cpu_treeview = create_treeview(cpu_liststore);
             network_treeview = create_treeview(network_liststore);
+            blockio_treeview = create_treeview(blockio_liststore);            
 
             container.pack_start(new Gtk.Label("Memory"), false, false, 0);
             container.pack_start(mem_treeview, false, false, 0);
+
             container.pack_start(new Gtk.Label("CPU"), false, false, 0);
             container.pack_start(cpu_treeview, false, false, 0);
+
             container.pack_start(new Gtk.Label("Network"), false, false, 0);
             container.pack_start(network_treeview, false, false, 0);
+
+            container.pack_start(new Gtk.Label("Block I/O"), false, false, 0);
+            container.pack_start(blockio_treeview, false, false, 0);            
         }
 
         public void update(DockerSdk.Model.ContainerStat stats) {
@@ -59,6 +68,14 @@ namespace Dockery.View.Stat {
             network_liststore.append(out network_iter);            
             network_liststore.set(network_iter, 0, "Write", 1, stats.networks.tx.to_human().to_string());
             
+            blockio_liststore.clear();
+            Gtk.TreeIter blockio_iter;
+
+            blockio_liststore.append(out blockio_iter);
+            blockio_liststore.set(blockio_iter, 0, "Read", 1, stats.blockio.read.to_human().to_string());
+            blockio_liststore.append(out blockio_iter);            
+            blockio_liststore.set(blockio_iter, 0, "Write", 1, stats.blockio.write.to_human().to_string());
+
             mutex.unlock();            
         }
 

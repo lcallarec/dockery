@@ -45,6 +45,23 @@ namespace Dockery.DockerSdk.Serializer {
                     );
                 }
 
+                var io_service_bytes_recursive = node_object.get_object_member("blkio_stats").get_array_member("io_service_bytes_recursive");
+                
+                int64 blockio_read = 0;
+                int64 blockio_write = 0;
+                
+                io_service_bytes_recursive.foreach_element((array, i, node) => {
+                    var element = array.get_object_element(i);
+                    switch (element.get_string_member("op")) {
+                        case "Read":
+                            blockio_read += element.get_int_member("value");
+                            break;
+                        case "Write":
+                            blockio_write += element.get_int_member("value");
+                            break;
+                    }
+                });
+       
                 return new ContainerStat.from(
                     new DateTime.from_iso8601(node_object.get_string_member("read"), new TimeZone.utc()),
                     new ContainerMemoryStat.from_int64(
@@ -66,7 +83,8 @@ namespace Dockery.DockerSdk.Serializer {
                             online_cpus = preonline_cpus
                         }
                     ),
-                    new ContainerNetworkStat.from(interfaces)
+                    new ContainerNetworkStat.from(interfaces),
+                    new ContainerBlockIOStat.from(Unit.Bytes(blockio_read), Unit.Bytes(blockio_write))
                 );
        
             } catch (Error e) {
