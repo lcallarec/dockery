@@ -17,11 +17,7 @@ namespace Dockery.Listener {
         public void listen() {
             
             this.future_response.on_response_ready.connect((event) => {
-                try {
-                    this.live_stream_component.append(event);
-                } catch (DeserializationError e) {
-                    GLib.warning(e.message);
-                }
+                this.live_stream_component.append(event);
             });
         }
     }
