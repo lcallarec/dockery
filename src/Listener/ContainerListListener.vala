@@ -239,7 +239,7 @@ namespace Dockery.Listener {
                     window.add_body(body);
                     window.show_all();
 
-                    Mutex m = new Mutex();
+                    Mutex m = Mutex();
                     source_timeout = GLib.Timeout.add(1000, () => {
                         if (m.trylock()) {
                             future_response = repository.containers().stats(container);

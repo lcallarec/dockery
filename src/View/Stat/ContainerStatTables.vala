@@ -19,7 +19,7 @@ namespace Dockery.View.Stat {
 
         private Gtk.Box container = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
 
-        private Mutex mutex = new Mutex();
+        private Mutex mutex = Mutex();
 
         public ContainerStatTables() {
             mem_treeview = create_treeview(mem_liststore);
