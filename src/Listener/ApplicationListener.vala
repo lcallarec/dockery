@@ -148,7 +148,7 @@ public class ApplicationListener : GLib.Object {
         }
     }
 
-    protected void __connect(string docker_endpoint) throws Error {
+    protected void __connect(string docker_endpoint) {
 
         repository = create_repository(docker_endpoint);
         
