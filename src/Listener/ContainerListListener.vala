@@ -242,15 +242,20 @@ namespace Dockery.Listener {
                     Mutex m = Mutex();
                     source_timeout = GLib.Timeout.add(1000, () => {
                         if (m.trylock()) {
-                            future_response = repository.containers().stats(container);
-                            future_response.on_response_ready.connect((stats) => {
-                                charts.update(stats);
-                                GLib.Idle.add(() => {
-                                    tables.update(stats);
-                                    return false;
+                            try {
+                                future_response = repository.containers().stats(container);
+                                future_response.on_response_ready.connect((stats) => {
+                                    charts.update(stats);
+                                    GLib.Idle.add(() => {
+                                        tables.update(stats);
+                                        return false;
+                                    });
                                 });
-                            });
-                            m.unlock();
+                            } catch (Error e) {
+                                feedback(Gtk.MessageType.ERROR, (string) e.message);
+                            } finally {
+                                m.unlock();
+                            }
                         }
                       
                         return true;
@@ -261,9 +266,6 @@ namespace Dockery.Listener {
                            GLib.Source.remove(source_timeout); 
                         }
                     });
-
-          
-                    
 
                 } catch (Error e) {
                     feedback(Gtk.MessageType.ERROR, (string) e.message);

@@ -49,6 +49,7 @@ public class ApplicationListener : GLib.Object {
 
     private void listen_daemon_events() {
         daemon_event_listener = new Dockery.Listener.DaemonEventListener(repository, this.view.live_stream_component);
+        daemon_event_listener.feedback.connect((type, message) =>  message_dispatcher.dispatch(type, message));
         daemon_event_listener.listen();
     }
 
