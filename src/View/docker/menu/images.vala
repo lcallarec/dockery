@@ -35,7 +35,7 @@ namespace View.Docker.Menu {
          * Remove image menu
          */
         protected void append_remove_menu_item() {
-            this.append_menu_item("_Remove image", null, () => {
+            this.append_menu_item("_Remove image", () => {
                 SignalDispatcher.dispatcher().images_remove_request(new Model.ImageCollection.from_model(image));
             });
         }
@@ -44,7 +44,7 @@ namespace View.Docker.Menu {
          * Simple create container from image menu
          */
         protected void append_create_container_menu_item() {
-            this.append_menu_item("_Create container", null, () => {
+            this.append_menu_item("_Create container", () => {
                 SignalDispatcher.dispatcher().image_create_container_request(image);
             });
         }
@@ -53,7 +53,7 @@ namespace View.Docker.Menu {
          * Create (with...) container from image menu
          */
         protected void append_create_container_with_menu_item() {
-            this.append_menu_item("_Create container with...", null, () => {
+            this.append_menu_item("_Create container with...", () => {
                 SignalDispatcher.dispatcher().image_create_container_with_request(image);
             });
         }
@@ -72,7 +72,7 @@ namespace View.Docker.Menu {
          * Remove images menu
          */
         protected void append_remove_menu_items() {
-            this.append_menu_item("_Remove selected images", null, () => {
+            this.append_menu_item("_Remove selected images", () => {
                 SignalDispatcher.dispatcher().images_remove_request(images);
             });
         }

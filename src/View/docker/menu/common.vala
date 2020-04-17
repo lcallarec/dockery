@@ -7,16 +7,9 @@ namespace View.Docker.Menu {
             this.add(new Gtk.SeparatorMenuItem());
         }
 
-        protected void append_menu_item(string mnemonic_label, string? icon_name, onMenuActivate? action) {
+        protected void append_menu_item(string mnemonic_label, onMenuActivate? action) {
 
-            var menu_item  = new Gtk.ImageMenuItem.with_mnemonic(mnemonic_label);
-
-            if (null != icon_name) {
-                var menu_image = new Gtk.Image();
-                menu_image.set_from_icon_name(icon_name, Gtk.IconSize.MENU);
-                menu_item.always_show_image = true;
-                menu_item.set_image(menu_image);
-            }
+            var menu_item  = new Gtk.MenuItem.with_mnemonic(mnemonic_label);
 
             if (null != action) {
                 menu_item.activate.connect(() => action());

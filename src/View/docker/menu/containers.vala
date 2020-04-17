@@ -43,11 +43,11 @@ namespace View.Docker.Menu {
 
         protected void append_play_pause_menu_item() {
 
-            Gtk.ImageMenuItem menu_item;
+            Gtk.MenuItem menu_item;
             if (container.status == Model.ContainerStatus.PAUSED) {
-                menu_item  = new Gtk.ImageMenuItem.with_mnemonic("_Unpause container");
+                menu_item  = new Gtk.MenuItem.with_mnemonic("_Unpause container");
             } else {
-                menu_item  = new Gtk.ImageMenuItem.with_mnemonic("_Pause container");
+                menu_item  = new Gtk.MenuItem.with_mnemonic("_Pause container");
             }
 
             this.add_play_pause_menu_item_listener(menu_item, container);
@@ -57,13 +57,13 @@ namespace View.Docker.Menu {
 
         protected void append_start_menu_item() {
 
-            this.append_menu_item("_Start container", null, () => {
+            this.append_menu_item("_Start container", () => {
                 SignalDispatcher.dispatcher().container_start_request(container);
             });
         }
 
         protected void append_stop_menu_item() {
-            this.append_menu_item("_Stop container", null, () => {
+            this.append_menu_item("_Stop container", () => {
                 SignalDispatcher.dispatcher().container_stop_request(container);
             });
         }
@@ -79,43 +79,43 @@ namespace View.Docker.Menu {
         }
 
         protected void append_rename_menu_item() {
-            this.append_menu_item("Re_name container", null, () => {
+            this.append_menu_item("Re_name container", () => {
                 this.container_rename_request(container, null, null);
             });
         }
 
         protected void append_remove_menu_item() {
-            this.append_menu_item("_Remove container", null, () => {
+            this.append_menu_item("_Remove container", () => {
                 SignalDispatcher.dispatcher().container_remove_request(container);
             });
         }
 
         protected void append_kill_menu_item() {
-            this.append_menu_item("_Kill container", null, () => {
+            this.append_menu_item("_Kill container", () => {
                 SignalDispatcher.dispatcher().container_kill_request(container);
             });
         }
 
         protected void append_restart_menu_item() {
-            this.append_menu_item("Re_start container", null, () => {
+            this.append_menu_item("Re_start container", () => {
                 SignalDispatcher.dispatcher().container_restart_request(container);
             });
         }
 
         protected void append_bash_in_menu_item() {
-            this.append_menu_item("Bash-in", null, () => {
+            this.append_menu_item("Bash-in", () => {
                 SignalDispatcher.dispatcher().container_bash_in_request(container);
             });
         }
         
         protected void append_inspect_menu_item() {
-            this.append_menu_item("Inspect", null, () => {
+            this.append_menu_item("Inspect", () => {
                 SignalDispatcher.dispatcher().container_inspect_request(container);
             });
         }
 
         protected void append_stats_menu_item() {
-            this.append_menu_item("Stats", null, () => {
+            this.append_menu_item("Stats", () => {
                 SignalDispatcher.dispatcher().container_stats_request(container);
             });
         }

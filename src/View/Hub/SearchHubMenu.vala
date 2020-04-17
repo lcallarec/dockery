@@ -22,10 +22,10 @@ namespace Dockery.View.Hub {
         }
 
         protected void append_pull_menu_item() {
-            this.append_menu_item("_Pull all tags of %s image".printf(image.name), null, () => {
+            this.append_menu_item("_Pull all tags of %s image".printf(image.name), () => {
                 SignalDispatcher.dispatcher().pull_image_from_docker_hub(null, image);
             });
-            this.append_menu_item("_Pull specific tags of %s image".printf(image.name), null, () => {
+            this.append_menu_item("_Pull specific tags of %s image".printf(image.name), () => {
                 SignalDispatcher.dispatcher().pull_image_from_docker_hub(null, image);
             });
         }
