@@ -13,7 +13,7 @@ namespace Dockery.DockerSdk.Endpoint {
 
         protected Io.QueryStringBuilder filter_builder = new Io.QueryStringBuilder();
 
-        public Endpoint(Client.Client client) {
+        protected Endpoint(Client.Client client) {
             this.client = client;
         }
 

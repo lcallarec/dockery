@@ -37,7 +37,7 @@ namespace View.Docker.Menu {
 
         protected Model.Container container;
 
-        public ContainerMenu(Model.Container container) {
+        protected ContainerMenu(Model.Container container) {
             this.container = container;
         }
 
@@ -167,7 +167,7 @@ namespace View.Docker.Menu {
      */
     internal abstract class NonRunningContainerMenu : ContainerMenu {
 
-        public NonRunningContainerMenu(Model.Container container) {
+        protected NonRunningContainerMenu(Model.Container container) {
 
             base(container);
 

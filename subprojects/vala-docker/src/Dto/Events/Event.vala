@@ -10,7 +10,7 @@ namespace Dockery.DockerSdk.Dto.Events {
         public int64 timeNano { get; construct set; }
         public int64 time { get; construct set; }
 
-        public Event(string event, EventActor actor, string action, string scope, int64 timeNano) {
+        protected Event(string event, EventActor actor, string action, string scope, int64 timeNano) {
             this.event = event;
             this.actor = actor;            
             this.action = action;
