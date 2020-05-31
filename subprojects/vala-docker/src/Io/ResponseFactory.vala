@@ -78,11 +78,8 @@ namespace Dockery.DockerSdk.Io {
         protected static Response extract_response_metadata(DataInputStream stream, Response response) {
 
             extract_response_status_code(stream, response);
-            response.on_status_received(response.status);
-            stdout.printf("Response status : %d\n", response.status);
-
             extract_response_headers(stream, response);
-            response.on_headers_received(response.headers);
+
             foreach (Gee.Map.Entry<string, string> header in response.headers.entries) {
                 stdout.printf("Response header : %s : %s\n", header.key, header.value);
             }
@@ -100,6 +97,7 @@ namespace Dockery.DockerSdk.Io {
                     string[] _header = header_line.split(":", 2);
                     headers.set(_header[0], _header[1].strip());
                 }
+                response.on_headers_received(headers);
             } catch (IOError e) {
 
             }
@@ -117,6 +115,8 @@ namespace Dockery.DockerSdk.Io {
                 if (regex.match(header_line, 0, out info)){
                     response.status = int.parse(info.fetch(2));
                 }
+                response.on_status_received(response.status);
+                stdout.printf("Response status : %d\n", response.status);
 
             } catch (RegexError e) {
 
