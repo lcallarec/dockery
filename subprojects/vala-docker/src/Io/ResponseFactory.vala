@@ -130,14 +130,14 @@ namespace Dockery.DockerSdk.Io {
     public class HttpResponseFactory: GLib.Object {
 
         public static Response create(Soup.Message message) {
-            return HttpResponseFactory.buildResponseFrom(message, new Response());
+            return HttpResponseFactory.build_response_from(message, new Response());
         }
 
         public static FutureResponse future_create(Soup.Message message, FutureResponse response) {
-            return (HttpResponseFactory.buildResponseFrom(message, response) as FutureResponse);
+            return (HttpResponseFactory.build_response_from(message, response) as FutureResponse);
         }
 
-        private static Response buildResponseFrom(Soup.Message message, Response response) {
+        private static Response build_response_from(Soup.Message message, Response response) {
             
             response.status = (int) message.status_code;
 
