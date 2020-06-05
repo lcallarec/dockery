@@ -115,7 +115,6 @@ namespace Dockery.DockerSdk.Io {
                 if (regex.match(header_line, 0, out info)){
                     response.status = int.parse(info.fetch(2));
                 }
-                response.on_status_received(response.status);
                 stdout.printf("Response status : %d\n", response.status);
 
             } catch (RegexError e) {
